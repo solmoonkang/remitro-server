@@ -1,4 +1,33 @@
+jwt:
+  secret-key: secret-key-secret-key-secret-key-secret-key-secret-key
+  issuer: remitro-server
+  access-token-expiration: 1000 * 60 * 60
+  refresh-token-expiration: 1000 * 60 * 60 * 24 * 14
+
 spring:
 
   application:
     name: remitro-server
+
+  aes:
+    secret-key: aes-secret-key-aes-secret-key
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
