@@ -86,7 +86,7 @@ public class JwtProvider {
 			return token.substring(BEARER_TYPE.length()).trim();
 		}
 
-		throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER);
+		throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_ERROR);
 	}
 
 	public boolean validateToken(String token) {
@@ -107,7 +107,7 @@ public class JwtProvider {
 			log.warn("[✅ LOGGER: JWT PROVIDER] 잘못된 JWT 토큰입니다.", e);
 		} catch (Exception e) {
 			log.warn("[✅ LOGGER: JWT PROVIDER] 유효하지 않은 JWT 토큰입니다.", e);
-			throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER);
+			throw new UnauthorizedException(INVALID_AUTHORIZATION_HEADER_ERROR);
 		}
 
 		return false;

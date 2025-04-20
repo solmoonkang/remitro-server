@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				return;
 			}
 
-			throw new UnauthorizedException(UNAUTHORIZED_REQUEST);
+			throw new UnauthorizedException(UNAUTHORIZED_REQUEST_ERROR);
 		} catch (Exception e) {
 			log.warn("[✅ LOGGER: JWT AUTHENTICATION FILTER] 인증 실패 또는 토큰이 존재하지 않습니다: {}", e.getMessage());
 			handlerExceptionResolver.resolveException(httpServletRequest, httpServletResponse, null, e);
