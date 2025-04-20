@@ -1,8 +1,8 @@
 jwt:
   secret-key: secret-key-secret-key-secret-key-secret-key-secret-key
   issuer: remitro-server
-  access-token-expiration: 1000 * 60 * 60
-  refresh-token-expiration: 1000 * 60 * 60 * 24 * 14
+  access-token-expiration: 15m
+  refresh-token-expiration: 7d
 
 spring:
 
