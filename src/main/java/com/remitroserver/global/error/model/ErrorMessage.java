@@ -14,6 +14,9 @@ public enum ErrorMessage {
 	AES_ENCRYPT_ERROR("[❎ ERROR] AES 암호화 중 오류가 발생했습니다."),
 	AES_DECRYPT_ERROR("[❎ ERROR] AES 복호화 중 오류가 발생했습니다."),
 
+	UNAUTHORIZED_REQUEST("[❎ ERROR] 인증되지 않은 사용자 요청입니다."),
+	INVALID_AUTHORIZATION_HEADER("[❎ ERROR] 유효하지 않은 AUTHORIZATION 헤더입니다."),
+
 	DUPLICATED_EMAIL("[❎ ERROR] 이미 존재하는 사용자 이메일입니다."),
 	DUPLICATED_NICKNAME("[❎ ERROR] 이미 존재하는 사용자 닉네임입니다."),
 	DUPLICATED_REGISTRATION_NUMBER("[❎ ERROR] 이미 가입된 사용자입니다."),
