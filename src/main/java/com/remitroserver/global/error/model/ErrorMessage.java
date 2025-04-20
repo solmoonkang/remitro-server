@@ -16,6 +16,7 @@ public enum ErrorMessage {
 
 	UNAUTHORIZED_REQUEST_ERROR("[❎ ERROR] 인증되지 않은 사용자 요청입니다."),
 	INVALID_AUTHORIZATION_HEADER_ERROR("[❎ ERROR] 유효하지 않은 AUTHORIZATION 헤더입니다."),
+	UNAUTHORIZED_REFRESH_TOKEN_ERROR("[❎ ERROR] 유효하지 않은 리프레시 토큰입니다."),
 
 	DUPLICATED_EMAIL_ERROR("[❎ ERROR] 이미 존재하는 사용자 이메일입니다."),
 	DUPLICATED_NICKNAME_ERROR("[❎ ERROR] 이미 존재하는 사용자 닉네임입니다."),
