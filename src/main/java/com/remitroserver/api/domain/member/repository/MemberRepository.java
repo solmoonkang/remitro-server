@@ -5,4 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.remitroserver.api.domain.member.entity.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+
+	boolean existsMemberByEmail(String email);
+
+	boolean existsMemberByNickname(String nickname);
+
+	boolean existsMemberByRegistrationNumber(String registrationNumber);
 }
