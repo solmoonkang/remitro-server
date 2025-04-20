@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -38,5 +39,20 @@ public class AuthenticationController {
 	})
 	public ResponseEntity<LoginResponse> loginMember(@RequestBody @Valid LoginRequest loginRequest) {
 		return ResponseEntity.ok().body(authenticationService.loginMember(loginRequest));
+	}
+
+	@PostMapping("/reissue")
+	@Operation(
+		summary = "토큰 재발급 - RefreshToken을 통한 AccessToken 재발급",
+		description = "요청 헤더에 있는 RefreshToken을 검증한 뒤, 새로운 AccessToken과 RefreshToken을 발급합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 토큰 재발급 성공"),
+		@ApiResponse(responseCode = "401", description = "🔒 토큰이 유효하지 않거나 재사용된 경우"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<LoginResponse> reissueToken(HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok().body(authenticationService.reissueToken(httpServletRequest));
 	}
 }
