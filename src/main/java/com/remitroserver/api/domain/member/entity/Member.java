@@ -1,5 +1,8 @@
 package com.remitroserver.api.domain.member.entity;
 
+import java.util.Objects;
+
+import com.remitroserver.api.dto.member.request.SignUpRequest;
 import com.remitroserver.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -40,5 +43,14 @@ public class Member extends BaseTimeEntity {
 		this.password = password;
 		this.registrationNumber = registrationNumber;
 		this.nickname = nickname;
+	}
+
+	public static Member createMember(SignUpRequest signUpRequest, String password, String registrationNumber) {
+		return new Member(
+			Objects.requireNonNull(signUpRequest.email()),
+			Objects.requireNonNull(password),
+			Objects.requireNonNull(registrationNumber),
+			Objects.requireNonNull(signUpRequest.nickname())
+		);
 	}
 }
