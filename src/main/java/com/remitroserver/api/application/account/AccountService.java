@@ -53,4 +53,28 @@ public class AccountService {
 
 		return AccountMapper.toDetailResponse(account);
 	}
+
+	@Transactional
+	public void suspendAccount(UUID accountToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
+
+		account.suspend();
+	}
+
+	@Transactional
+	public void activateAccount(UUID accountToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
+
+		account.activate();
+	}
+
+	@Transactional
+	public void closeAccount(UUID accountToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
+
+		account.close();
+	}
 }
