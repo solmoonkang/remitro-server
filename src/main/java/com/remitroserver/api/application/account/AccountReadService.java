@@ -3,6 +3,7 @@ package com.remitroserver.api.application.account;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.global.common.util.AccountNumberGenerator;
 import com.remitroserver.global.error.exception.BadRequestException;
 import com.remitroserver.global.error.exception.ConflictException;
+import com.remitroserver.global.error.exception.NotFoundException;
 import com.remitroserver.global.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,11 @@ public class AccountReadService {
 
 	public List<Account> getAccountsByMember(Member member) {
 		return accountRepository.findAccountsByMemberOrderByCreatedAt(member);
+	}
+
+	public Account getAccountByTokenAndOwner(UUID accountToken, Member member) {
+		return accountRepository.findByAccountTokenAndMember(accountToken, member)
+			.orElseThrow(() -> new NotFoundException(ACCOUNT_NOT_FOUND_ERROR));
 	}
 
 	public void validateAccountLimitExceeded(Member member, AccountType accountType) {
