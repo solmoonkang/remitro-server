@@ -10,6 +10,8 @@ public enum ErrorMessage {
 
 	UNKNOWN_SERVER_ERROR("[❎ ERROR] 서버에서 알 수 없는 에러가 발생했습니다."),
 
+	UTILITY_CLASS_INSTANTIATION_ERROR("[❎ ERROR] 유틸리티 클래스는 인스턴스화할 수 없습니다."),
+
 	AES_INITIALIZE_ERROR("[❎ ERROR] AES 초기화 중 예외가 발생했습니다."),
 	AES_ENCRYPT_ERROR("[❎ ERROR] AES 암호화 중 오류가 발생했습니다."),
 	AES_DECRYPT_ERROR("[❎ ERROR] AES 복호화 중 오류가 발생했습니다."),
