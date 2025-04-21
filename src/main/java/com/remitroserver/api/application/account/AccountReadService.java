@@ -2,8 +2,11 @@ package com.remitroserver.api.application.account;
 
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.domain.account.model.AccountType;
 import com.remitroserver.api.domain.account.repository.AccountRepository;
 import com.remitroserver.api.domain.member.entity.Member;
@@ -23,12 +26,6 @@ public class AccountReadService {
 	private final AccountNumberGenerator accountNumberGenerator;
 	private final AccountRepository accountRepository;
 
-	public void validateAccountLimitExceeded(Member member, AccountType accountType) {
-		if (accountRepository.countByMemberAndAccountType(member, accountType) >= accountType.getMaxAccount()) {
-			throw new BadRequestException(ACCOUNT_TYPE_LIMIT_EXCEEDED_ERROR);
-		}
-	}
-
 	public String generateUniqueAccountNumber(AccountType accountType) {
 		int attemptCount = 0;
 
@@ -41,5 +38,15 @@ public class AccountReadService {
 		}
 
 		throw new ConflictException(ErrorMessage.ACCOUNT_NUMBER_GENERATION_FAILED_ERROR);
+	}
+
+	public List<Account> getAccountsByMember(Member member) {
+		return accountRepository.findAccountsByMemberOrderByCreatedAt(member);
+	}
+
+	public void validateAccountLimitExceeded(Member member, AccountType accountType) {
+		if (accountRepository.countByMemberAndAccountType(member, accountType) >= accountType.getMaxAccount()) {
+			throw new BadRequestException(ACCOUNT_TYPE_LIMIT_EXCEEDED_ERROR);
+		}
 	}
 }
