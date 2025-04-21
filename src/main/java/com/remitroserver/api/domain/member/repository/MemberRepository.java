@@ -8,11 +8,11 @@ import com.remitroserver.api.domain.member.entity.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-	Optional<Member> findMemberByEmail(String email);
+	Optional<Member> findByEmail(String email);
 
-	boolean existsMemberByEmail(String email);
+	boolean existsByEmail(String email);
 
-	boolean existsMemberByNickname(String nickname);
+	boolean existsByNickname(String nickname);
 
-	boolean existsMemberByRegistrationNumber(String registrationNumber);
+	boolean existsByRegistrationNumber(String registrationNumber);
 }
