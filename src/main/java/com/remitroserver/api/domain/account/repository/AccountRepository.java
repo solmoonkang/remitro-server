@@ -1,6 +1,8 @@
 package com.remitroserver.api.domain.account.repository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +20,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
 	@Query("SELECT a FROM Account a WHERE a.member = :member ORDER BY a.createdAt DESC")
 	List<Account> findAccountsByMemberOrderByCreatedAt(@Param("member") Member member);
+
+	Optional<Account> findByAccountTokenAndMember(UUID accessToken, Member member);
 }
