@@ -1,5 +1,7 @@
 package com.remitroserver.api.domain.account.entity;
 
+import static com.remitroserver.global.error.model.ErrorMessage.*;
+
 import java.util.UUID;
 
 import com.remitroserver.api.domain.account.model.AccountType;
@@ -7,6 +9,7 @@ import com.remitroserver.api.domain.account.model.Money;
 import com.remitroserver.api.domain.account.model.Status;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.global.common.entity.BaseTimeEntity;
+import com.remitroserver.global.error.exception.BadRequestException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -76,5 +79,29 @@ public class Account extends BaseTimeEntity {
 
 	public void withdraw(Money amount) {
 		this.balance = this.balance.subtract(amount);
+	}
+
+	public void suspend() {
+		if (this.status == Status.CLOSED) {
+			throw new BadRequestException(ACCOUNT_ALREADY_CLOSED_ERROR);
+		}
+
+		this.status = Status.SUSPENDED;
+	}
+
+	public void activate() {
+		if (this.status == Status.SUSPENDED) {
+			throw new BadRequestException(ACCOUNT_NOT_SUSPENDED_ERROR);
+		}
+
+		this.status = Status.ACTIVE;
+	}
+
+	public void close() {
+		if (!this.balance.isZero()) {
+			throw new BadRequestException(ACCOUNT_BALANCE_NOT_ZERO_ERROR);
+		}
+
+		this.status = Status.CLOSED;
 	}
 }
