@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
+@Schema(description = "회원 정보 조회 응답 DTO")
 public record MemberInfoResponse(
 	@Schema(description = "사용자 닉네임", example = "memberNickname")
 	String nickname,

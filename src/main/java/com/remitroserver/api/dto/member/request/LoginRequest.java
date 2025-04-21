@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
+@Schema(description = "로그인 요청 DTO")
 public record LoginRequest(
 	@Schema(description = "사용자 이메일", example = "member@example.com")
 	@Email(message = "이메일 형식에 맞게 입력해주세요.")

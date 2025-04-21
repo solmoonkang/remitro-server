@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @Builder
+@Schema(description = "회원가입 요청 DTO")
 public record SignUpRequest(
 	@Schema(description = "사용자 이메일", example = "member@example.com")
 	@Email(message = "이메일 형식에 맞게 입력해주세요.")
