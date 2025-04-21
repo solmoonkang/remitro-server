@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class MemberService {
 
-	// TODO: ACCOUNT 엔티티에 대해서 Embeddable로 처리하는 데 그에 대한 부분 더 자세히 공부하고 적용시켜서 완성시키자.
-
 	private final PasswordEncoder passwordEncoder;
 	private final AES128Util aes128Util;
 	private final MemberRepository memberRepository;
@@ -39,7 +37,7 @@ public class MemberService {
 		final String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 		final String encodedRegistrationNumber = aes128Util.encryptText(signUpRequest.registrationNumber());
 
-		final Member member = Member.createMember(signUpRequest, encodedPassword, encodedRegistrationNumber);
+		final Member member = Member.create(signUpRequest, encodedPassword, encodedRegistrationNumber);
 		memberRepository.save(member);
 	}
 
