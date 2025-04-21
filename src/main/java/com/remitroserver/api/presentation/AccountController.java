@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,7 +63,7 @@ public class AccountController {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 목록 조회 성공"),
-		@ApiResponse(responseCode = "401", description = "❌ 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 해당 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -77,7 +78,7 @@ public class AccountController {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 상세 정보 조회 성공"),
-		@ApiResponse(responseCode = "401", description = "❌ 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 해당 계좌 정보 또는 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -86,5 +87,62 @@ public class AccountController {
 		@Auth AuthMember authMember) {
 
 		return ResponseEntity.ok().body(accountService.findAccountDetail(accountToken, authMember));
+	}
+
+	@PatchMapping("/{accountToken}/suspend")
+	@Operation(
+		summary = "계좌 정지 - 사용자 요청에 의한 계좌 일시 정지",
+		description = "계좌를 분실했거나 의심 거래가 감지된 경우 계좌를 일시적으로 정지합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 계좌 정지 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
+	})
+	public ResponseEntity<String> suspendAccount(
+		@PathVariable UUID accountToken,
+		@Auth AuthMember authMember) {
+
+		accountService.suspendAccount(accountToken, authMember);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌가 성공적으로 정지되었습니다.");
+	}
+
+	@PatchMapping("/{accountToken}/activate")
+	@Operation(
+		summary = "계좌 복구 - 정지된 계좌 복구 요청",
+		description = "본인 인증을 완료한 사용자에 한해 정지된 계좌를 다시 활성화합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 계좌 복구 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
+	})
+	public ResponseEntity<String> activateAccount(
+		@PathVariable UUID accountToken,
+		@Auth AuthMember authMember) {
+
+		accountService.activateAccount(accountToken, authMember);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌가 성공적으로 복구되었습니다.");
+	}
+
+	@PatchMapping("/{accountToken}/close")
+	@Operation(
+		summary = "계좌 해지 - 계좌 사용 종료 처리",
+		description = "잔액이 0원인 계좌에 한해 계좌를 해지할 수 있습니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 계좌 해지 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
+	})
+	public ResponseEntity<String> closeAccount(
+		@PathVariable UUID accountToken,
+		@Auth AuthMember authMember) {
+
+		accountService.closeAccount(accountToken, authMember);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌가 성공적으로 해지되었습니다.");
 	}
 }
