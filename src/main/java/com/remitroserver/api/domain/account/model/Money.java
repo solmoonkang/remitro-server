@@ -49,4 +49,8 @@ public class Money {
 	public static Money zero() {
 		return new Money(0L);
 	}
+
+	public boolean isZero() {
+		return this.value == 0;
+	}
 }
