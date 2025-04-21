@@ -18,24 +18,24 @@ public class MemberReadService {
 	private final MemberRepository memberRepository;
 
 	public Member getMemberByEmail(String email) {
-		return memberRepository.findMemberByEmail(email)
+		return memberRepository.findByEmail(email)
 			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_ERROR));
 	}
 
 	public void validateEmailDuplicated(String email) {
-		if (memberRepository.existsMemberByEmail(email)) {
+		if (memberRepository.existsByEmail(email)) {
 			throw new ConflictException(DUPLICATED_EMAIL_ERROR);
 		}
 	}
 
 	public void validateNicknameDuplicated(String nickname) {
-		if (memberRepository.existsMemberByNickname(nickname)) {
+		if (memberRepository.existsByNickname(nickname)) {
 			throw new ConflictException(DUPLICATED_NICKNAME_ERROR);
 		}
 	}
 
 	public void validateRegistrationNumberDuplicated(String registrationNumber) {
-		if (memberRepository.existsMemberByRegistrationNumber(registrationNumber)) {
+		if (memberRepository.existsByRegistrationNumber(registrationNumber)) {
 			throw new ConflictException(DUPLICATED_REGISTRATION_NUMBER_ERROR);
 		}
 	}
