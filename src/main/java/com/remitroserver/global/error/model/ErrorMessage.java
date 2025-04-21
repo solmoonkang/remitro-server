@@ -23,6 +23,10 @@ public enum ErrorMessage {
 	INVALID_MONEY_VALUE_ERROR("[❎ ERROR] 금액은 0원 이상이어야 합니다."),
 	INSUFFICIENT_BALANCE_ERROR("[❎ ERROR] 잔액이 부족합니다."),
 
+	ACCOUNT_ALREADY_CLOSED_ERROR("[❎ ERROR] 해지된 계좌는 정지할 수 없습니다."),
+	ACCOUNT_NOT_SUSPENDED_ERROR("[❎ ERROR] 정지된 계좌만 복구할 수 있습니다."),
+	ACCOUNT_BALANCE_NOT_ZERO_ERROR("[❎ ERROR] 잔액이 0원이어야 계좌를 해지할 수 있습니다."),
+
 	DUPLICATED_EMAIL_ERROR("[❎ ERROR] 이미 존재하는 사용자 이메일입니다."),
 	DUPLICATED_NICKNAME_ERROR("[❎ ERROR] 이미 존재하는 사용자 닉네임입니다."),
 	DUPLICATED_REGISTRATION_NUMBER_ERROR("[❎ ERROR] 이미 가입된 사용자입니다."),
