@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.remitroserver.api.application.member.mapper.MemberMapper;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.member.repository.MemberRepository;
@@ -46,7 +47,7 @@ public class MemberService {
 		final String decodedRegistrationNumber = aes128Util.decryptText(member.getRegistrationNumber());
 		final String maskRegistrationNumber = MaskingUtil.maskRegistrationNumber(decodedRegistrationNumber);
 
-		return new MemberInfoResponse(member.getNickname(), maskRegistrationNumber, member.getCreatedAt());
+		return MemberMapper.toInfoResponse(member, maskRegistrationNumber);
 	}
 
 	private void validatePasswordConfirmationMatch(String password, String checkPassword) {
