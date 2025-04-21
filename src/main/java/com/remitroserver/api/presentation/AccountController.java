@@ -1,7 +1,10 @@
 package com.remitroserver.api.presentation;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitroserver.api.application.account.AccountService;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.dto.account.request.AccountCreateRequest;
+import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 import com.remitroserver.global.auth.annotation.Auth;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +35,7 @@ public class AccountController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@Operation(
-		summary = "계좌 생성",
+		summary = "계좌 생성 - 사용자 계좌 생성",
 		description = "계좌 타입을 선택해 사용자가 입출금 계좌를 생성합니다. 생성 시 잔액은 0원으로 초기화됩니다."
 	)
 	@ApiResponses({
@@ -46,5 +50,19 @@ public class AccountController {
 
 		accountService.createAccount(authMember, accountCreateRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 사용자 계좌를 성공적으로 생성했습니다.");
+	}
+
+	@GetMapping("/accounts")
+	@Operation(
+		summary = "내 계좌 목록 조회 - 사용자가 보유한 계좌 목록 조회",
+		description = "현재 로그인한 사용자가 개설한 모든 계좌 정보를 최신순으로 정렬하여 반환합니다. (잔액, 상태, 생성일 포함)"
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 계좌 목록 조회 성공"),
+		@ApiResponse(responseCode = "401", description = "❌ 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<List<AccountSummaryResponse>> getAllMyAccounts(@Auth AuthMember authMember) {
+		return ResponseEntity.ok().body(accountService.getAllMyAccounts(authMember));
 	}
 }
