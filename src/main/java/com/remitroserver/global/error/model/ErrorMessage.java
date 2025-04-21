@@ -30,7 +30,8 @@ public enum ErrorMessage {
 	ACCOUNT_TYPE_LIMIT_EXCEEDED_ERROR("[❎ ERROR] 해당 계좌 유형은 최대 생성 개수를 초과했습니다."),
 	PASSWORD_MISMATCH_ERROR("[❎ ERROR] 입력하신 비밀번호가 서로 일치하지 않습니다."),
 	INVALID_REGISTRATION_NUMBER_FORMAT_ERROR("[❎ ERROR] 올바르지 않은 주민등록번호 형식입니다."),
-	MEMBER_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 회원을 찾을 수 없습니다.");
+	MEMBER_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 회원을 찾을 수 없습니다."),
+	ACCOUNT_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 계좌를 찾을 수 없습니다.");
 
 	private final String message;
 }
