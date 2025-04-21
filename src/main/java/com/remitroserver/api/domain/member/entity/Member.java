@@ -45,7 +45,7 @@ public class Member extends BaseTimeEntity {
 		this.nickname = nickname;
 	}
 
-	public static Member createMember(SignUpRequest signUpRequest, String password, String registrationNumber) {
+	public static Member create(SignUpRequest signUpRequest, String password, String registrationNumber) {
 		return new Member(
 			Objects.requireNonNull(signUpRequest.email()),
 			Objects.requireNonNull(password),
