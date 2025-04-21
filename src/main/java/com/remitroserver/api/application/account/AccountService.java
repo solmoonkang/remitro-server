@@ -1,6 +1,7 @@
 package com.remitroserver.api.application.account;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import com.remitroserver.api.domain.account.repository.AccountRepository;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.dto.account.request.AccountCreateRequest;
+import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -36,12 +38,19 @@ public class AccountService {
 		accountRepository.save(account);
 	}
 
-	public List<AccountSummaryResponse> getAllMyAccounts(AuthMember authMember) {
+	public List<AccountSummaryResponse> findAllMyAccounts(AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final List<Account> accounts = accountReadService.getAccountsByMember(member);
 
 		return accounts.stream()
 			.map(AccountMapper::toSummaryResponse)
 			.toList();
+	}
+
+	public AccountDetailResponse findAccountDetail(UUID accountToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
+
+		return AccountMapper.toDetailResponse(account);
 	}
 }
