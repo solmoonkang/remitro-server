@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitroserver.api.application.account.AccountService;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.dto.account.request.AccountCreateRequest;
+import com.remitroserver.api.dto.account.response.AccountBalanceResponse;
 import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 import com.remitroserver.global.auth.annotation.Auth;
@@ -87,6 +88,24 @@ public class AccountController {
 		@Auth AuthMember authMember) {
 
 		return ResponseEntity.ok().body(accountService.findAccountDetail(accountToken, authMember));
+	}
+
+	@GetMapping("/{accountToken}/balance")
+	@Operation(
+		summary = "계좌 잔액 조회 - 현재 잔액 확인",
+		description = "UUID 기반 계좌 식별자를 통해 현재 계좌의 잔액을 반환합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 잔액 조회 성공"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<AccountBalanceResponse> findAccountBalance(
+		@PathVariable UUID accountToken,
+		@Auth AuthMember authMember) {
+
+		return ResponseEntity.ok().body(accountService.findAccountBalance(accountToken, authMember));
 	}
 
 	@PatchMapping("/{accountToken}/suspend")
