@@ -22,6 +22,7 @@ public enum ErrorMessage {
 	DUPLICATED_NICKNAME_ERROR("[❎ ERROR] 이미 존재하는 사용자 닉네임입니다."),
 	DUPLICATED_REGISTRATION_NUMBER_ERROR("[❎ ERROR] 이미 가입된 사용자입니다."),
 	PASSWORD_MISMATCH_ERROR("[❎ ERROR] 입력하신 비밀번호가 서로 일치하지 않습니다."),
+	INVALID_REGISTRATION_NUMBER_FORMAT_ERROR("[❎ ERROR] 올바르지 않은 주민등록번호 형식입니다."),
 	MEMBER_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 회원을 찾을 수 없습니다.");
 
 	private final String message;
