@@ -13,6 +13,7 @@ import com.remitroserver.api.domain.account.repository.AccountRepository;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.dto.account.request.AccountCreateRequest;
+import com.remitroserver.api.dto.account.response.AccountBalanceResponse;
 import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 
@@ -52,6 +53,13 @@ public class AccountService {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 
 		return AccountMapper.toDetailResponse(account);
+	}
+
+	public AccountBalanceResponse findAccountBalance(UUID accountToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
+
+		return AccountMapper.toBalanceResponse(account);
 	}
 
 	@Transactional
