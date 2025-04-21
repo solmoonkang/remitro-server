@@ -4,10 +4,6 @@ import com.remitroserver.global.error.model.ErrorMessage;
 
 public class BadRequestException extends RemitroServerException {
 
-	public BadRequestException(String message) {
-		super(message);
-	}
-
 	public BadRequestException(ErrorMessage errorMessage) {
 		super(errorMessage.getMessage());
 	}
