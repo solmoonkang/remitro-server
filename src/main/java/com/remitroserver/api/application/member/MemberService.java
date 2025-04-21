@@ -6,10 +6,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.member.repository.MemberRepository;
 import com.remitroserver.api.dto.member.request.SignUpRequest;
+import com.remitroserver.api.dto.member.response.MemberInfoResponse;
 import com.remitroserver.global.common.util.AES128Util;
+import com.remitroserver.global.common.util.MaskingUtil;
 import com.remitroserver.global.error.exception.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberService {
+
+	// TODO: ACCOUNT 엔티티에 대해서 Embeddable로 처리하는 데 그에 대한 부분 더 자세히 공부하고 적용시켜서 완성시키자.
 
 	private final PasswordEncoder passwordEncoder;
 	private final AES128Util aes128Util;
@@ -36,6 +41,14 @@ public class MemberService {
 
 		final Member member = Member.createMember(signUpRequest, encodedPassword, encodedRegistrationNumber);
 		memberRepository.save(member);
+	}
+
+	public MemberInfoResponse getMemberInfo(AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final String decodedRegistrationNumber = aes128Util.decryptText(member.getRegistrationNumber());
+		final String maskRegistrationNumber = MaskingUtil.maskRegistrationNumber(decodedRegistrationNumber);
+
+		return new MemberInfoResponse(member.getNickname(), maskRegistrationNumber, member.getCreatedAt());
 	}
 
 	private void validatePasswordConfirmationMatch(String password, String checkPassword) {
