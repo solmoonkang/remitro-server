@@ -2,7 +2,10 @@ package com.remitroserver.api.application.account.mapper;
 
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
+import java.time.LocalDateTime;
+
 import com.remitroserver.api.domain.account.entity.Account;
+import com.remitroserver.api.dto.account.response.AccountBalanceResponse;
 import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 
@@ -30,6 +33,13 @@ public class AccountMapper {
 			.status(account.getStatus())
 			.createdAt(account.getCreatedAt())
 			.ownerNickname(account.getMember().getNickname())
+			.build();
+	}
+
+	public static AccountBalanceResponse toBalanceResponse(Account account) {
+		return AccountBalanceResponse.builder()
+			.balance(account.getBalance().getValue())
+			.retrievedAt(LocalDateTime.now())
 			.build();
 	}
 }
