@@ -1,10 +1,12 @@
 package com.remitroserver.api.presentation;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitroserver.api.application.account.AccountService;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.dto.account.request.AccountCreateRequest;
+import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 import com.remitroserver.global.auth.annotation.Auth;
 
@@ -52,7 +55,7 @@ public class AccountController {
 		return ResponseEntity.ok().body("[✅ SUCCESS] 사용자 계좌를 성공적으로 생성했습니다.");
 	}
 
-	@GetMapping("/accounts")
+	@GetMapping
 	@Operation(
 		summary = "내 계좌 목록 조회 - 사용자가 보유한 계좌 목록 조회",
 		description = "현재 로그인한 사용자가 개설한 모든 계좌 정보를 최신순으로 정렬하여 반환합니다. (잔액, 상태, 생성일 포함)"
@@ -60,9 +63,28 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 목록 조회 성공"),
 		@ApiResponse(responseCode = "401", description = "❌ 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 해당 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<List<AccountSummaryResponse>> getAllMyAccounts(@Auth AuthMember authMember) {
-		return ResponseEntity.ok().body(accountService.getAllMyAccounts(authMember));
+	public ResponseEntity<List<AccountSummaryResponse>> findAllMyAccounts(@Auth AuthMember authMember) {
+		return ResponseEntity.ok().body(accountService.findAllMyAccounts(authMember));
+	}
+
+	@GetMapping("/{accountToken}")
+	@Operation(
+		summary = "계좌 상세 조회 - 단일 계좌 정보 확인",
+		description = "랜덤 UUID 계좌 값을 기반으로 계좌 번호, 잔액, 상태, 소유자 닉네임 등 상세 정보를 반환합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 계좌 상세 정보 조회 성공"),
+		@ApiResponse(responseCode = "401", description = "❌ 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 해당 계좌 정보 또는 사용자 정보를 찾을 수 없음"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<AccountDetailResponse> findAccountDetail(
+		@PathVariable UUID accountToken,
+		@Auth AuthMember authMember) {
+
+		return ResponseEntity.ok().body(accountService.findAccountDetail(accountToken, authMember));
 	}
 }
