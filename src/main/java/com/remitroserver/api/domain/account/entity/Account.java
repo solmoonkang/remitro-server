@@ -1,5 +1,7 @@
 package com.remitroserver.api.domain.account.entity;
 
+import java.util.UUID;
+
 import com.remitroserver.api.domain.account.model.AccountType;
 import com.remitroserver.api.domain.account.model.Money;
 import com.remitroserver.api.domain.account.model.Status;
@@ -36,6 +38,9 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_number", length = 30, unique = true, nullable = false)
 	private String accountNumber;
 
+	@Column(name = "account_token", updatable = false, unique = true, nullable = false)
+	private UUID accountToken;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
@@ -58,6 +63,7 @@ public class Account extends BaseTimeEntity {
 		this.balance = balance;
 		this.accountType = accountType;
 		this.status = status;
+		this.accountToken = UUID.randomUUID();
 	}
 
 	public static Account create(String accountNumber, Member member, AccountType accountType) {
