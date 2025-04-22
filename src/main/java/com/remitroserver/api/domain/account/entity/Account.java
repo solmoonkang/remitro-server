@@ -106,4 +106,8 @@ public class Account extends BaseTimeEntity {
 			throw new BadRequestException(ACCOUNT_NOT_ACTIVE_ERROR);
 		}
 	}
+
+	public boolean isSameAccount(Account target) {
+		return this.id != null && this.id.equals(target.getId());
+	}
 }
