@@ -17,6 +17,7 @@ public enum ErrorMessage {
 	ACCOUNT_ALREADY_CLOSED_ERROR("[❎ ERROR] 해지된 계좌는 정지할 수 없습니다."),
 	PASSWORD_MISMATCH_ERROR("[❎ ERROR] 입력하신 비밀번호가 서로 일치하지 않습니다."),
 	INVALID_REGISTRATION_NUMBER_FORMAT_ERROR("[❎ ERROR] 올바르지 않은 주민등록번호 형식입니다."),
+	TRANSFER_TO_SAME_ACCOUNT_ERROR("[❎ ERROR] 동일한 계좌로는 송금할 수 없습니다."),
 
 	UNAUTHORIZED_REQUEST_ERROR("[❎ ERROR] 인증되지 않은 사용자 요청입니다."),
 	INVALID_AUTHORIZATION_HEADER_ERROR("[❎ ERROR] 유효하지 않은 AUTHORIZATION 헤더입니다."),
