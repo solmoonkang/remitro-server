@@ -1,10 +1,16 @@
 package com.remitroserver.api.domain.transaction.repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
 import com.remitroserver.api.domain.transaction.model.TransactionStatus;
@@ -14,5 +20,23 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 	boolean existsByIdempotencyKey(String idempotencyKey);
 
 	Optional<Transaction> findByTransactionTokenAndFromAccountMemberAndStatus(
-		UUID transactionToken, Member member, TransactionStatus status);
+		UUID transactionToken,
+		Member member,
+		TransactionStatus status
+	);
+
+	@Query("""
+		SELECT t FROM Transaction t
+		WHERE (t.fromAccount = :account OR t.toAccount = :account)
+			AND (:fromAt IS NULL OR t.createdAt >= :fromAt)
+			AND (:toAt IS NULL OR t.createdAt <= :toAt)
+			AND (:status IS NULL OR t.status = :status)
+		ORDER BY t.createdAt DESC
+		""")
+	List<Transaction> findTransactionsByAccountAndCondition(
+		@Param("account") Account account,
+		@Param("fromAt") LocalDateTime fromAt,
+		@Param("toAt") LocalDateTime toAt,
+		@Param("status") TransactionStatus status
+	);
 }
