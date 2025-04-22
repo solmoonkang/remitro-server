@@ -3,6 +3,9 @@ package com.remitroserver.api.application.transaction;
 import static com.remitroserver.api.domain.transaction.model.TransactionStatus.*;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
+import java.time.Duration;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class TransactionService {
 
+	// TODO: 이후 거래 내역 조회, 거래 상세 내역 조회 API 구현
+
 	private final TransactionRepository transactionRepository;
 	private final TransactionStatusLogRepository transactionStatusLogRepository;
 	private final MemberReadService memberReadService;
@@ -33,7 +38,7 @@ public class TransactionService {
 	private final TransactionReadService transactionReadService;
 
 	@Transactional
-	public void transferFunds(AuthMember authMember, TransferRequest transferRequest) {
+	public void requestTransfer(AuthMember authMember, TransferRequest transferRequest) {
 		transactionReadService.validateIdempotencyKeyExists(transferRequest.idempotencyKey());
 
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
@@ -44,14 +49,36 @@ public class TransactionService {
 		validateNotSelfTransfer(fromAccount, toAccount);
 
 		final Money amount = new Money(transferRequest.amount());
-
-		performTransfer(fromAccount, toAccount, amount);
-
 		final Transaction transaction = Transaction.create(
 			fromAccount, toAccount, amount, transferRequest.idempotencyKey());
-		transaction.complete();
+
 		transactionRepository.save(transaction);
 		transactionStatusLogRepository.save(TransactionStatusLog.create(transaction, COMPLETED));
+	}
+
+	@Transactional
+	public void approveTransfer(UUID transactionToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Transaction transaction = transactionReadService.getRequestedTransactionByTokenAndOwner(
+			transactionToken, member);
+
+		transaction.validateNotExpired(Duration.ofMinutes(5));
+		transaction.complete();
+
+		performTransfer(transaction.getFromAccount(), transaction.getToAccount(), transaction.getAmount());
+
+		transactionStatusLogRepository.save(TransactionStatusLog.create(transaction, COMPLETED));
+	}
+
+	@Transactional
+	public void cancelTransfer(UUID transactionToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Transaction transaction = transactionReadService.getRequestedTransactionByTokenAndOwner(
+			transactionToken, member);
+
+		transaction.cancel();
+
+		transactionStatusLogRepository.save(TransactionStatusLog.create(transaction, CANCELLED));
 	}
 
 	private void performTransfer(Account fromAccount, Account toAccount, Money amount) {
