@@ -1,7 +1,11 @@
 package com.remitroserver.api.presentation;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/transactions")
-@Tag(name = "송금 APIs", description = "계좌 간 송금 처리 및 거래 내역 관리 API")
+@Tag(name = "거래 APIs", description = "계좌 간 송금 처리 및 거래 내역 관리 API")
 public class TransactionController {
 
 	private final TransactionService transactionService;
@@ -32,21 +36,57 @@ public class TransactionController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@Operation(
 		summary = "송금 요청 - 계좌 간 자금 이체",
-		description = "사용자가 보유한 계좌에서 다른 계좌로 송금을 수행합니다. 송금 금액과 계좌 상태, 중복 여부 등 다양한 검증이 포함됩니다."
+		description = "사용자가 송금을 요청합니다. 요청은 '대기(REQUESTED)' 상태로 저장되며, 이후 별도 승인 요청을 통해 송금이 완료됩니다."
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "201", description = "🎉 송금 요청 완료"),
-		@ApiResponse(responseCode = "400", description = "❌ 잘못된 송금 요청 (잔액 부족, 동일 계좌 송금, 계좌 비활성 등)"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 송금 요청 (잔액 부족, 동일 계좌 송금)"),
 		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자 또는 계좌"),
 		@ApiResponse(responseCode = "409", description = "⚠️ 이미 처리된 송금 요청 (멱등성 키 중복)"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<String> transferFunds(
+	public ResponseEntity<String> requestTransfer(
 		@Auth AuthMember authMember,
 		@RequestBody @Valid TransferRequest transferRequest) {
 
-		transactionService.transferFunds(authMember, transferRequest);
+		transactionService.requestTransfer(authMember, transferRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 송금 요청이 성공적으로 처리되었습니다.");
+	}
+
+	@PatchMapping("/{transactionToken}/approve")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "송금 승인 - 요청된 거래 승인 처리",
+		description = "송금 요청 후, 5분 이내에 사용자가 거래를 승인하면 자금 이체가 완료됩니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 송금 승인 완료"),
+		@ApiResponse(responseCode = "400", description = "❌ 거래 상태 오류 또는 만료"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 거래 정보를 찾을 수 없음"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<String> approveTransfer(@PathVariable UUID transactionToken, @Auth AuthMember authMember) {
+		transactionService.approveTransfer(transactionToken, authMember);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 송금 요청이 성공적으로 승인되었습니다.");
+	}
+
+	@PatchMapping("/{transactionToken}/cancel")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "송금 취소 - 요청된 거래 취소 처리",
+		description = "승인 대기 상태인 송금 요청을 사용자가 취소합니다. 승인된 거래는 취소할 수 없습니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 송금 취소 완료"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 상태의 거래 취소 요청"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 거래 정보를 찾을 수 없음"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<String> cancelTransfer(@PathVariable UUID transactionToken, @Auth AuthMember authMember) {
+		transactionService.cancelTransfer(transactionToken, authMember);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 송금 요청이 성공적으로 취소되었습니다.");
 	}
 }
