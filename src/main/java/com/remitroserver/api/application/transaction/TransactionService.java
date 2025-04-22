@@ -17,7 +17,7 @@ import com.remitroserver.api.domain.transaction.entity.TransactionStatusLog;
 import com.remitroserver.api.domain.transaction.repository.TransactionRepository;
 import com.remitroserver.api.domain.transaction.repository.TransactionStatusLogRepository;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
-import com.remitroserver.global.error.exception.ConflictException;
+import com.remitroserver.global.error.exception.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,23 +30,25 @@ public class TransactionService {
 	private final TransactionStatusLogRepository transactionStatusLogRepository;
 	private final MemberReadService memberReadService;
 	private final AccountReadService accountReadService;
+	private final TransactionReadService transactionReadService;
 
 	@Transactional
 	public void transferFunds(AuthMember authMember, TransferRequest transferRequest) {
-		validateIdempotencyKeyExists(transferRequest.idempotencyKey());
+		transactionReadService.validateIdempotencyKeyExists(transferRequest.idempotencyKey());
 
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final Account fromAccount = accountReadService.getActiveAccountByTokenAndOwner(
 			transferRequest.fromAccountToken(), member);
-		final Account toAccount = accountReadService.getActiveAccountByAccountNumber(
-			transferRequest.toAccountNumber());
+		final Account toAccount = accountReadService.getActiveAccountByAccountNumber(transferRequest.toAccountNumber());
+
+		validateNotSelfTransfer(fromAccount, toAccount);
 
 		final Money amount = new Money(transferRequest.amount());
-		final Transaction transaction = Transaction.create(fromAccount, toAccount, amount,
-			transferRequest.idempotencyKey());
 
 		performTransfer(fromAccount, toAccount, amount);
 
+		final Transaction transaction = Transaction.create(
+			fromAccount, toAccount, amount, transferRequest.idempotencyKey());
 		transaction.complete();
 		transactionRepository.save(transaction);
 		transactionStatusLogRepository.save(TransactionStatusLog.create(transaction, COMPLETED));
@@ -57,9 +59,9 @@ public class TransactionService {
 		toAccount.deposit(amount);
 	}
 
-	private void validateIdempotencyKeyExists(String idempotencyKey) {
-		if (transactionRepository.existsByIdempotencyKey(idempotencyKey)) {
-			throw new ConflictException(DUPLICATED_IDEMPOTENCY_KEY_ERROR);
+	private void validateNotSelfTransfer(Account fromAccount, Account toAccount) {
+		if (fromAccount.isSameAccount(toAccount)) {
+			throw new BadRequestException(TRANSFER_TO_SAME_ACCOUNT_ERROR);
 		}
 	}
 }
