@@ -1,20 +1,26 @@
 package com.remitroserver.api.presentation;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitroserver.api.application.transaction.TransactionService;
 import com.remitroserver.api.domain.auth.model.AuthMember;
+import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
+import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
 import com.remitroserver.global.auth.annotation.Auth;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,5 +94,29 @@ public class TransactionController {
 	public ResponseEntity<String> cancelTransfer(@PathVariable UUID transactionToken, @Auth AuthMember authMember) {
 		transactionService.cancelTransfer(transactionToken, authMember);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 송금 요청이 성공적으로 취소되었습니다.");
+	}
+
+	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "거래 내역 조회 - 사용자 계좌 기준 조건별 거래 내역 조회",
+		description = "사용자의 특정 계좌 기준으로 송금 및 수신 거래 내역을 조회합니다. " +
+			"거래일(fromDate, toDate) 및 상태(status) 조건으로 필터링할 수 있으며, 결과는 최신순으로 정렬되어 반환됩니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 거래 내역 조회 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 요청 파라미터 (날짜 형식 오류 등)"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않거나 소유하지 않은 계좌"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<List<TransactionSummaryResponse>> findMyAllTransactionsByCondition(
+		@RequestParam UUID accountToken,
+		@Auth AuthMember authMember,
+		@ParameterObject TransactionSearchRequest transactionSearchRequest) {
+
+		return ResponseEntity.ok().body(transactionService.findMyAllTransactionsByCondition(
+			accountToken, authMember, transactionSearchRequest)
+		);
 	}
 }
