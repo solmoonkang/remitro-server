@@ -51,9 +51,26 @@ public class AccountReadService {
 			.orElseThrow(() -> new NotFoundException(ACCOUNT_NOT_FOUND_ERROR));
 	}
 
+	public Account getAccountByAccountNumber(String accountNumber) {
+		return accountRepository.findByAccountNumber(accountNumber)
+			.orElseThrow(() -> new NotFoundException(ACCOUNT_NOT_FOUND_ERROR));
+	}
+
 	public void validateAccountLimitExceeded(Member member, AccountType accountType) {
 		if (accountRepository.countByMemberAndAccountType(member, accountType) >= accountType.getMaxAccount()) {
 			throw new BadRequestException(ACCOUNT_TYPE_LIMIT_EXCEEDED_ERROR);
 		}
+	}
+
+	public Account getActiveAccountByTokenAndOwner(UUID token, Member owner) {
+		Account account = getAccountByTokenAndOwner(token, owner);
+		account.validateIsActive();
+		return account;
+	}
+
+	public Account getActiveAccountByAccountNumber(String accountNumber) {
+		Account account = getAccountByAccountNumber(accountNumber);
+		account.validateIsActive();
+		return account;
 	}
 }

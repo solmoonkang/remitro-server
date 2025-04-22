@@ -22,4 +22,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 	List<Account> findAccountsByMemberOrderByCreatedAt(@Param("member") Member member);
 
 	Optional<Account> findByAccountTokenAndMember(UUID accessToken, Member member);
+
+	Optional<Account> findByAccountNumber(String accountNumber);
 }
