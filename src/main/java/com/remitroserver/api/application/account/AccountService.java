@@ -1,5 +1,7 @@
 package com.remitroserver.api.application.account;
 
+import static com.remitroserver.api.domain.account.model.AccountStatus.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -67,7 +69,7 @@ public class AccountService {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 
-		account.suspend();
+		account.changeStatusTo(SUSPENDED);
 	}
 
 	@Transactional
@@ -75,7 +77,7 @@ public class AccountService {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 
-		account.activate();
+		account.changeStatusTo(ACTIVE);
 	}
 
 	@Transactional
@@ -83,6 +85,6 @@ public class AccountService {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 
-		account.close();
+		account.changeStatusTo(CLOSED);
 	}
 }
