@@ -1,16 +1,19 @@
 package com.remitroserver.api.domain.account.entity;
 
+import static com.remitroserver.api.domain.account.model.AccountStatus.*;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
+import com.remitroserver.api.domain.account.model.AccountStatus;
 import com.remitroserver.api.domain.account.model.AccountType;
 import com.remitroserver.api.domain.account.model.Money;
-import com.remitroserver.api.domain.account.model.Status;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.global.common.entity.BaseTimeEntity;
 import com.remitroserver.global.error.exception.BadRequestException;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -38,7 +41,7 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_id", nullable = false)
 	private Long id;
 
-	@Column(name = "account_number", length = 30, unique = true, nullable = false)
+	@Column(name = "account_number", unique = true, nullable = false, length = 30)
 	private String accountNumber;
 
 	@Column(name = "account_token", updatable = false, unique = true, nullable = false)
@@ -49,18 +52,21 @@ public class Account extends BaseTimeEntity {
 	private Member member;
 
 	@Embedded
-	@Column(name = "balance", nullable = false)
+	@AttributeOverride(
+		name = "value",
+		column = @Column(name = "balance", nullable = false)
+	)
 	private Money balance;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "account_type", length = 30, nullable = false)
+	@Column(name = "account_type", nullable = false, length = 30)
 	private AccountType accountType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", length = 30, nullable = false)
-	private Status status;
+	@Column(name = "account_status", nullable = false, length = 30)
+	private AccountStatus status;
 
-	private Account(String accountNumber, Member member, Money balance, AccountType accountType, Status status) {
+	private Account(String accountNumber, Member member, Money balance, AccountType accountType, AccountStatus status) {
 		this.accountNumber = accountNumber;
 		this.member = member;
 		this.balance = balance;
@@ -70,7 +76,13 @@ public class Account extends BaseTimeEntity {
 	}
 
 	public static Account create(String accountNumber, Member member, AccountType accountType) {
-		return new Account(accountNumber, member, Money.zero(), accountType, Status.ACTIVE);
+		return new Account(
+			Objects.requireNonNull(accountNumber),
+			Objects.requireNonNull(member),
+			Objects.requireNonNull(Money.zero()),
+			Objects.requireNonNull(accountType),
+			Objects.requireNonNull(ACTIVE)
+		);
 	}
 
 	public void deposit(Money amount) {
@@ -81,27 +93,17 @@ public class Account extends BaseTimeEntity {
 		this.balance = this.balance.subtract(amount);
 	}
 
-	public void suspend() {
-		if (this.status == Status.CLOSED) {
-			throw new BadRequestException(ACCOUNT_ALREADY_CLOSED_ERROR);
-		}
-
-		this.status = Status.SUSPENDED;
-	}
-
-	public void activate() {
-		if (this.status == Status.SUSPENDED) {
-			throw new BadRequestException(ACCOUNT_NOT_SUSPENDED_ERROR);
-		}
-
-		this.status = Status.ACTIVE;
-	}
-
-	public void close() {
-		if (!this.balance.isZero()) {
+	public void changeStatusTo(AccountStatus targetStatus) {
+		if (this.status == ACTIVE && targetStatus == AccountStatus.CLOSED && !this.balance.isZero()) {
 			throw new BadRequestException(ACCOUNT_BALANCE_NOT_ZERO_ERROR);
 		}
 
-		this.status = Status.CLOSED;
+		this.status = this.status.transitionTo(targetStatus);
+	}
+
+	public void validateIsActive() {
+		if (this.status != ACTIVE) {
+			throw new BadRequestException(ACCOUNT_NOT_ACTIVE_ERROR);
+		}
 	}
 }
