@@ -2,8 +2,8 @@ package com.remitroserver.api.dto.account.response;
 
 import java.time.LocalDateTime;
 
+import com.remitroserver.api.domain.account.model.AccountStatus;
 import com.remitroserver.api.domain.account.model.AccountType;
-import com.remitroserver.api.domain.account.model.Status;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -21,7 +21,7 @@ public record AccountDetailResponse(
 	Long balance,
 
 	@Schema(description = "계좌 상태", example = "ACTIVE")
-	Status status,
+	AccountStatus status,
 
 	@Schema(description = "계좌 생성일", example = "2024-04-21T15:30:00")
 	LocalDateTime createdAt,
