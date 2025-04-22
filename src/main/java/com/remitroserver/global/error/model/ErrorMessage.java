@@ -18,6 +18,9 @@ public enum ErrorMessage {
 	PASSWORD_MISMATCH_ERROR("[❎ ERROR] 입력하신 비밀번호가 서로 일치하지 않습니다."),
 	INVALID_REGISTRATION_NUMBER_FORMAT_ERROR("[❎ ERROR] 올바르지 않은 주민등록번호 형식입니다."),
 	TRANSFER_TO_SAME_ACCOUNT_ERROR("[❎ ERROR] 동일한 계좌로는 송금할 수 없습니다."),
+	INVALID_TRANSACTION_STATUS_FOR_CANCEL_ERROR("[❎ ERROR] 취소 가능한 상태가 아닙니다."),
+	TRANSACTION_NOT_REQUESTED_ERROR("[❎ ERROR] 요청 상태의 거래만 취소할 수 있습니다."),
+	TRANSACTION_EXPIRED_ERROR("[❎ ERROR] 거래 승인 가능 시간을 초과했습니다."),
 
 	UNAUTHORIZED_REQUEST_ERROR("[❎ ERROR] 인증되지 않은 사용자 요청입니다."),
 	INVALID_AUTHORIZATION_HEADER_ERROR("[❎ ERROR] 유효하지 않은 AUTHORIZATION 헤더입니다."),
@@ -25,6 +28,7 @@ public enum ErrorMessage {
 
 	MEMBER_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 회원을 찾을 수 없습니다."),
 	ACCOUNT_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 계좌를 찾을 수 없습니다."),
+	TRANSACTION_NOT_FOUND_ERROR("[❎ ERROR] 요청 상태의 거래를 찾을 수 없습니다."),
 
 	DUPLICATED_EMAIL_ERROR("[❎ ERROR] 이미 존재하는 사용자 이메일입니다."),
 	DUPLICATED_NICKNAME_ERROR("[❎ ERROR] 이미 존재하는 사용자 닉네임입니다."),
