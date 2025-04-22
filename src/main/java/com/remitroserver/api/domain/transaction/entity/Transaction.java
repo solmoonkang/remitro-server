@@ -1,11 +1,17 @@
 package com.remitroserver.api.domain.transaction.entity;
 
+import static com.remitroserver.global.error.model.ErrorMessage.*;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.domain.account.model.Money;
 import com.remitroserver.api.domain.transaction.model.TransactionStatus;
 import com.remitroserver.global.common.entity.BaseTimeEntity;
+import com.remitroserver.global.error.exception.BadRequestException;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -43,6 +49,9 @@ public class Transaction extends BaseTimeEntity {
 	@JoinColumn(name = "to_account_id", nullable = false)
 	private Account toAccount;
 
+	@Column(name = "transaction_token", unique = true, nullable = false, updatable = false)
+	private UUID transactionToken;
+
 	@Embedded
 	@AttributeOverride(
 		name = "value",
@@ -62,6 +71,7 @@ public class Transaction extends BaseTimeEntity {
 
 		this.fromAccount = fromAccount;
 		this.toAccount = toAccount;
+		this.transactionToken = UUID.randomUUID();
 		this.amount = amount;
 		this.status = status;
 		this.idempotencyKey = idempotencyKey;
@@ -81,7 +91,19 @@ public class Transaction extends BaseTimeEntity {
 		this.status = TransactionStatus.COMPLETED;
 	}
 
-	public void fail() {
-		this.status = TransactionStatus.FAILED;
+	public void cancel() {
+		if (this.status != TransactionStatus.REQUESTED) {
+			throw new BadRequestException(TRANSACTION_NOT_REQUESTED_ERROR);
+		}
+
+		this.status = TransactionStatus.CANCELLED;
+	}
+
+	public void validateNotExpired(Duration allowedTime) {
+		LocalDateTime now = LocalDateTime.now();
+
+		if (Duration.between(this.getCreatedAt(), now).compareTo(allowedTime) > 0) {
+			throw new BadRequestException(TRANSACTION_EXPIRED_ERROR);
+		}
 	}
 }
