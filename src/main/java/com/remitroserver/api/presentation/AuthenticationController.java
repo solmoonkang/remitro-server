@@ -1,9 +1,11 @@
 package com.remitroserver.api.presentation;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitroserver.api.application.auth.AuthenticationService;
@@ -27,6 +29,7 @@ public class AuthenticationController {
 	private final AuthenticationService authenticationService;
 
 	@PostMapping("/login")
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "로그인 - 사용자 인증 및 토큰 발급",
 		description = "사용자의 이메일과 비밀번호를 검증한 뒤, AccessToken과 RefreshToken을 발급합니다."
@@ -42,6 +45,7 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/reissue")
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "토큰 재발급 - RefreshToken을 통한 AccessToken 재발급",
 		description = "요청 헤더에 있는 RefreshToken을 검증한 뒤, 새로운 AccessToken과 RefreshToken을 발급합니다."

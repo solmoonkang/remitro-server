@@ -58,13 +58,14 @@ public class AccountController {
 	}
 
 	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "내 계좌 목록 조회 - 사용자가 보유한 계좌 목록 조회",
 		description = "현재 로그인한 사용자가 개설한 모든 계좌 정보를 최신순으로 정렬하여 반환합니다. (잔액, 상태, 생성일 포함)"
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 목록 조회 성공"),
-		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 해당 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -73,6 +74,7 @@ public class AccountController {
 	}
 
 	@GetMapping("/{accountToken}")
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "계좌 상세 조회 - 단일 계좌 정보 확인",
 		description = "랜덤 UUID 계좌 값을 기반으로 계좌 번호, 잔액, 상태, 소유자 닉네임 등 상세 정보를 반환합니다."
@@ -91,13 +93,14 @@ public class AccountController {
 	}
 
 	@GetMapping("/{accountToken}/balance")
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "계좌 잔액 조회 - 현재 잔액 확인",
 		description = "UUID 기반 계좌 식별자를 통해 현재 계좌의 잔액을 반환합니다."
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 잔액 조회 성공"),
-		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -109,6 +112,7 @@ public class AccountController {
 	}
 
 	@PatchMapping("/{accountToken}/suspend")
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "계좌 정지 - 사용자 요청에 의한 계좌 일시 정지",
 		description = "계좌를 분실했거나 의심 거래가 감지된 경우 계좌를 일시적으로 정지합니다."
@@ -116,7 +120,7 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 정지 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
-		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
 	})
 	public ResponseEntity<String> suspendAccount(
@@ -128,6 +132,7 @@ public class AccountController {
 	}
 
 	@PatchMapping("/{accountToken}/activate")
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "계좌 복구 - 정지된 계좌 복구 요청",
 		description = "본인 인증을 완료한 사용자에 한해 정지된 계좌를 다시 활성화합니다."
@@ -135,7 +140,7 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 복구 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
-		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
 	})
 	public ResponseEntity<String> activateAccount(
@@ -147,6 +152,7 @@ public class AccountController {
 	}
 
 	@PatchMapping("/{accountToken}/close")
+	@ResponseStatus(HttpStatus.OK)
 	@Operation(
 		summary = "계좌 해지 - 계좌 사용 종료 처리",
 		description = "잔액이 0원인 계좌에 한해 계좌를 해지할 수 있습니다."
@@ -154,7 +160,7 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 해지 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
-		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
 	})
 	public ResponseEntity<String> closeAccount(

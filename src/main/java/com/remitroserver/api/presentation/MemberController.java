@@ -56,7 +56,7 @@ public class MemberController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 사용자 정보 조회 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 주민등록번호 마스킹 실패 (잘못된 형식)"),
-		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 사용자를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류 (AES 복호화 실패 등)")
 	})
