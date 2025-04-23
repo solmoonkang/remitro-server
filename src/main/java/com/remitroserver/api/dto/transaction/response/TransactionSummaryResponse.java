@@ -11,7 +11,6 @@ import lombok.Builder;
 @Builder
 @Schema(description = "거래 내역 요약 응답 DTO")
 public record TransactionSummaryResponse(
-
 	@Schema(description = "거래 고유 식별자 (UUID)", example = "e8b9d16a-9f54-4a6f-8e8f-123456789abc")
 	UUID transactionToken,
 
