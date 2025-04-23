@@ -13,10 +13,12 @@ import com.remitroserver.api.application.member.MemberReadService;
 import com.remitroserver.api.application.transaction.TransactionReadService;
 import com.remitroserver.api.application.transaction.mapper.TransactionMapper;
 import com.remitroserver.api.domain.account.entity.Account;
+import com.remitroserver.api.domain.account.model.Money;
 import com.remitroserver.api.domain.account.repository.AccountRepository;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
+import com.remitroserver.api.dto.account.request.AccountAmountRequest;
 import com.remitroserver.api.dto.account.request.AccountCreateRequest;
 import com.remitroserver.api.dto.account.response.AccountBalanceResponse;
 import com.remitroserver.api.dto.account.response.AccountDetailResponse;
@@ -73,6 +75,26 @@ public class AccountService {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 
 		return AccountMapper.toBalanceResponse(account);
+	}
+
+	@Transactional
+	public void depositToAccount(UUID accountToken, AuthMember authMember, AccountAmountRequest accountAmountRequest) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
+
+		account.deposit(Money.fromPositive(accountAmountRequest.amount()));
+	}
+
+	@Transactional
+	public void withdrawFromAccount(
+		UUID accountToken,
+		AuthMember authMember,
+		AccountAmountRequest accountAmountRequest) {
+
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
+
+		account.withdraw(Money.fromPositive(accountAmountRequest.amount()));
 	}
 
 	@Transactional
