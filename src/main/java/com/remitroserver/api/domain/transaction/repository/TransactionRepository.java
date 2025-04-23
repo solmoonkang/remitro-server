@@ -28,6 +28,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 	@Query("""
 		SELECT t FROM Transaction t
 		WHERE (t.fromAccount = :account OR t.toAccount = :account)
+			AND t.createdAt >= :fromAt
+		ORDER BY t.createdAt DESC
+		""")
+	List<Transaction> findTransactionsWithinPeriod(
+		@Param("account") Account account,
+		@Param("fromAt") LocalDateTime fromAt);
+
+	@Query("""
+		SELECT t FROM Transaction t
+		WHERE (t.fromAccount = :account OR t.toAccount = :account)
 			AND (:fromAt IS NULL OR t.createdAt >= :fromAt)
 			AND (:toAt IS NULL OR t.createdAt <= :toAt)
 			AND (:status IS NULL OR t.status = :status)
