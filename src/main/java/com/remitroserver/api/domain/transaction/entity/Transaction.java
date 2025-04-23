@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.domain.account.model.Money;
+import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.model.TransactionStatus;
 import com.remitroserver.global.common.entity.BaseTimeEntity;
 import com.remitroserver.global.error.exception.BadRequestException;
@@ -105,5 +106,10 @@ public class Transaction extends BaseTimeEntity {
 		if (Duration.between(this.getCreatedAt(), now).compareTo(allowedTime) > 0) {
 			throw new BadRequestException(TRANSACTION_EXPIRED_ERROR);
 		}
+	}
+
+	public boolean isOwner(Member member) {
+		return fromAccount.getMember().equals(member)
+			|| toAccount.getMember().equals(member);
 	}
 }
