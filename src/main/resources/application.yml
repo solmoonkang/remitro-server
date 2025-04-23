@@ -10,7 +10,7 @@ spring:
     name: remitro-server
 
   aes:
-    secret-key: aes-secret-key-aes-secret-key
+    secret-key: aes-secret-key--
 
   h2:
     console:
