@@ -23,6 +23,7 @@ import com.remitroserver.api.domain.transaction.repository.TransactionRepository
 import com.remitroserver.api.domain.transaction.repository.TransactionStatusLogRepository;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
+import com.remitroserver.api.dto.transaction.response.TransactionDetailResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
 import com.remitroserver.global.error.exception.BadRequestException;
 
@@ -71,6 +72,16 @@ public class TransactionService {
 		return transactions.stream()
 			.map(TransactionMapper::toSummaryResponse)
 			.toList();
+	}
+
+	public TransactionDetailResponse findTransactionDetail(UUID transactionToken, AuthMember authMember) {
+		final Member member = memberReadService.getMemberByEmail(authMember.email());
+		final Transaction transaction = transactionReadService.getTransactionByTokenAndOwner(transactionToken, member);
+
+		final List<TransactionStatusLog> transactionStatusLogs = transactionStatusLogRepository
+			.findAllByTransactionOrderByCreatedAtAsc(transaction);
+
+		return TransactionMapper.toDetailResponse(transaction, transactionStatusLogs);
 	}
 
 	@Transactional
