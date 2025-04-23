@@ -110,4 +110,8 @@ public class Account extends BaseTimeEntity {
 	public boolean isSameAccount(Account target) {
 		return this.id != null && this.id.equals(target.getId());
 	}
+
+	public boolean isOwner(Member member) {
+		return this.member.equals(member);
+	}
 }
