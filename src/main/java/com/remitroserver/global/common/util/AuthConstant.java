@@ -8,7 +8,8 @@ public class AuthConstant {
 
 	public static final String[] PUBLIC_API_PATHS = {
 		"/api/members/signup",
-		"/api/auth/login"
+		"/api/auth/login",
+		"/api/auth/reissue"
 	};
 
 	public static final String[] SECURITY_IGNORED_URLS = {
