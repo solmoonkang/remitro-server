@@ -55,6 +55,11 @@ public class TransactionReadService {
 			account, fromAt, toAt, transactionSearchRequest.status());
 	}
 
+	public Transaction getTransactionByTokenAndOwner(UUID transactionToken, Member member) {
+		return transactionRepository.findByTransactionTokenAndMember(transactionToken, member)
+			.orElseThrow(() -> new NotFoundException(TRANSACTION_NOT_FOUND_ERROR));
+	}
+
 	public void validateIdempotencyKeyExists(String idempotencyKey) {
 		if (transactionRepository.existsByIdempotencyKey(idempotencyKey)) {
 			throw new ConflictException(DUPLICATED_IDEMPOTENCY_KEY_ERROR);
