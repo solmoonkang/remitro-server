@@ -22,10 +22,6 @@ public record TransferRequest(
 	@Schema(description = "송금 금액", example = "10,000")
 	@NotNull(message = "송금 금액은 필수 항목입니다.")
 	@Positive(message = "송금 금액은 0원보다 커야 합니다.")
-	Long amount,
-
-	@Schema(description = "멱등성 키", example = "req-uuid-unique-key")
-	@NotBlank(message = "멱등성 키는 필수 항목입니다.")
-	String idempotencyKey
+	Long amount
 ) {
 }
