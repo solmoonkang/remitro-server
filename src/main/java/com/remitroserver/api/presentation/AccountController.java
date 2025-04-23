@@ -46,7 +46,7 @@ public class AccountController {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "201", description = "✅ 계좌 생성 완료"),
-		@ApiResponse(responseCode = "400", description = "❌ 요청 오류 또는 계좌 제한 초과"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 요청 또는 계좌 제한 초과"),
 		@ApiResponse(responseCode = "409", description = "⚠️ 중복된 계좌번호 생성 시도"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류 (계좌 번호 생성 실패 등)")
 	})
@@ -66,7 +66,7 @@ public class AccountController {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 목록 조회 성공"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 해당 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -83,6 +83,7 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 상세 정보 조회 성공"),
 		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 해당 계좌 정보 또는 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -101,7 +102,8 @@ public class AccountController {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 잔액 조회 성공"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -121,7 +123,8 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 입금 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 금액 요청"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보가 존재하지 않음")
 	})
 	public ResponseEntity<String> depositToAccount(
@@ -142,7 +145,8 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 출금 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 금액 요청 또는 잔액 부족"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보가 존재하지 않음")
 	})
 	public ResponseEntity<String> withdrawFromAccount(
@@ -163,7 +167,8 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 정지 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
 	})
 	public ResponseEntity<String> suspendAccount(
@@ -183,7 +188,8 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 복구 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
 	})
 	public ResponseEntity<String> activateAccount(
@@ -203,7 +209,8 @@ public class AccountController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 계좌 해지 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 계좌 상태이거나 요청 오류"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보를 찾을 수 없음")
 	})
 	public ResponseEntity<String> closeAccount(

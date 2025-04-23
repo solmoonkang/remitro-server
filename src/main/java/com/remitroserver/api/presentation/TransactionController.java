@@ -48,7 +48,7 @@ public class TransactionController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "201", description = "🎉 송금 요청 완료"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 송금 요청 (잔액 부족, 동일 계좌 송금)"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자 또는 계좌"),
 		@ApiResponse(responseCode = "409", description = "⚠️ 이미 처리된 송금 요청 (멱등성 키 중복)"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
@@ -71,7 +71,7 @@ public class TransactionController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 거래 내역 조회 성공"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 요청 파라미터 (날짜 형식 오류 등)"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않거나 소유하지 않은 계좌"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -94,7 +94,8 @@ public class TransactionController {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 거래 상세 정보 조회 성공"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 거래 정보"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -114,7 +115,7 @@ public class TransactionController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 송금 승인 완료"),
 		@ApiResponse(responseCode = "400", description = "❌ 거래 상태 오류 또는 만료"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
 		@ApiResponse(responseCode = "404", description = "🔍 거래 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
@@ -132,7 +133,8 @@ public class TransactionController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "✅ 송금 취소 완료"),
 		@ApiResponse(responseCode = "400", description = "❌ 잘못된 상태의 거래 취소 요청"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
 		@ApiResponse(responseCode = "404", description = "🔍 거래 정보를 찾을 수 없음"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
