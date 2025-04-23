@@ -1,6 +1,5 @@
 package com.remitroserver.api.domain.transaction.repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.remitroserver.api.domain.account.entity.Account;
-import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
 import com.remitroserver.api.domain.transaction.model.TransactionStatus;
 
@@ -19,13 +17,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
 	boolean existsByIdempotencyKey(String idempotencyKey);
 
-	Optional<Transaction> findByTransactionTokenAndMember(UUID transactionToken, Member member);
+	Optional<Transaction> findByTransactionToken(UUID transactionToken);
 
-	Optional<Transaction> findByTransactionTokenAndFromAccountMemberAndStatus(
-		UUID transactionToken,
-		Member member,
-		TransactionStatus status
-	);
+	Optional<Transaction> findByTransactionTokenAndStatus(UUID transactionToken, TransactionStatus status);
 
 	@Query("""
 		SELECT t FROM Transaction t
