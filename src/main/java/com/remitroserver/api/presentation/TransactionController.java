@@ -20,6 +20,7 @@ import com.remitroserver.api.application.transaction.TransactionService;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
+import com.remitroserver.api.dto.transaction.response.TransactionDetailResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
 import com.remitroserver.global.auth.annotation.Auth;
 
@@ -60,6 +61,50 @@ public class TransactionController {
 		return ResponseEntity.ok().body("[✅ SUCCESS] 송금 요청이 성공적으로 처리되었습니다.");
 	}
 
+	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "거래 내역 조회 - 사용자 계좌 기준 조건별 거래 내역 조회",
+		description = "사용자의 특정 계좌 기준으로 송금 및 수신 거래 내역을 조회합니다. " +
+			"거래일(fromDate, toDate) 및 상태(status) 조건으로 필터링할 수 있으며, 결과는 최신순으로 정렬되어 반환됩니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 거래 내역 조회 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 요청 파라미터 (날짜 형식 오류 등)"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않거나 소유하지 않은 계좌"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<List<TransactionSummaryResponse>> findMyAllTransactionsByCondition(
+		@RequestParam UUID accountToken,
+		@Auth AuthMember authMember,
+		@ParameterObject TransactionSearchRequest transactionSearchRequest) {
+
+		return ResponseEntity.ok().body(transactionService.findMyAllTransactionsByCondition(
+			accountToken, authMember, transactionSearchRequest)
+		);
+	}
+
+	@GetMapping("/{transactionToken}")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "거래 상세 조회 - 단일 거래 내역 확인",
+		description = "사용자가 자신의 계좌로 발생한 특정 거래의 상세 정보를 확인합니다. " +
+			"출금/입금 계좌 번호, 닉네임, 거래 금액, 상태 로그 등을 포함한 상세 정보를 제공합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 거래 상세 정보 조회 성공"),
+		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 거래 정보"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<TransactionDetailResponse> findTransactionDetail(
+		@PathVariable UUID transactionToken,
+		@Auth AuthMember authMember) {
+
+		return ResponseEntity.ok().body(transactionService.findTransactionDetail(transactionToken, authMember));
+	}
+
 	@PatchMapping("/{transactionToken}/approve")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
@@ -94,29 +139,5 @@ public class TransactionController {
 	public ResponseEntity<String> cancelTransfer(@PathVariable UUID transactionToken, @Auth AuthMember authMember) {
 		transactionService.cancelTransfer(transactionToken, authMember);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 송금 요청이 성공적으로 취소되었습니다.");
-	}
-
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
-	@Operation(
-		summary = "거래 내역 조회 - 사용자 계좌 기준 조건별 거래 내역 조회",
-		description = "사용자의 특정 계좌 기준으로 송금 및 수신 거래 내역을 조회합니다. " +
-			"거래일(fromDate, toDate) 및 상태(status) 조건으로 필터링할 수 있으며, 결과는 최신순으로 정렬되어 반환됩니다."
-	)
-	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "✅ 거래 내역 조회 성공"),
-		@ApiResponse(responseCode = "400", description = "❌ 잘못된 요청 파라미터 (날짜 형식 오류 등)"),
-		@ApiResponse(responseCode = "401", description = "🚫 인증되지 않은 사용자 요청"),
-		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않거나 소유하지 않은 계좌"),
-		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
-	})
-	public ResponseEntity<List<TransactionSummaryResponse>> findMyAllTransactionsByCondition(
-		@RequestParam UUID accountToken,
-		@Auth AuthMember authMember,
-		@ParameterObject TransactionSearchRequest transactionSearchRequest) {
-
-		return ResponseEntity.ok().body(transactionService.findMyAllTransactionsByCondition(
-			accountToken, authMember, transactionSearchRequest)
-		);
 	}
 }
