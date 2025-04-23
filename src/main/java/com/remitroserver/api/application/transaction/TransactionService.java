@@ -1,9 +1,7 @@
 package com.remitroserver.api.application.transaction;
 
-import static com.remitroserver.api.domain.transaction.model.TransactionStatus.*;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +17,6 @@ import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
 import com.remitroserver.api.domain.transaction.entity.TransactionStatusLog;
-import com.remitroserver.api.domain.transaction.repository.TransactionRepository;
 import com.remitroserver.api.domain.transaction.repository.TransactionStatusLogRepository;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
@@ -34,15 +31,15 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class TransactionService {
 
-	private final TransactionRepository transactionRepository;
 	private final TransactionStatusLogRepository transactionStatusLogRepository;
 	private final MemberReadService memberReadService;
 	private final AccountReadService accountReadService;
 	private final TransactionReadService transactionReadService;
+	private final TransactionWriteService transactionWriteService;
 
 	@Transactional
-	public void requestTransfer(AuthMember authMember, TransferRequest transferRequest) {
-		transactionReadService.validateIdempotencyKeyExists(transferRequest.idempotencyKey());
+	public void requestTransfer(AuthMember authMember, String idempotencyKey, TransferRequest transferRequest) {
+		transactionReadService.validateIdempotencyKeyExists(idempotencyKey);
 
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final Account fromAccount = accountReadService.getActiveAccountByTokenAndOwner(
@@ -52,11 +49,8 @@ public class TransactionService {
 		validateNotSelfTransfer(fromAccount, toAccount);
 
 		final Money amount = Money.fromPositive(transferRequest.amount());
-		final Transaction transaction = Transaction.create(
-			fromAccount, toAccount, amount, transferRequest.idempotencyKey());
 
-		transactionRepository.save(transaction);
-		transactionStatusLogRepository.save(TransactionStatusLog.create(transaction, COMPLETED));
+		transactionWriteService.createTransactionWithLog(fromAccount, toAccount, amount, idempotencyKey);
 	}
 
 	public List<TransactionSummaryResponse> findMyAllTransactionsByCondition(
@@ -87,31 +81,13 @@ public class TransactionService {
 	@Transactional
 	public void approveTransfer(UUID transactionToken, AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Transaction transaction = transactionReadService.getRequestedTransactionByTokenAndOwner(
-			transactionToken, member);
-
-		transaction.validateNotExpired(Duration.ofMinutes(5));
-		transaction.complete();
-
-		performTransfer(transaction.getFromAccount(), transaction.getToAccount(), transaction.getAmount());
-
-		transactionStatusLogRepository.save(TransactionStatusLog.create(transaction, COMPLETED));
+		transactionWriteService.completeTransactionWithLog(transactionToken, member);
 	}
 
 	@Transactional
 	public void cancelTransfer(UUID transactionToken, AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Transaction transaction = transactionReadService.getRequestedTransactionByTokenAndOwner(
-			transactionToken, member);
-
-		transaction.cancel();
-
-		transactionStatusLogRepository.save(TransactionStatusLog.create(transaction, CANCELLED));
-	}
-
-	private void performTransfer(Account fromAccount, Account toAccount, Money amount) {
-		fromAccount.withdraw(amount);
-		toAccount.deposit(amount);
+		transactionWriteService.cancelTransactionWithLog(transactionToken, member);
 	}
 
 	private void validateNotSelfTransfer(Account fromAccount, Account toAccount) {

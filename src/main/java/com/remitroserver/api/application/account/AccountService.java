@@ -1,7 +1,5 @@
 package com.remitroserver.api.application.account;
 
-import static com.remitroserver.api.domain.account.model.AccountStatus.*;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -13,8 +11,6 @@ import com.remitroserver.api.application.member.MemberReadService;
 import com.remitroserver.api.application.transaction.TransactionReadService;
 import com.remitroserver.api.application.transaction.mapper.TransactionMapper;
 import com.remitroserver.api.domain.account.entity.Account;
-import com.remitroserver.api.domain.account.model.Money;
-import com.remitroserver.api.domain.account.repository.AccountRepository;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
@@ -32,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountService {
 
-	private final AccountRepository accountRepository;
 	private final MemberReadService memberReadService;
 	private final AccountReadService accountReadService;
+	private final AccountWriteService accountWriteService;
 	private final TransactionReadService transactionReadService;
 
 	@Transactional
@@ -43,9 +39,7 @@ public class AccountService {
 		accountReadService.validateAccountLimitExceeded(member, accountCreateRequest.accountType());
 
 		final String accountNumber = accountReadService.generateUniqueAccountNumber(accountCreateRequest.accountType());
-		final Account account = Account.create(accountNumber, member, accountCreateRequest.accountType());
-
-		accountRepository.save(account);
+		accountWriteService.createAccount(accountNumber, member, accountCreateRequest);
 	}
 
 	public List<AccountSummaryResponse> findAllMyAccounts(AuthMember authMember) {
@@ -80,9 +74,7 @@ public class AccountService {
 	@Transactional
 	public void depositToAccount(UUID accountToken, AuthMember authMember, AccountAmountRequest accountAmountRequest) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
-
-		account.deposit(Money.fromPositive(accountAmountRequest.amount()));
+		accountWriteService.deposit(accountToken, member, accountAmountRequest);
 	}
 
 	@Transactional
@@ -92,32 +84,24 @@ public class AccountService {
 		AccountAmountRequest accountAmountRequest) {
 
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
-
-		account.withdraw(Money.fromPositive(accountAmountRequest.amount()));
+		accountWriteService.withdraw(accountToken, member, accountAmountRequest);
 	}
 
 	@Transactional
 	public void suspendAccount(UUID accountToken, AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
-
-		account.changeStatusTo(SUSPENDED);
+		accountWriteService.updateSuspendAccount(accountToken, member);
 	}
 
 	@Transactional
 	public void activateAccount(UUID accountToken, AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
-
-		account.changeStatusTo(ACTIVE);
+		accountWriteService.updateActivateAccount(accountToken, member);
 	}
 
 	@Transactional
 	public void closeAccount(UUID accountToken, AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
-
-		account.changeStatusTo(CLOSED);
+		accountWriteService.updateCloseAccount(accountToken, member);
 	}
 }
