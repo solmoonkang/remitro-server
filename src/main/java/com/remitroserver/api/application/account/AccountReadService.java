@@ -14,6 +14,7 @@ import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.global.common.util.AccountNumberGenerator;
 import com.remitroserver.global.error.exception.BadRequestException;
 import com.remitroserver.global.error.exception.ConflictException;
+import com.remitroserver.global.error.exception.ForbiddenException;
 import com.remitroserver.global.error.exception.NotFoundException;
 import com.remitroserver.global.error.model.ErrorMessage;
 
@@ -47,8 +48,12 @@ public class AccountReadService {
 	}
 
 	public Account getAccountByTokenAndOwner(UUID accountToken, Member member) {
-		return accountRepository.findByAccountTokenAndMember(accountToken, member)
+		final Account account = accountRepository.findByAccountToken(accountToken)
 			.orElseThrow(() -> new NotFoundException(ACCOUNT_NOT_FOUND_ERROR));
+
+		validateAccountOwner(account, member);
+
+		return account;
 	}
 
 	public Account getAccountByAccountNumber(String accountNumber) {
@@ -72,5 +77,11 @@ public class AccountReadService {
 		Account account = getAccountByAccountNumber(accountNumber);
 		account.validateIsActive();
 		return account;
+	}
+
+	private void validateAccountOwner(Account account, Member member) {
+		if (!account.isOwner(member)) {
+			throw new ForbiddenException(ACCOUNT_ACCESS_DENIED_ERROR);
+		}
 	}
 }
