@@ -3,11 +3,13 @@ package com.remitroserver.api.application.account.mapper;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.dto.account.response.AccountBalanceResponse;
 import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
+import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
 
 public class AccountMapper {
 
@@ -25,7 +27,10 @@ public class AccountMapper {
 			.build();
 	}
 
-	public static AccountDetailResponse toDetailResponse(Account account) {
+	public static AccountDetailResponse toDetailResponse(
+		Account account,
+		List<TransactionSummaryResponse> transactionSummaryResponses) {
+
 		return AccountDetailResponse.builder()
 			.accountNumber(account.getAccountNumber())
 			.accountType(account.getAccountType())
@@ -33,6 +38,7 @@ public class AccountMapper {
 			.status(account.getStatus())
 			.createdAt(account.getCreatedAt())
 			.ownerNickname(account.getMember().getNickname())
+			.recentTransactions(transactionSummaryResponses)
 			.build();
 	}
 
