@@ -26,6 +26,9 @@ public enum ErrorMessage {
 	INVALID_AUTHORIZATION_HEADER_ERROR("[❎ ERROR] 유효하지 않은 AUTHORIZATION 헤더입니다."),
 	UNAUTHORIZED_REFRESH_TOKEN_ERROR("[❎ ERROR] 유효하지 않은 리프레시 토큰입니다."),
 
+	ACCOUNT_ACCESS_DENIED_ERROR("[❎ ERROR] 해당 계좌에 접근할 권한이 없습니다."),
+	TRANSACTION_ACCESS_DENIED_ERROR("[❎ ERROR] 해당 계좌에 접근할 권한이 없습니다."),
+
 	MEMBER_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 회원을 찾을 수 없습니다."),
 	ACCOUNT_NOT_FOUND_ERROR("[❎ ERROR] 요청하신 계좌를 찾을 수 없습니다."),
 	TRANSACTION_NOT_FOUND_ERROR("[❎ ERROR] 요청 상태의 거래를 찾을 수 없습니다."),
