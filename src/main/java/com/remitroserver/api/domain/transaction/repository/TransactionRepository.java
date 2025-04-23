@@ -19,6 +19,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
 	boolean existsByIdempotencyKey(String idempotencyKey);
 
+	Optional<Transaction> findByTransactionTokenAndMember(UUID transactionToken, Member member);
+
 	Optional<Transaction> findByTransactionTokenAndFromAccountMemberAndStatus(
 		UUID transactionToken,
 		Member member,
