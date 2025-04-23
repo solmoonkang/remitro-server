@@ -34,6 +34,11 @@ public class TransactionReadService {
 			.orElseThrow(() -> new NotFoundException(TRANSACTION_NOT_FOUND_ERROR));
 	}
 
+	public List<Transaction> getRecentTransactions(Account account) {
+		final LocalDateTime fromAt = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+		return transactionRepository.findTransactionsWithinPeriod(account, fromAt);
+	}
+
 	public List<Transaction> getAllTransactionsByCondition(
 		Account account,
 		TransactionSearchRequest transactionSearchRequest) {
