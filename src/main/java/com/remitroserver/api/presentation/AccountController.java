@@ -133,7 +133,9 @@ public class AccountController {
 		@RequestBody @Valid AccountAmountRequest accountAmountRequest) {
 
 		accountService.depositToAccount(accountToken, authMember, accountAmountRequest);
-		return ResponseEntity.ok().body("[✅ SUCCESS] 사용자 계좌에 " + accountAmountRequest.amount() + "원이 성공적으로 입금되었습니다.");
+		return ResponseEntity.ok().body(String.format(
+			"[✅ SUCCESS] 사용자 계좌에 %s원이 성공적으로 입금되었습니다.", String.format("%,d", accountAmountRequest.amount()))
+		);
 	}
 
 	@PatchMapping("/{accountToken}/withdraw")
@@ -155,7 +157,9 @@ public class AccountController {
 		@RequestBody @Valid AccountAmountRequest accountAmountRequest) {
 
 		accountService.withdrawFromAccount(accountToken, authMember, accountAmountRequest);
-		return ResponseEntity.ok().body("[✅ SUCCESS] 사용자 계좌에서 " + accountAmountRequest.amount() + "원이 성공적으로 출금되었습니다.");
+		return ResponseEntity.ok().body(String.format(
+			"[✅ SUCCESS] 사용자 계좌에 %s원이 성공적으로 출금되었습니다.", String.format("%,d", accountAmountRequest.amount()))
+		);
 	}
 
 	@PatchMapping("/{accountToken}/suspend")
