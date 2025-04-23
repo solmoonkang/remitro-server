@@ -51,7 +51,7 @@ public class TransactionService {
 
 		validateNotSelfTransfer(fromAccount, toAccount);
 
-		final Money amount = new Money(transferRequest.amount());
+		final Money amount = Money.fromPositive(transferRequest.amount());
 		final Transaction transaction = Transaction.create(
 			fromAccount, toAccount, amount, transferRequest.idempotencyKey());
 

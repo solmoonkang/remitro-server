@@ -18,6 +18,7 @@ import com.remitroserver.api.domain.transaction.model.TransactionStatus;
 import com.remitroserver.api.domain.transaction.repository.TransactionRepository;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.global.error.exception.ConflictException;
+import com.remitroserver.global.error.exception.ForbiddenException;
 import com.remitroserver.global.error.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,13 @@ public class TransactionReadService {
 	private final TransactionRepository transactionRepository;
 
 	public Transaction getRequestedTransactionByTokenAndOwner(UUID transactionToken, Member member) {
-		return transactionRepository
-			.findByTransactionTokenAndFromAccountMemberAndStatus(transactionToken, member, TransactionStatus.REQUESTED)
+		final Transaction transaction = transactionRepository
+			.findByTransactionTokenAndStatus(transactionToken, TransactionStatus.REQUESTED)
 			.orElseThrow(() -> new NotFoundException(TRANSACTION_NOT_FOUND_ERROR));
+
+		validateTransactionOwner(transaction, member);
+
+		return transaction;
 	}
 
 	public List<Transaction> getRecentTransactions(Account account) {
@@ -56,13 +61,23 @@ public class TransactionReadService {
 	}
 
 	public Transaction getTransactionByTokenAndOwner(UUID transactionToken, Member member) {
-		return transactionRepository.findByTransactionTokenAndMember(transactionToken, member)
+		final Transaction transaction = transactionRepository.findByTransactionToken(transactionToken)
 			.orElseThrow(() -> new NotFoundException(TRANSACTION_NOT_FOUND_ERROR));
+
+		validateTransactionOwner(transaction, member);
+
+		return transaction;
 	}
 
 	public void validateIdempotencyKeyExists(String idempotencyKey) {
 		if (transactionRepository.existsByIdempotencyKey(idempotencyKey)) {
 			throw new ConflictException(DUPLICATED_IDEMPOTENCY_KEY_ERROR);
+		}
+	}
+
+	private void validateTransactionOwner(Transaction transaction, Member member) {
+		if (!transaction.isOwner(member)) {
+			throw new ForbiddenException(TRANSACTION_ACCESS_DENIED_ERROR);
 		}
 	}
 }
