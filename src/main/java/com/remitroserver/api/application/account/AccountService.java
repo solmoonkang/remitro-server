@@ -71,20 +71,18 @@ public class AccountService {
 		return AccountMapper.toBalanceResponse(account);
 	}
 
-	@Transactional
 	public void depositToAccount(UUID accountToken, AuthMember authMember, AccountAmountRequest accountAmountRequest) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		accountWriteService.deposit(accountToken, member, accountAmountRequest);
+		accountWriteService.deposit(accountToken, member, accountAmountRequest.amount());
 	}
 
-	@Transactional
 	public void withdrawFromAccount(
 		UUID accountToken,
 		AuthMember authMember,
 		AccountAmountRequest accountAmountRequest) {
 
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		accountWriteService.withdraw(accountToken, member, accountAmountRequest);
+		accountWriteService.withdraw(accountToken, member, accountAmountRequest.amount());
 	}
 
 	@Transactional
