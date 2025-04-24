@@ -24,27 +24,46 @@ repositories {
 }
 
 dependencies {
+    // Spring Data JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    // Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    // Bean Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Spring Retry
+    implementation 'org.springframework.retry:spring-retry:1.3.1'
+
+    // Spring AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // AspectJ
+    implementation 'org.springframework:spring-aspects:6.0.12'
+
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // H2 Database
     runtimeOnly 'com.h2database:h2'
 
+    // Spring Data Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // SpringDoc OpenAPI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
 
+    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
