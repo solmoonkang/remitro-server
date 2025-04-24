@@ -39,6 +39,7 @@ public enum ErrorMessage {
 	DUPLICATED_IDEMPOTENCY_KEY_ERROR("[❎ ERROR] 이미 처리된 송금 요청입니다."),
 	ACCOUNT_NUMBER_GENERATION_FAILED_ERROR("[❎ ERROR] 이미 존재하는 계좌 번호입니다."),
 	ACCOUNT_TYPE_LIMIT_EXCEEDED_ERROR("[❎ ERROR] 해당 계좌 유형은 최대 생성 개수를 초과했습니다."),
+	ACCOUNT_CONCURRENCY_ERROR("[❎ ERROR] 잔액 변경 충돌이 발생했습니다. 잠시 후 다시 시도해주세요."),
 
 	UNKNOWN_SERVER_ERROR("[❎ ERROR] 서버에서 알 수 없는 에러가 발생했습니다."),
 	UTILITY_CLASS_INSTANTIATION_ERROR("[❎ ERROR] 유틸리티 클래스는 인스턴스화할 수 없습니다."),
