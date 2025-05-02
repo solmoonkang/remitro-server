@@ -32,8 +32,13 @@ public class AccountWriteService {
 	private final AccountRepository accountRepository;
 	private final AccountReadService accountReadService;
 
-	public void createAccount(String accountNumber, Member member, AccountCreateRequest accountCreateRequest) {
-		final Account account = Account.create(accountNumber, member, accountCreateRequest.accountType());
+	public void createAccount(
+		String accountNumber,
+		Member member,
+		String password,
+		AccountCreateRequest accountCreateRequest) {
+
+		final Account account = Account.create(accountNumber, member, password, accountCreateRequest.accountType());
 		accountRepository.save(account);
 	}
 
