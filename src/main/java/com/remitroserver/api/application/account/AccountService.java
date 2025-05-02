@@ -1,8 +1,11 @@
 package com.remitroserver.api.application.account;
 
+import static com.remitroserver.global.error.model.ErrorMessage.*;
+
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ import com.remitroserver.api.dto.account.response.AccountBalanceResponse;
 import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
+import com.remitroserver.global.error.exception.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountService {
 
+	private final PasswordEncoder passwordEncoder;
 	private final MemberReadService memberReadService;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
@@ -38,8 +43,12 @@ public class AccountService {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		accountReadService.validateAccountLimitExceeded(member, accountCreateRequest.accountType());
 
+		validatePasswordConfirmationMatch(
+			accountCreateRequest.accountPassword(), accountCreateRequest.accountCheckPassword());
+
 		final String accountNumber = accountReadService.generateUniqueAccountNumber(accountCreateRequest.accountType());
-		accountWriteService.createAccount(accountNumber, member, accountCreateRequest);
+		final String encodedAccountPassword = passwordEncoder.encode(accountCreateRequest.accountPassword());
+		accountWriteService.createAccount(accountNumber, member, encodedAccountPassword, accountCreateRequest);
 	}
 
 	public List<AccountSummaryResponse> findAllMyAccounts(AuthMember authMember) {
@@ -101,5 +110,11 @@ public class AccountService {
 	public void closeAccount(UUID accountToken, AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		accountWriteService.updateCloseAccount(accountToken, member);
+	}
+
+	private void validatePasswordConfirmationMatch(String password, String checkPassword) {
+		if (!password.equals(checkPassword)) {
+			throw new BadRequestException(PASSWORD_MISMATCH_ERROR);
+		}
 	}
 }
