@@ -42,6 +42,10 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_id", nullable = false)
 	private Long id;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
+
 	@Version
 	private Long version;
 
@@ -51,9 +55,8 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_token", updatable = false, unique = true, nullable = false)
 	private UUID accountToken;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false)
-	private Member member;
+	@Column(name = "password", nullable = false)
+	private String password;
 
 	@Embedded
 	@AttributeOverride(
@@ -70,19 +73,28 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_status", nullable = false, length = 30)
 	private AccountStatus status;
 
-	private Account(String accountNumber, Member member, Money balance, AccountType accountType, AccountStatus status) {
+	private Account(
+		String accountNumber,
+		Member member,
+		String password,
+		Money balance,
+		AccountType accountType,
+		AccountStatus status) {
+
 		this.accountNumber = accountNumber;
 		this.member = member;
+		this.accountToken = UUID.randomUUID();
+		this.password = password;
 		this.balance = balance;
 		this.accountType = accountType;
 		this.status = status;
-		this.accountToken = UUID.randomUUID();
 	}
 
-	public static Account create(String accountNumber, Member member, AccountType accountType) {
+	public static Account create(String accountNumber, Member member, String password, AccountType accountType) {
 		return new Account(
 			Objects.requireNonNull(accountNumber),
 			Objects.requireNonNull(member),
+			Objects.requireNonNull(password),
 			Objects.requireNonNull(Money.zero()),
 			Objects.requireNonNull(accountType),
 			Objects.requireNonNull(ACTIVE)
