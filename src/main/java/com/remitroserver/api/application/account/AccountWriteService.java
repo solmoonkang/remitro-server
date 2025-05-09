@@ -1,6 +1,7 @@
 package com.remitroserver.api.application.account;
 
 import static com.remitroserver.api.domain.account.model.AccountStatus.*;
+import static com.remitroserver.global.common.util.AccountConstant.*;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
 import java.util.UUID;
@@ -9,6 +10,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,8 @@ import com.remitroserver.api.domain.account.model.Money;
 import com.remitroserver.api.domain.account.repository.AccountRepository;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.dto.account.request.AccountCreateRequest;
+import com.remitroserver.global.common.util.PasswordValidator;
+import com.remitroserver.global.error.exception.BadRequestException;
 import com.remitroserver.global.error.exception.ConflictException;
 
 import lombok.RequiredArgsConstructor;
@@ -26,25 +30,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccountWriteService {
 
-	private static final int MAX_RETRIES = 5;
-	private static final long BACKOFF_MS = 50;
-
+	private final PasswordEncoder passwordEncoder;
+	private final PasswordValidator passwordValidator;
 	private final AccountRepository accountRepository;
 	private final AccountReadService accountReadService;
+	private final AccountLockoutService accountLockoutService;
 
-	public void createAccount(
-		String accountNumber,
-		Member member,
-		String password,
-		AccountCreateRequest accountCreateRequest) {
+	public void createAccount(String accountNumber, Member member, AccountCreateRequest accountCreateRequest) {
+		final String encodedAccountPassword = passwordEncoder.encode(accountCreateRequest.accountPassword());
+		final Account account = Account
+			.create(accountNumber, member, encodedAccountPassword, accountCreateRequest.accountType());
 
-		final Account account = Account.create(accountNumber, member, password, accountCreateRequest.accountType());
 		accountRepository.save(account);
 	}
 
 	@Retryable(
 		value = ObjectOptimisticLockingFailureException.class,
-		maxAttempts = MAX_RETRIES,
 		backoff = @Backoff(delay = BACKOFF_MS)
 	)
 	@Transactional(isolation = Isolation.READ_COMMITTED)
@@ -52,21 +53,27 @@ public class AccountWriteService {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 		final Money amount = Money.fromPositive(rawAmount);
 
-		account.isOwner(member);
 		account.deposit(amount);
 	}
 
 	@Retryable(
 		value = ObjectOptimisticLockingFailureException.class,
-		maxAttempts = MAX_RETRIES,
 		backoff = @Backoff(delay = BACKOFF_MS)
 	)
 	@Transactional(isolation = Isolation.READ_COMMITTED)
-	public void withdraw(UUID accountToken, Member member, Long rawAmount) {
+	public void withdraw(UUID accountToken, Member member, Long rawAmount, String rawPassword) {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 		final Money amount = Money.fromPositive(rawAmount);
 
-		account.isOwner(member);
+		accountLockoutService.validateAccountNotLocked(account.getId());
+
+		try {
+			passwordValidator.validatePasswordMatches(rawPassword, account.getPassword());
+		} catch (BadRequestException e) {
+			accountLockoutService.validateEnforcePasswordLockout(account.getId());
+		}
+
+		accountLockoutService.resetFailedAttempts(account.getId());
 		account.withdraw(amount);
 	}
 
