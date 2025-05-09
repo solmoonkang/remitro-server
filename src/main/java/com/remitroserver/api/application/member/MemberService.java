@@ -1,7 +1,5 @@
 package com.remitroserver.api.application.member;
 
-import static com.remitroserver.global.error.model.ErrorMessage.*;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +12,7 @@ import com.remitroserver.api.dto.member.request.SignUpRequest;
 import com.remitroserver.api.dto.member.response.MemberInfoResponse;
 import com.remitroserver.global.common.util.AES128Util;
 import com.remitroserver.global.common.util.MaskingUtil;
-import com.remitroserver.global.error.exception.BadRequestException;
+import com.remitroserver.global.common.util.PasswordValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class MemberService {
 
+	private final PasswordValidator passwordValidator;
 	private final PasswordEncoder passwordEncoder;
 	private final AES128Util aes128Util;
 	private final MemberRepository memberRepository;
@@ -33,7 +32,7 @@ public class MemberService {
 		memberReadService.validateEmailDuplicated(signUpRequest.email());
 		memberReadService.validateNicknameDuplicated(signUpRequest.nickname());
 		memberReadService.validateRegistrationNumberDuplicated(signUpRequest.registrationNumber());
-		validatePasswordConfirmationMatch(signUpRequest.password(), signUpRequest.checkPassword());
+		passwordValidator.validatePasswordEquals(signUpRequest.password(), signUpRequest.checkPassword());
 
 		final String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 		final String encodedRegistrationNumber = aes128Util.encryptText(signUpRequest.registrationNumber());
@@ -48,11 +47,5 @@ public class MemberService {
 		final String maskRegistrationNumber = MaskingUtil.maskRegistrationNumber(decodedRegistrationNumber);
 
 		return MemberMapper.toInfoResponse(member, maskRegistrationNumber);
-	}
-
-	private void validatePasswordConfirmationMatch(String password, String checkPassword) {
-		if (!password.equals(checkPassword)) {
-			throw new BadRequestException(PASSWORD_MISMATCH_ERROR);
-		}
 	}
 }
