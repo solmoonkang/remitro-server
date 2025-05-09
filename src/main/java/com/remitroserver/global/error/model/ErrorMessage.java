@@ -21,6 +21,9 @@ public enum ErrorMessage {
 	INVALID_TRANSACTION_STATUS_FOR_CANCEL_ERROR("[❎ ERROR] 취소 가능한 상태가 아닙니다."),
 	TRANSACTION_NOT_REQUESTED_ERROR("[❎ ERROR] 요청 상태의 거래만 취소할 수 있습니다."),
 	TRANSACTION_EXPIRED_ERROR("[❎ ERROR] 거래 승인 가능 시간을 초과했습니다."),
+	ACCOUNT_PASSWORD_MISMATCH_ERROR("[❎ ERROR] 계좌 비밀번호가 일치하지 않습니다. 남은 기회는 %d회입니다."),
+	ACCOUNT_PASSWORD_LOCKED_AFTER_MAX_ERROR("[❎ ERROR] 비밀번호를 %d회 이상 틀려서 %d분 동안 계좌가 잠겼습니다."),
+	ACCOUNT_PASSWORD_LOCKED_ERROR("[❎ ERROR] 계좌가 잠긴 상태입니다. %d분 후에 다시 시도해야 합니다."),
 
 	UNAUTHORIZED_REQUEST_ERROR("[❎ ERROR] 인증되지 않은 사용자 요청입니다."),
 	INVALID_AUTHORIZATION_HEADER_ERROR("[❎ ERROR] 유효하지 않은 AUTHORIZATION 헤더입니다."),
