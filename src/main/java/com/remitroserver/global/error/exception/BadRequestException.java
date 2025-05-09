@@ -7,4 +7,8 @@ public class BadRequestException extends RemitroServerException {
 	public BadRequestException(ErrorMessage errorMessage) {
 		super(errorMessage.getMessage());
 	}
+
+	public BadRequestException(String message) {
+		super(message);
+	}
 }
