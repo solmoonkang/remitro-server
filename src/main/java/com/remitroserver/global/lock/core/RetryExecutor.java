@@ -11,9 +11,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class RetryExecutor {
 
-	private final RetryTemplate retryTemplate;
+	private final RetryTemplate retryTemplate = createDefaultTemplate();
 
-	public RetryExecutor() {
+	public void execute(Runnable task) {
+		retryTemplate.execute(context -> {
+			task.run();
+			return null;
+		});
+	}
+
+	private RetryTemplate createDefaultTemplate() {
 		RetryTemplate template = new RetryTemplate();
 
 		SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy(
@@ -25,13 +32,6 @@ public class RetryExecutor {
 		template.setRetryPolicy(simpleRetryPolicy);
 		template.setBackOffPolicy(fixedBackOffPolicy);
 
-		this.retryTemplate = template;
-	}
-
-	public void execute(Runnable task) {
-		retryTemplate.execute(context -> {
-			task.run();
-			return null;
-		});
+		return template;
 	}
 }
