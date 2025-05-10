@@ -21,6 +21,8 @@ import com.remitroserver.api.dto.account.response.AccountDetailResponse;
 import com.remitroserver.api.dto.account.response.AccountSummaryResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
 import com.remitroserver.global.common.util.PasswordValidator;
+import com.remitroserver.global.lock.aop.DistributedLock;
+import com.remitroserver.global.lock.core.RetryExecutor;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +36,7 @@ public class AccountService {
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
 	private final TransactionReadService transactionReadService;
+	private final RetryExecutor retryExecutor;
 
 	@Transactional
 	public void createAccount(AuthMember authMember, AccountCreateRequest accountCreateRequest) {
@@ -76,19 +79,21 @@ public class AccountService {
 		return AccountMapper.toBalanceResponse(account);
 	}
 
-	public void depositToAccount(UUID accountToken, AuthMember authMember, AccountAmountRequest accountAmountRequest) {
+	@DistributedLock(key = "#accountToken")
+	public void deposit(UUID accountToken, AuthMember authMember, AccountAmountRequest accountAmountRequest) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		accountWriteService.deposit(accountToken, member, accountAmountRequest.amount());
+
+		retryExecutor.execute(() ->
+			accountWriteService.deposit(accountToken, member, accountAmountRequest.amount()));
 	}
 
-	public void withdrawFromAccount(
-		UUID accountToken,
-		AuthMember authMember,
-		AccountAmountRequest accountAmountRequest) {
-
+	@DistributedLock(key = "#accountToken")
+	public void withdraw(UUID accountToken, AuthMember authMember, AccountAmountRequest accountAmountRequest) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		accountWriteService.withdraw(
-			accountToken, member, accountAmountRequest.amount(), accountAmountRequest.accountPassword());
+
+		retryExecutor.execute(() ->
+			accountWriteService.withdraw(
+				accountToken, member, accountAmountRequest.amount(), accountAmountRequest.accountPassword()));
 	}
 
 	@Transactional
