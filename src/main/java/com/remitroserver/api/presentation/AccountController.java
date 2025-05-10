@@ -132,7 +132,7 @@ public class AccountController {
 		@Auth AuthMember authMember,
 		@RequestBody @Valid AccountAmountRequest accountAmountRequest) {
 
-		accountService.depositToAccount(accountToken, authMember, accountAmountRequest);
+		accountService.deposit(accountToken, authMember, accountAmountRequest);
 		return ResponseEntity.ok().body(String.format(
 			"[✅ SUCCESS] 사용자 계좌에 %s원이 성공적으로 입금되었습니다.", String.format("%,d", accountAmountRequest.amount()))
 		);
@@ -156,7 +156,7 @@ public class AccountController {
 		@Auth AuthMember authMember,
 		@RequestBody @Valid AccountAmountRequest accountAmountRequest) {
 
-		accountService.withdrawFromAccount(accountToken, authMember, accountAmountRequest);
+		accountService.withdraw(accountToken, authMember, accountAmountRequest);
 		return ResponseEntity.ok().body(String.format(
 			"[✅ SUCCESS] 사용자 계좌에 %s원이 성공적으로 출금되었습니다.", String.format("%,d", accountAmountRequest.amount()))
 		);
