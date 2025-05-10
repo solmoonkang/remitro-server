@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.domain.account.model.Money;
@@ -25,6 +26,7 @@ public class TransactionWriteService {
 	private final TransactionStatusLogRepository transactionStatusLogRepository;
 	private final TransactionReadService transactionReadService;
 
+	@Transactional
 	public void createTransactionWithLog(Account fromAccount, Account toAccount, Money amount, String idempotencyKey) {
 		final Transaction transaction = Transaction.create(fromAccount, toAccount, amount, idempotencyKey);
 
