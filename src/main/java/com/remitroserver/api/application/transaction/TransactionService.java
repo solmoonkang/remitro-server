@@ -1,9 +1,11 @@
 package com.remitroserver.api.application.transaction;
 
+import static com.remitroserver.global.common.util.RedisConstant.*;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import com.remitroserver.api.dto.transaction.request.TransferRequest;
 import com.remitroserver.api.dto.transaction.response.TransactionDetailResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
 import com.remitroserver.global.error.exception.BadRequestException;
+import com.remitroserver.global.lock.core.DistributedLockExecutor;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,21 +39,24 @@ public class TransactionService {
 	private final AccountReadService accountReadService;
 	private final TransactionReadService transactionReadService;
 	private final TransactionWriteService transactionWriteService;
+	private final DistributedLockExecutor distributedLockExecutor;
 
-	@Transactional
 	public void requestTransfer(AuthMember authMember, String idempotencyKey, TransferRequest transferRequest) {
 		transactionReadService.validateIdempotencyKeyExists(idempotencyKey);
 
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final Account fromAccount = accountReadService.getActiveAccountByTokenAndOwner(
 			transferRequest.fromAccountToken(), member);
-		final Account toAccount = accountReadService.getActiveAccountByAccountNumber(transferRequest.toAccountNumber());
+		final Account toAccount = accountReadService.getActiveAccountByAccountNumber(
+			transferRequest.toAccountNumber());
 
 		validateNotSelfTransfer(fromAccount, toAccount);
 
-		final Money amount = Money.fromPositive(transferRequest.amount());
-
-		transactionWriteService.createTransactionWithLog(fromAccount, toAccount, amount, idempotencyKey);
+		final List<String> lockKeys = getSortedAccountLockKeys(fromAccount.getId(), toAccount.getId());
+		distributedLockExecutor.executeWithMultiLocks(lockKeys, () -> {
+			final Money amount = Money.fromPositive(transferRequest.amount());
+			transactionWriteService.createTransactionWithLog(fromAccount, toAccount, amount, idempotencyKey);
+		});
 	}
 
 	public List<TransactionSummaryResponse> findMyAllTransactionsByCondition(
@@ -94,5 +100,12 @@ public class TransactionService {
 		if (fromAccount.isSameAccount(toAccount)) {
 			throw new BadRequestException(TRANSFER_TO_SAME_ACCOUNT_ERROR);
 		}
+	}
+
+	private List<String> getSortedAccountLockKeys(Long fromAccountId, Long toAccountId) {
+		return Stream.of(fromAccountId, toAccountId)
+			.sorted()
+			.map(accountId -> ACCOUNT_LOCK_KEY_PREFIX + accountId)
+			.toList();
 	}
 }
