@@ -3,12 +3,21 @@ package com.remitroserver.api.application.transaction.mapper;
 import java.util.List;
 
 import com.remitroserver.api.domain.transaction.entity.Transaction;
-import com.remitroserver.api.domain.transaction.entity.TransactionStatusLog;
+import com.remitroserver.api.domain.transaction.entity.StatusLog;
+import com.remitroserver.api.dto.transaction.request.TransferRequest;
 import com.remitroserver.api.dto.transaction.response.TransactionDetailResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionStatusLogResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionSummaryResponse;
 
 public class TransactionMapper {
+
+	public static TransferRequest toTransferRequest(Transaction transaction) {
+		return TransferRequest.builder()
+			.fromAccountToken(transaction.getFromAccount().getAccountToken())
+			.toAccountNumber(transaction.getToAccount().getAccountNumber())
+			.amount(transaction.getAmount().getValue())
+			.build();
+	}
 
 	public static TransactionSummaryResponse toSummaryResponse(Transaction transaction) {
 		return TransactionSummaryResponse.builder()
@@ -22,7 +31,7 @@ public class TransactionMapper {
 
 	public static TransactionDetailResponse toDetailResponse(
 		Transaction transaction,
-		List<TransactionStatusLog> transactionStatusLogs) {
+		List<StatusLog> statusLogs) {
 
 		return TransactionDetailResponse.builder()
 			.transactionToken(transaction.getTransactionToken())
@@ -32,19 +41,19 @@ public class TransactionMapper {
 			.toNickname(transaction.getToAccount().getMember().getNickname())
 			.amount(transaction.getAmount().getValue())
 			.createdAt(transaction.getCreatedAt())
-			.statusLogs(toLogResponse(transactionStatusLogs))
+			.statusLogs(toLogResponse(statusLogs))
 			.build();
 	}
 
-	public static TransactionStatusLogResponse toLogResponse(TransactionStatusLog transactionStatusLog) {
+	public static TransactionStatusLogResponse toLogResponse(StatusLog statusLog) {
 		return TransactionStatusLogResponse.builder()
-			.status(transactionStatusLog.getStatus())
-			.changedAt(transactionStatusLog.getCreatedAt())
+			.status(statusLog.getStatus())
+			.changedAt(statusLog.getCreatedAt())
 			.build();
 	}
 
-	private static List<TransactionStatusLogResponse> toLogResponse(List<TransactionStatusLog> transactionStatusLogs) {
-		return transactionStatusLogs.stream()
+	private static List<TransactionStatusLogResponse> toLogResponse(List<StatusLog> statusLogs) {
+		return statusLogs.stream()
 			.map(TransactionMapper::toLogResponse)
 			.toList();
 	}
