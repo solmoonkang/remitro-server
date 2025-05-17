@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "transaction_status_logs")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TransactionStatusLog extends BaseTimeEntity {
+public class StatusLog extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,13 +39,13 @@ public class TransactionStatusLog extends BaseTimeEntity {
 	@Column(name = "transaction_status", nullable = false, length = 20)
 	private TransactionStatus status;
 
-	private TransactionStatusLog(Transaction transaction, TransactionStatus status) {
+	private StatusLog(Transaction transaction, TransactionStatus status) {
 		this.transaction = transaction;
 		this.status = status;
 	}
 
-	public static TransactionStatusLog create(Transaction transaction, TransactionStatus status) {
-		return new TransactionStatusLog(
+	public static StatusLog create(Transaction transaction, TransactionStatus status) {
+		return new StatusLog(
 			Objects.requireNonNull(transaction),
 			Objects.requireNonNull(status)
 		);
