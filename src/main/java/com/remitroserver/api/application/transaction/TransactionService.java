@@ -18,8 +18,8 @@ import com.remitroserver.api.domain.account.model.Money;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
-import com.remitroserver.api.domain.transaction.entity.TransactionStatusLog;
-import com.remitroserver.api.domain.transaction.repository.TransactionStatusLogRepository;
+import com.remitroserver.api.domain.transaction.entity.StatusLog;
+import com.remitroserver.api.domain.transaction.repository.StatusLogRepository;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
 import com.remitroserver.api.dto.transaction.response.TransactionDetailResponse;
@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class TransactionService {
 
-	private final TransactionStatusLogRepository transactionStatusLogRepository;
+	private final StatusLogRepository statusLogRepository;
 	private final MemberReadService memberReadService;
 	private final AccountReadService accountReadService;
 	private final TransactionReadService transactionReadService;
@@ -78,10 +78,10 @@ public class TransactionService {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		final Transaction transaction = transactionReadService.getTransactionByTokenAndOwner(transactionToken, member);
 
-		final List<TransactionStatusLog> transactionStatusLogs = transactionStatusLogRepository
+		final List<StatusLog> statusLogs = statusLogRepository
 			.findAllByTransactionOrderByCreatedAtAsc(transaction);
 
-		return TransactionMapper.toDetailResponse(transaction, transactionStatusLogs);
+		return TransactionMapper.toDetailResponse(transaction, statusLogs);
 	}
 
 	@Transactional
