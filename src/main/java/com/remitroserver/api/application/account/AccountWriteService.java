@@ -37,7 +37,7 @@ public class AccountWriteService {
 	}
 
 	@Transactional
-	protected void deposit(UUID accountToken, Member member, Long rawAmount) {
+	public void deposit(UUID accountToken, Member member, Long rawAmount) {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 		account.deposit(Money.fromPositive(rawAmount));
 	}
@@ -50,24 +50,24 @@ public class AccountWriteService {
 		try {
 			passwordValidator.validatePasswordMatches(rawPassword, account.getPassword());
 		} catch (BadRequestException e) {
-			accountLockoutService.validateEnforcePasswordLockout(account.getId());
+			accountLockoutService.handlePasswordFailure(account.getId());
 		}
 
-		accountLockoutService.resetFailedAttempts(account.getId());
+		accountLockoutService.resetFailures(account.getId());
 		account.withdraw(Money.fromPositive(rawAmount));
 	}
 
-	public void updateSuspendAccount(UUID accountToken, Member member) {
+	public void suspendAccount(UUID accountToken, Member member) {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 		account.changeStatusTo(SUSPENDED);
 	}
 
-	public void updateActivateAccount(UUID accountToken, Member member) {
+	public void activateAccount(UUID accountToken, Member member) {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 		account.changeStatusTo(ACTIVE);
 	}
 
-	public void updateCloseAccount(UUID accountToken, Member member) {
+	public void closeAccount(UUID accountToken, Member member) {
 		final Account account = accountReadService.getAccountByTokenAndOwner(accountToken, member);
 		account.changeStatusTo(CLOSED);
 	}

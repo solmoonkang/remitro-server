@@ -23,7 +23,7 @@ public class AccountLockoutService {
 		}
 	}
 
-	public void validateEnforcePasswordLockout(Long accountId) {
+	public void handlePasswordFailure(Long accountId) {
 		final long failedCount = accountRedisRepository.incrementAccountFailedAttempts(accountId);
 
 		if (failedCount >= MAX_FAILED) {
@@ -37,7 +37,7 @@ public class AccountLockoutService {
 		throw new BadRequestException(String.format(ACCOUNT_PASSWORD_MISMATCH_ERROR.getMessage(), remainingTime));
 	}
 
-	public void resetFailedAttempts(Long accountId) {
+	public void resetFailures(Long accountId) {
 		accountRedisRepository.resetFailedAttempts(accountId);
 	}
 }
