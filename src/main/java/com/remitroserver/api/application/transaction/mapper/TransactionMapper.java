@@ -3,7 +3,7 @@ package com.remitroserver.api.application.transaction.mapper;
 import java.util.List;
 
 import com.remitroserver.api.domain.transaction.entity.Transaction;
-import com.remitroserver.api.domain.transaction.entity.StatusLog;
+import com.remitroserver.api.domain.statusLog.entity.StatusLog;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
 import com.remitroserver.api.dto.transaction.response.TransactionDetailResponse;
 import com.remitroserver.api.dto.transaction.response.TransactionStatusLogResponse;
