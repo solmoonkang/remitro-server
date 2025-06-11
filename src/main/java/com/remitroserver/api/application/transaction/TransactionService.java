@@ -17,9 +17,9 @@ import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.domain.account.model.Money;
 import com.remitroserver.api.domain.auth.model.AuthMember;
 import com.remitroserver.api.domain.member.entity.Member;
-import com.remitroserver.api.domain.transaction.entity.StatusLog;
+import com.remitroserver.api.domain.statusLog.entity.StatusLog;
+import com.remitroserver.api.domain.statusLog.repository.StatusLogRepository;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
-import com.remitroserver.api.domain.transaction.repository.StatusLogRepository;
 import com.remitroserver.api.dto.account.request.AccountAmountRequest;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
@@ -63,21 +63,14 @@ public class TransactionService {
 	}
 
 	public void requestTransfer(AuthMember authMember, String idempotencyKey, TransferRequest transferRequest) {
-		transactionReadService.validateIdempotencyKeyExists(idempotencyKey);
+		transactionReadService.validateIdempotencyKeyNotExists(idempotencyKey);
 
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
-		final Account fromAccount = accountReadService.getActiveAccountByTokenAndOwner(
-			transferRequest.fromAccountToken(), member);
-		final Account toAccount = accountReadService.getActiveAccountByAccountNumber(
-			transferRequest.toAccountNumber());
+		final Account fromAccount = getSenderAccount(transferRequest.fromAccountToken(), member);
+		final Account toAccount = getRecipientAccount(transferRequest.toAccountNumber());
 
 		validateNotSelfTransfer(fromAccount, toAccount);
-
-		final List<String> lockKeys = getSortedAccountLockKeys(fromAccount.getId(), toAccount.getId());
-		distributedLockExecutor.executeWithMultiLocks(lockKeys, () -> {
-			final Money amount = Money.fromPositive(transferRequest.amount());
-			transactionWriteService.createTransactionWithLog(fromAccount, toAccount, amount, idempotencyKey);
-		});
+		executeTransferWithLock(fromAccount, toAccount, transferRequest.amount(), idempotencyKey);
 	}
 
 	public List<TransactionSummaryResponse> findMyAllTransactionsByCondition(
@@ -109,6 +102,9 @@ public class TransactionService {
 	public void approveTransfer(UUID transactionToken, AuthMember authMember) {
 		final Member member = memberReadService.getMemberByEmail(authMember.email());
 		transactionWriteService.completeTransactionWithLog(transactionToken, member);
+
+		final String idempotencyKey = transactionReadService.getIdempotencyKeyByTransactionToken(transactionToken);
+		transactionWriteService.createTransactionIdempotencyKey(idempotencyKey);
 	}
 
 	@Transactional
@@ -123,10 +119,28 @@ public class TransactionService {
 		}
 	}
 
+	private Account getSenderAccount(UUID fromToken, Member member) {
+		return accountReadService.getActiveAccountByTokenAndOwner(fromToken, member);
+	}
+
+	private Account getRecipientAccount(String toAccountNumber) {
+		return accountReadService.getActiveAccountByAccountNumber(toAccountNumber);
+	}
+
 	private List<String> getSortedAccountLockKeys(Long fromAccountId, Long toAccountId) {
 		return Stream.of(fromAccountId, toAccountId)
 			.sorted()
 			.map(accountId -> ACCOUNT_LOCK_KEY_PREFIX + accountId)
 			.toList();
+	}
+
+	private void executeTransferWithLock(Account from, Account to, Long rawAmount, String idempotencyKey) {
+		final List<String> lockKeys = getSortedAccountLockKeys(from.getId(), to.getId());
+
+		distributedLockExecutor.executeWithMultiLocks(lockKeys, () -> {
+			final Money amount = Money.fromPositive(rawAmount);
+			final Transaction transaction = transactionWriteService.createRequestedTransactionWithLog(from, to, amount);
+			transactionWriteService.storeTransactionTokenMapping(transaction.getTransactionToken(), idempotencyKey);
+		});
 	}
 }
