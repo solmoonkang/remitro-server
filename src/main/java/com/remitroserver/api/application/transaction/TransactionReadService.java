@@ -15,6 +15,7 @@ import com.remitroserver.api.domain.account.entity.Account;
 import com.remitroserver.api.domain.member.entity.Member;
 import com.remitroserver.api.domain.transaction.entity.Transaction;
 import com.remitroserver.api.domain.transaction.model.TransactionStatus;
+import com.remitroserver.api.domain.transaction.repository.IdempotencyKeyRedisRepository;
 import com.remitroserver.api.domain.transaction.repository.TransactionRepository;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.global.error.exception.ConflictException;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class TransactionReadService {
 
 	private final TransactionRepository transactionRepository;
+	private final IdempotencyKeyRedisRepository idempotencyKeyRedisRepository;
 
 	public Transaction getRequestedTransactionByTokenAndOwner(UUID transactionToken, Member member) {
 		final Transaction transaction = transactionRepository
@@ -69,8 +71,12 @@ public class TransactionReadService {
 		return transaction;
 	}
 
-	public void validateIdempotencyKeyExists(String idempotencyKey) {
-		if (transactionRepository.existsByIdempotencyKey(idempotencyKey)) {
+	public String getIdempotencyKeyByTransactionToken(UUID transactionToken) {
+		return idempotencyKeyRedisRepository.findIdempotencyKeyByTransactionToken(transactionToken);
+	}
+
+	public void validateIdempotencyKeyNotExists(String idempotencyKey) {
+		if (idempotencyKeyRedisRepository.isIdempotencyKeyExists(idempotencyKey)) {
 			throw new ConflictException(DUPLICATED_IDEMPOTENCY_KEY_ERROR);
 		}
 	}
