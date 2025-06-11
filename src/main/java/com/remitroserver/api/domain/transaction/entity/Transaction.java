@@ -65,9 +65,6 @@ public class Transaction extends BaseTimeEntity {
 	@Column(name = "transaction_status", nullable = false, length = 20)
 	private TransactionStatus status;
 
-	@Column(name = "idempotency_key", unique = true, nullable = false, length = 64)
-	private String idempotencyKey;
-
 	private Transaction(Account fromAccount, Account toAccount, Money amount, TransactionStatus status) {
 
 		this.fromAccount = fromAccount;
