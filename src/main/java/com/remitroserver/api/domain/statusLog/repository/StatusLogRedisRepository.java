@@ -1,4 +1,4 @@
-package com.remitroserver.api.domain.transaction.repository;
+package com.remitroserver.api.domain.statusLog.repository;
 
 import java.time.Duration;
 import java.util.ArrayList;

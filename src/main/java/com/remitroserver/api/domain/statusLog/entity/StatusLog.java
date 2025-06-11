@@ -1,7 +1,8 @@
-package com.remitroserver.api.domain.transaction.entity;
+package com.remitroserver.api.domain.statusLog.entity;
 
 import java.util.Objects;
 
+import com.remitroserver.api.domain.transaction.entity.Transaction;
 import com.remitroserver.api.domain.transaction.model.TransactionStatus;
 import com.remitroserver.global.common.entity.BaseTimeEntity;
 

@@ -1,11 +1,11 @@
-package com.remitroserver.api.domain.transaction.repository;
+package com.remitroserver.api.domain.statusLog.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.remitroserver.api.domain.transaction.entity.Transaction;
-import com.remitroserver.api.domain.transaction.entity.StatusLog;
+import com.remitroserver.api.domain.statusLog.entity.StatusLog;
 
 public interface StatusLogRepository extends JpaRepository<StatusLog, Long> {
 
