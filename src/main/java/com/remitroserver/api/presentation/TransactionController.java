@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.remitroserver.api.application.transaction.TransactionService;
 import com.remitroserver.api.domain.auth.model.AuthMember;
+import com.remitroserver.api.dto.account.request.AccountAmountRequest;
 import com.remitroserver.api.dto.transaction.request.TransactionSearchRequest;
 import com.remitroserver.api.dto.transaction.request.TransferRequest;
 import com.remitroserver.api.dto.transaction.response.TransactionDetailResponse;
@@ -40,6 +41,54 @@ import lombok.RequiredArgsConstructor;
 public class TransactionController {
 
 	private final TransactionService transactionService;
+
+	@PatchMapping("/{accountToken}/deposit")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "계좌 입금 - 지정된 금액 입금",
+		description = "인증된 사용자의 계좌에 지정된 금액을 입금합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 입금 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 금액 요청"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
+		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보가 존재하지 않음")
+	})
+	public ResponseEntity<String> depositToAccount(
+		@PathVariable UUID accountToken,
+		@Auth AuthMember authMember,
+		@RequestBody @Valid AccountAmountRequest accountAmountRequest) {
+
+		transactionService.requestDeposit(accountToken, authMember, accountAmountRequest);
+		return ResponseEntity.ok().body(String.format(
+			"[✅ SUCCESS] 사용자 계좌에 %s원이 성공적으로 입금되었습니다.", String.format("%,d", accountAmountRequest.amount()))
+		);
+	}
+
+	@PatchMapping("/{accountToken}/withdraw")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "계좌 출금 - 지정된 금액 출금",
+		description = "인증된 사용자의 계좌에서 지정된 금액을 출금합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "✅ 출금 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 금액 요청 또는 잔액 부족"),
+		@ApiResponse(responseCode = "401", description = "🔒 인증되지 않은 사용자 요청"),
+		@ApiResponse(responseCode = "403", description = "🚫 접근 권한 부족"),
+		@ApiResponse(responseCode = "404", description = "🔍 계좌 또는 사용자 정보가 존재하지 않음")
+	})
+	public ResponseEntity<String> withdrawFromAccount(
+		@PathVariable UUID accountToken,
+		@Auth AuthMember authMember,
+		@RequestBody @Valid AccountAmountRequest accountAmountRequest) {
+
+		transactionService.requestWithdraw(accountToken, authMember, accountAmountRequest);
+		return ResponseEntity.ok().body(String.format(
+			"[✅ SUCCESS] 사용자 계좌에 %s원이 성공적으로 출금되었습니다.", String.format("%,d", accountAmountRequest.amount()))
+		);
+	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
