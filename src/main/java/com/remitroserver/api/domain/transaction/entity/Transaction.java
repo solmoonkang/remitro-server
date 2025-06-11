@@ -1,5 +1,6 @@
 package com.remitroserver.api.domain.transaction.entity;
 
+import static com.remitroserver.api.domain.transaction.model.TransactionStatus.*;
 import static com.remitroserver.global.error.model.ErrorMessage.*;
 
 import java.time.Duration;
@@ -67,24 +68,39 @@ public class Transaction extends BaseTimeEntity {
 	@Column(name = "idempotency_key", unique = true, nullable = false, length = 64)
 	private String idempotencyKey;
 
-	private Transaction(Account fromAccount, Account toAccount, Money amount, TransactionStatus status,
-		String idempotencyKey) {
+	private Transaction(Account fromAccount, Account toAccount, Money amount, TransactionStatus status) {
 
 		this.fromAccount = fromAccount;
 		this.toAccount = toAccount;
 		this.transactionToken = UUID.randomUUID();
 		this.amount = amount;
 		this.status = status;
-		this.idempotencyKey = idempotencyKey;
 	}
 
-	public static Transaction create(Account from, Account to, Money amount, String idempotencyKey) {
+	public static Transaction create(Account from, Account to, Money amount) {
 		return new Transaction(
 			Objects.requireNonNull(from),
 			Objects.requireNonNull(to),
 			Objects.requireNonNull(amount),
-			Objects.requireNonNull(TransactionStatus.REQUESTED),
-			Objects.requireNonNull(idempotencyKey)
+			Objects.requireNonNull(REQUESTED)
+		);
+	}
+
+	public static Transaction createDeposit(Account toAccount, Money amount) {
+		return new Transaction(
+			null,
+			Objects.requireNonNull(toAccount),
+			Objects.requireNonNull(amount),
+			Objects.requireNonNull(REQUESTED)
+		);
+	}
+
+	public static Transaction createWithdraw(Account fromAccount, Money amount) {
+		return new Transaction(
+			Objects.requireNonNull(fromAccount),
+			null,
+			Objects.requireNonNull(amount),
+			Objects.requireNonNull(REQUESTED)
 		);
 	}
 
@@ -93,7 +109,7 @@ public class Transaction extends BaseTimeEntity {
 	}
 
 	public void cancel() {
-		if (this.status != TransactionStatus.REQUESTED) {
+		if (this.status != REQUESTED) {
 			throw new BadRequestException(TRANSACTION_NOT_REQUESTED_ERROR);
 		}
 
