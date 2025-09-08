@@ -1,4 +1,4 @@
-package com.remitro.member.application.controller;
+package com.remitro.member.application.presentation;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
