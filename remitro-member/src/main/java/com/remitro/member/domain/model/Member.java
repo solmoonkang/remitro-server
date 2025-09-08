@@ -42,4 +42,12 @@ public class Member {
 	public static Member createMember(String email, String password, String nickname) {
 		return new Member(email, password, nickname);
 	}
+
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+
+	public void updateNickname(String nickname) {
+		this.nickname = nickname;
+	}
 }
