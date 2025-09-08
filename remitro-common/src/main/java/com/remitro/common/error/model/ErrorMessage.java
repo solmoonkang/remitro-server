@@ -10,6 +10,7 @@ public enum ErrorMessage {
 
 	// 400: BAD REQUEST
 	INVALID_PASSWORD("입력하신 비밀번호는 틀린 비밀번호입니다."),
+	INVALID_TOKEN("유효하지 않은 토큰입니다."),
 
 	// 401: UNAUTHORIZED
 	TOKEN_EXPIRED("이미 만료된 토큰입니다."),
@@ -17,6 +18,7 @@ public enum ErrorMessage {
 	// 403: FORBIDDEN
 
 	// 404: NOT FOUND
+	MEMBER_NOT_FOUND("요청하신 회원은 존재하지 않습니다."),
 
 	// 409: CONFLICT
 	EMAIL_DUPLICATED("이미 사용중인 이메일입니다."),
