@@ -29,7 +29,6 @@ ext {
 }
 
 dependencies {
-	// MSA: common
 	implementation project(':remitro-common')
 
 	// Spring Data JPA
