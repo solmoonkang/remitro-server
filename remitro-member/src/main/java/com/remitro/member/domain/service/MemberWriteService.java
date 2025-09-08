@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.remitro.member.application.dto.request.SignUpRequest;
+import com.remitro.member.application.dto.request.UpdateMemberRequest;
 import com.remitro.member.domain.model.Member;
 import com.remitro.member.domain.repository.MemberRepository;
 
@@ -20,5 +21,9 @@ public class MemberWriteService {
 		final String encodedPassword = passwordEncoder.encode(signUpRequest.password());
 		final Member member = Member.createMember(signUpRequest.email(), encodedPassword, signUpRequest.nickname());
 		memberRepository.save(member);
+	}
+
+	public void updateMember(Member member, UpdateMemberRequest updateMemberRequest) {
+		member.updateNickname(updateMemberRequest.nickname());
 	}
 }
