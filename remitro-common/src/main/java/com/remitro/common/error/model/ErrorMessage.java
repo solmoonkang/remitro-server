@@ -11,14 +11,19 @@ public enum ErrorMessage {
 	// 400: BAD REQUEST
 	INVALID_PASSWORD("입력하신 비밀번호는 틀린 비밀번호입니다."),
 	INVALID_TOKEN("유효하지 않은 토큰입니다."),
+	INSUFFICIENT_FUNDS("잔액이 충분하지 않습니다."),
+	INVALID_AMOUNT("금액은 0보다 커야 합니다."),
+	INVALID_STATUS_CHANGE("이미 해지된 계좌는 상태를 변경할 수 없습니다."),
 
 	// 401: UNAUTHORIZED
 	TOKEN_EXPIRED("이미 만료된 토큰입니다."),
 
 	// 403: FORBIDDEN
+	ACCOUNT_ACCESS_FORBIDDEN("해당 계좌에 접근할 권한이 없습니다."),
 
 	// 404: NOT FOUND
 	MEMBER_NOT_FOUND("요청하신 회원은 존재하지 않습니다."),
+	ACCOUNT_NOT_FOUND("요청하신 계좌는 존재하지 않습니다."),
 
 	// 409: CONFLICT
 	EMAIL_DUPLICATED("이미 사용중인 이메일입니다."),
