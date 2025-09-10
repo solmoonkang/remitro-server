@@ -34,4 +34,16 @@ public class AccountValidator {
 			throw new BadRequestException(ErrorMessage.INVALID_AMOUNT);
 		}
 	}
+
+	public void validateSufficientBalance(Long balance, Long amount) {
+		if (balance < amount) {
+			throw new BadRequestException(ErrorMessage.INSUFFICIENT_FUNDS);
+		}
+	}
+
+	public void validateSelfTransfer(Long senderAccountId, Long receiverAccountId) {
+		if (senderAccountId.equals(receiverAccountId)) {
+			throw new BadRequestException(ErrorMessage.INVALID_TRANSFER);
+		}
+	}
 }
