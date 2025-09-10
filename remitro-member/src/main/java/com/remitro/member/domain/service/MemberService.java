@@ -25,7 +25,7 @@ public class MemberService {
 		memberValidator.validateEmailNotDuplicated(signUpRequest.email());
 		memberValidator.validateNicknameNotDuplicated(signUpRequest.nickname());
 		memberValidator.validatePasswordMatche(signUpRequest.password(), signUpRequest.checkPassword());
-		memberWriteService.createMember(signUpRequest);
+		memberWriteService.saveMember(signUpRequest);
 	}
 
 	@Transactional
