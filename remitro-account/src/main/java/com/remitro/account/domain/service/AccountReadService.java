@@ -25,4 +25,9 @@ public class AccountReadService {
 	public List<Account> findAllAccountsByMemberId(Long memberId) {
 		return accountRepository.findByMemberId(memberId);
 	}
+
+	public Account findAccountByNumber(String accountNumber) {
+		return accountRepository.findByAccountNumber(accountNumber)
+			.orElseThrow(() -> new NotFoundException(ErrorMessage.ACCOUNT_NOT_FOUND));
+	}
 }
