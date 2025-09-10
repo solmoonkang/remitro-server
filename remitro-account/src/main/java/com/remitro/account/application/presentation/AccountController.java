@@ -15,6 +15,7 @@ import com.remitro.account.application.dto.request.AccountDepositRequest;
 import com.remitro.account.application.dto.request.AccountPasswordRequest;
 import com.remitro.account.application.dto.request.AccountWithdrawRequest;
 import com.remitro.account.application.dto.request.CreateAccountRequest;
+import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.dto.request.UpdateStatusRequest;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.domain.service.AccountService;
@@ -71,6 +72,16 @@ public class AccountController {
 
 		accountService.withdrawToAccount(accountId, accountWithdrawRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 출금이 성공적으로 완료되었습니다.");
+	}
+
+	@PostMapping("/{accountId}/transfer")
+	public ResponseEntity<?> transferToAccount(
+		@Auth AuthMember authMember,
+		@PathVariable Long accountId,
+		@Valid @RequestBody TransferFormRequest transferFormRequest) {
+
+		accountService.transferToAccount(authMember, accountId, transferFormRequest);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 송금이 성공적으로 완료되었습니다.");
 	}
 
 	@PatchMapping("/{accountId}")
