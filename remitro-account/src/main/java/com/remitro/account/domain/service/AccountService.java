@@ -9,6 +9,7 @@ import com.remitro.account.application.dto.request.AccountDepositRequest;
 import com.remitro.account.application.dto.request.AccountPasswordRequest;
 import com.remitro.account.application.dto.request.AccountWithdrawRequest;
 import com.remitro.account.application.dto.request.CreateAccountRequest;
+import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.dto.request.UpdateStatusRequest;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.mapper.AccountMapper;
@@ -63,6 +64,20 @@ public class AccountService {
 		final Account account = accountReadService.findAccountById(accountId);
 		accountValidator.validateAccountPasswordMatch(accountWithdrawRequest.password(), account.getPassword());
 		account.withdraw(accountWithdrawRequest.amount());
+	}
+
+	@Transactional
+	public void transferToAccount(AuthMember authMember, Long accountId, TransferFormRequest transferFormRequest) {
+		final Account senderAccount = accountReadService.findAccountById(accountId);
+		final Account receiverAccount = accountReadService.findAccountByNumber(transferFormRequest.receiverAccountNumber());
+
+		accountValidator.validateAccountAccess(senderAccount.getMember().getId(), authMember.id());
+		accountValidator.validateAccountPasswordMatch(transferFormRequest.password(), senderAccount.getPassword());
+		accountValidator.validateSufficientBalance(senderAccount.getBalance(), transferFormRequest.amount());
+		accountValidator.validateSelfTransfer(senderAccount.getId(), receiverAccount.getId());
+
+		senderAccount.withdraw(transferFormRequest.amount());
+		receiverAccount.deposit(transferFormRequest.amount());
 	}
 
 	@Transactional
