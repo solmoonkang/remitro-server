@@ -13,6 +13,7 @@ public enum ErrorMessage {
 	INVALID_TOKEN("유효하지 않은 토큰입니다."),
 	INSUFFICIENT_FUNDS("잔액이 충분하지 않습니다."),
 	INVALID_AMOUNT("금액은 0보다 커야 합니다."),
+	INVALID_TRANSFER("유효하지 않은 송금입니다."),
 	INVALID_STATUS_CHANGE("이미 해지된 계좌는 상태를 변경할 수 없습니다."),
 
 	// 401: UNAUTHORIZED
