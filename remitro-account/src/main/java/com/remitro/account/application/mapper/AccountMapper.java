@@ -13,7 +13,8 @@ public class AccountMapper {
 
 	public static AccountDetailResponse toAccountDetailResponse(Account account) {
 		return new AccountDetailResponse(account.getMember().getNickname(), account.getAccountNumber(),
-			account.getAccountName(), account.getBalance(), null, account.getAccountType().name());
+			account.getAccountName(), account.getBalance(), account.isActivated(), account.getAccountType().name(),
+			account.getAccountStatus().name());
 	}
 
 	public static List<AccountDetailResponse> toAccountListResponse(List<Account> accounts) {
