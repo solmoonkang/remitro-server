@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@ComponentScan(basePackages = "com.remitro.member")
+@ComponentScan(basePackages = {"com.remitro.member", "com.remitro.transaction"})
 public class AccountServiceApplication {
 
 	public static void main(String[] args) {
