@@ -18,7 +18,6 @@ import com.remitro.account.domain.model.Account;
 import com.remitro.common.auth.model.AuthMember;
 import com.remitro.member.domain.model.Member;
 import com.remitro.member.domain.service.MemberReadService;
-import com.remitro.transaction.domain.service.TransactionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +30,7 @@ public class AccountService {
 	private final MemberReadService memberReadService;
 	private final AccountWriteService accountWriteService;
 	private final AccountReadService accountReadService;
-	private final TransactionService transactionService;
+	private final TransactionRecorder transactionRecorder;
 
 	@Transactional
 	public void createAccount(AuthMember authMember, CreateAccountRequest createAccountRequest) {
@@ -58,7 +57,7 @@ public class AccountService {
 		accountValidator.validateAmountPositive(accountDepositRequest.amount());
 		final Account receiver = accountReadService.findAccountById(accountId);
 		receiver.deposit(accountDepositRequest.amount());
-		transactionService.recordDepositTransaction(receiver, accountDepositRequest.amount());
+		transactionRecorder.recordDepositTransaction(receiver, accountDepositRequest.amount());
 	}
 
 	@Transactional
@@ -67,7 +66,7 @@ public class AccountService {
 		final Account sender = accountReadService.findAccountById(accountId);
 		accountValidator.validateAccountPasswordMatch(accountWithdrawRequest.password(), sender.getPassword());
 		sender.withdraw(accountWithdrawRequest.amount());
-		transactionService.recordWithdrawalTransaction(sender, accountWithdrawRequest.amount());
+		transactionRecorder.recordWithdrawalTransaction(sender, accountWithdrawRequest.amount());
 	}
 
 	@Transactional
@@ -83,7 +82,7 @@ public class AccountService {
 		sender.withdraw(transferFormRequest.amount());
 		receiver.deposit(transferFormRequest.amount());
 
-		transactionService.recordTransferTransaction(sender, receiver, transferFormRequest.amount());
+		transactionRecorder.recordTransferTransaction(sender, receiver, transferFormRequest.amount());
 	}
 
 	@Transactional
