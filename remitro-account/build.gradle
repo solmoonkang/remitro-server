@@ -30,6 +30,7 @@ ext {
 
 dependencies {
     implementation project(':remitro-member')
+    implementation project(':remitro-transaction')
     implementation project(':remitro-common')
 
     // Spring Data JPA
