@@ -18,6 +18,7 @@ import com.remitro.account.domain.model.Account;
 import com.remitro.common.auth.model.AuthMember;
 import com.remitro.member.domain.model.Member;
 import com.remitro.member.domain.service.MemberReadService;
+import com.remitro.transaction.domain.service.TransactionService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +31,7 @@ public class AccountService {
 	private final MemberReadService memberReadService;
 	private final AccountWriteService accountWriteService;
 	private final AccountReadService accountReadService;
+	private final TransactionService transactionService;
 
 	@Transactional
 	public void createAccount(AuthMember authMember, CreateAccountRequest createAccountRequest) {
@@ -54,30 +56,34 @@ public class AccountService {
 	@Transactional
 	public void depositToAccount(Long accountId, AccountDepositRequest accountDepositRequest) {
 		accountValidator.validateAmountPositive(accountDepositRequest.amount());
-		final Account account = accountReadService.findAccountById(accountId);
-		account.deposit(accountDepositRequest.amount());
+		final Account receiver = accountReadService.findAccountById(accountId);
+		receiver.deposit(accountDepositRequest.amount());
+		transactionService.recordDepositTransaction(receiver, accountDepositRequest.amount());
 	}
 
 	@Transactional
 	public void withdrawToAccount(Long accountId, AccountWithdrawRequest accountWithdrawRequest) {
 		accountValidator.validateAmountPositive(accountWithdrawRequest.amount());
-		final Account account = accountReadService.findAccountById(accountId);
-		accountValidator.validateAccountPasswordMatch(accountWithdrawRequest.password(), account.getPassword());
-		account.withdraw(accountWithdrawRequest.amount());
+		final Account sender = accountReadService.findAccountById(accountId);
+		accountValidator.validateAccountPasswordMatch(accountWithdrawRequest.password(), sender.getPassword());
+		sender.withdraw(accountWithdrawRequest.amount());
+		transactionService.recordWithdrawalTransaction(sender, accountWithdrawRequest.amount());
 	}
 
 	@Transactional
 	public void transferToAccount(AuthMember authMember, Long accountId, TransferFormRequest transferFormRequest) {
-		final Account senderAccount = accountReadService.findAccountById(accountId);
-		final Account receiverAccount = accountReadService.findAccountByNumber(transferFormRequest.receiverAccountNumber());
+		final Account sender = accountReadService.findAccountById(accountId);
+		final Account receiver = accountReadService.findAccountByNumber(transferFormRequest.receiverAccountNumber());
 
-		accountValidator.validateAccountAccess(senderAccount.getMember().getId(), authMember.id());
-		accountValidator.validateAccountPasswordMatch(transferFormRequest.password(), senderAccount.getPassword());
-		accountValidator.validateSufficientBalance(senderAccount.getBalance(), transferFormRequest.amount());
-		accountValidator.validateSelfTransfer(senderAccount.getId(), receiverAccount.getId());
+		accountValidator.validateAccountAccess(sender.getMember().getId(), authMember.id());
+		accountValidator.validateAccountPasswordMatch(transferFormRequest.password(), sender.getPassword());
+		accountValidator.validateSufficientBalance(sender.getBalance(), transferFormRequest.amount());
+		accountValidator.validateSelfTransfer(sender.getId(), receiver.getId());
 
-		senderAccount.withdraw(transferFormRequest.amount());
-		receiverAccount.deposit(transferFormRequest.amount());
+		sender.withdraw(transferFormRequest.amount());
+		receiver.deposit(transferFormRequest.amount());
+
+		transactionService.recordTransferTransaction(sender, receiver, transferFormRequest.amount());
 	}
 
 	@Transactional
