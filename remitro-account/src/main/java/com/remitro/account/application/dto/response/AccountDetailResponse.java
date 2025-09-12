@@ -1,7 +1,5 @@
 package com.remitro.account.application.dto.response;
 
-import java.util.List;
-
 import lombok.Builder;
 
 @Builder
@@ -14,7 +12,9 @@ public record AccountDetailResponse(
 
 	Long balance,
 
-	List<TransactionDetailResponse> transactionHistories,
+	boolean isActivated,
+
+	String accountType,
 
 	String accountStatus
 ) {
