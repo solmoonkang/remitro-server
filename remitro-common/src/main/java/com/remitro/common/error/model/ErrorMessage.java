@@ -21,10 +21,12 @@ public enum ErrorMessage {
 
 	// 403: FORBIDDEN
 	ACCOUNT_ACCESS_FORBIDDEN("해당 계좌에 접근할 권한이 없습니다."),
+	TRANSACTION_ACCESS_FORBIDDEN("해당 거래에 접근할 권한이 없습니다."),
 
 	// 404: NOT FOUND
 	MEMBER_NOT_FOUND("요청하신 회원은 존재하지 않습니다."),
 	ACCOUNT_NOT_FOUND("요청하신 계좌는 존재하지 않습니다."),
+	TRANSACTION_NOT_FOUND("요청하신 거래는 존재하지 않습니다."),
 
 	// 409: CONFLICT
 	EMAIL_DUPLICATED("이미 사용중인 이메일입니다."),
