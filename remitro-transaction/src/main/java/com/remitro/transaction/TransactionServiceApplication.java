@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.remitro.account")
+@ComponentScan(basePackages = {"com.remitro.account"})
 public class TransactionServiceApplication {
 
 	public static void main(String[] args) {
