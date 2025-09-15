@@ -8,9 +8,7 @@ Remitro Server는 온라인 뱅킹 서비스를 위한 마이크로서비스 기
 
 ### 아키텍처
 
-
 ![마이크로서비스 아키텍처 다이어그램](image/microservice-architecture-diagram.jpeg)
-
 
 * **마이크로서비스**: 각 비즈니스 도메인(회원, 계좌, 거래)이 독립적인 서비스로 분리되어 있습니다.
 * **서비스 디스커버리**: 유레카 서버를 통해 각 서비스의 위치를 관리합니다.
@@ -20,13 +18,13 @@ Remitro Server는 온라인 뱅킹 서비스를 위한 마이크로서비스 기
 
 ### 기술 스택
 
-| 분류 | 기술 | 아이콘 |
-|---|---|---|
-| **백엔드** | Java 17<br>Spring Boot 3.x | ![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white)<br>![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) |
-| **서비스 관리** | Spring Cloud Eureka<br>Spring Cloud Gateway | ![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-6DB33F?style=for-the-badge&logo=spring&logoColor=white)<br>![Spring Cloud Gateway](https://img.shields.io/badge/Spring%20Cloud%20Gateway-6DB33F?style=for-the-badge&logo=spring&logoColor=white) |
-| **데이터베이스** | MySQL<br>H2 (테스트용) | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)<br>![H2 Database](https://img.shields.io/badge/H2%20Database-4479A1?style=for-the-badge&logo=h2&logoColor=white) |
-| **API 문서화** | Swagger (OpenAPI 3.0) | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white) |
-| **의존성 관리** | Gradle | ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white) |
+| 분류          | 기술                                          | 아이콘                                                                                                                                                                                                                                                          |
+|-------------|---------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **백엔드**     | Java 17<br>Spring Boot 3.5.5                | ![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white)<br>![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)                                     |
+| **서비스 관리**  | Spring Cloud Eureka<br>Spring Cloud Gateway | ![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-6DB33F?style=for-the-badge&logo=spring&logoColor=white)<br>![Spring Cloud Gateway](https://img.shields.io/badge/Spring%20Cloud%20Gateway-6DB33F?style=for-the-badge&logo=spring&logoColor=white) |
+| **데이터베이스**  | MySQL<br>H2 (테스트용)                          | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)<br>![H2 Database](https://img.shields.io/badge/H2%20Database-4479A1?style=for-the-badge&logo=h2&logoColor=white)                                          |
+| **API 문서화** | Swagger (OpenAPI 3.0)                       | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)                                                                                                                                                     |
+| **의존성 관리**  | Gradle                                      | ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)                                                                                                                                                        |
 
 ---
 
@@ -44,9 +42,9 @@ Remitro Server는 온라인 뱅킹 서비스를 위한 마이크로서비스 기
 
 ### 실행 방법
 
-1.  **Git 클론**: `git clone https://github.com/solmoonkang/remitro-server.git`
-2.  **환경 설정**: `remitro-config` Git 저장소에 DB 연결 정보, 포트 등 환경 파일을 설정합니다.
-3.  **서비스 실행**: 다음 순서대로 각 서비스를 실행합니다.
+1. **Git 클론**: `git clone https://github.com/solmoonkang/remitro-server.git`
+2. **환경 설정**: `remitro-config` Git 저장소에 DB 연결 정보, 포트 등 환경 파일을 설정합니다.
+3. **서비스 실행**: 다음 순서대로 각 서비스를 실행합니다.
     * `remitro-eureka-server`
     * `remitro-config`
     * `remitro-api-gateway`
