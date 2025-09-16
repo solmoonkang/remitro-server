@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.service.AccountReadService;
-import com.remitro.account.domain.service.TransactionRecorder;
 import com.remitro.common.auth.model.AuthMember;
 import com.remitro.transaction.application.dto.response.TransactionDetailResponse;
 import com.remitro.transaction.application.mapper.TransactionMapper;
@@ -21,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TransactionService implements TransactionRecorder {
+public class TransactionService {
 
 	private final TransactionValidator transactionValidator;
 	private final AccountValidator accountValidator;
