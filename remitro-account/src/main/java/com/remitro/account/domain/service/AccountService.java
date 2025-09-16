@@ -15,6 +15,7 @@ import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
+import com.remitro.account.infrastructure.event.AccountEventProducer;
 import com.remitro.common.auth.model.AuthMember;
 import com.remitro.member.domain.model.Member;
 import com.remitro.member.domain.service.MemberReadService;
@@ -30,7 +31,7 @@ public class AccountService {
 	private final MemberReadService memberReadService;
 	private final AccountWriteService accountWriteService;
 	private final AccountReadService accountReadService;
-	private final TransactionRecorder transactionRecorder;
+	private final AccountEventProducer accountEventProducer;
 
 	@Transactional
 	public void createAccount(AuthMember authMember, CreateAccountRequest createAccountRequest) {
@@ -57,7 +58,7 @@ public class AccountService {
 		accountValidator.validateAmountPositive(accountDepositRequest.amount());
 		final Account receiver = accountReadService.findAccountById(accountId);
 		receiver.deposit(accountDepositRequest.amount());
-		transactionRecorder.recordDepositTransaction(receiver, accountDepositRequest.amount());
+		accountEventProducer.publishDepositEvent(receiver.getAccountNumber(), accountDepositRequest.amount());
 	}
 
 	@Transactional
@@ -66,7 +67,7 @@ public class AccountService {
 		final Account sender = accountReadService.findAccountById(accountId);
 		accountValidator.validateAccountPasswordMatch(accountWithdrawRequest.password(), sender.getPassword());
 		sender.withdraw(accountWithdrawRequest.amount());
-		transactionRecorder.recordWithdrawalTransaction(sender, accountWithdrawRequest.amount());
+		accountEventProducer.publishWithdrawalEvent(sender.getAccountNumber(), accountWithdrawRequest.amount());
 	}
 
 	@Transactional
@@ -82,7 +83,8 @@ public class AccountService {
 		sender.withdraw(transferFormRequest.amount());
 		receiver.deposit(transferFormRequest.amount());
 
-		transactionRecorder.recordTransferTransaction(sender, receiver, transferFormRequest.amount());
+		accountEventProducer.publishTransferEvent(
+			sender.getAccountNumber(), receiver.getAccountNumber(), transferFormRequest.amount());
 	}
 
 	@Transactional
