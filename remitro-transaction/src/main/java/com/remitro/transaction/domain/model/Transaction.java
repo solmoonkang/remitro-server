@@ -54,8 +54,11 @@ public class Transaction {
 	@Column(name = "transaction_at")
 	private LocalDateTime transactionAt;
 
+	@Column(name = "idempotency_key", unique = true, nullable = false)
+	private String idempotencyKey;
+
 	private Transaction(Account senderAccount, Account receiverAccount, TransactionType transactionType, Long amount,
-		Long balanceSnapshot) {
+		Long balanceSnapshot, String idempotencyKey) {
 
 		this.senderAccount = senderAccount;
 		this.receiverAccount = receiverAccount;
@@ -63,22 +66,29 @@ public class Transaction {
 		this.amount = amount;
 		this.balanceSnapshot = balanceSnapshot;
 		this.transactionAt = LocalDateTime.now();
+		this.idempotencyKey = idempotencyKey;
 	}
 
-	public static Transaction createSenderTransaction(Account senderAccount, Account receiverAccount, Long amount) {
-		return new Transaction(senderAccount, receiverAccount, TRANSFER, amount, senderAccount.getBalance());
+	public static Transaction createSenderTransaction(Account senderAccount, Account receiverAccount, Long amount,
+		String idempotencyKey) {
+
+		return new Transaction(senderAccount, receiverAccount, TRANSFER, amount, senderAccount.getBalance(),
+			idempotencyKey);
 	}
 
-	public static Transaction createReceiverTransaction(Account senderAccount, Account receiverAccount, Long amount) {
-		return new Transaction(senderAccount, receiverAccount, TRANSFER, amount, receiverAccount.getBalance());
+	public static Transaction createReceiverTransaction(Account senderAccount, Account receiverAccount, Long amount,
+		String idempotencyKey) {
+
+		return new Transaction(senderAccount, receiverAccount, TRANSFER, amount, receiverAccount.getBalance(),
+			idempotencyKey);
 	}
 
-	public static Transaction createDepositTransaction(Account receiverAccount, Long amount) {
-		return new Transaction(null, receiverAccount, DEPOSIT, amount, receiverAccount.getBalance());
+	public static Transaction createDepositTransaction(Account receiverAccount, Long amount, String idempotencyKey) {
+		return new Transaction(null, receiverAccount, DEPOSIT, amount, receiverAccount.getBalance(), idempotencyKey);
 	}
 
-	public static Transaction createWithdrawalTransaction(Account senderAccount, Long amount) {
-		return new Transaction(senderAccount, null, WITHDRAWAL, amount, senderAccount.getBalance());
+	public static Transaction createWithdrawalTransaction(Account senderAccount, Long amount, String idempotencyKey) {
+		return new Transaction(senderAccount, null, WITHDRAWAL, amount, senderAccount.getBalance(), idempotencyKey);
 	}
 
 	public boolean isSentBy(Long memberId) {
