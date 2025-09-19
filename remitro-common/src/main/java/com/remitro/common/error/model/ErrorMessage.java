@@ -31,6 +31,7 @@ public enum ErrorMessage {
 	// 409: CONFLICT
 	EMAIL_DUPLICATED("이미 사용중인 이메일입니다."),
 	NICKNAME_DUPLICATED("이미 사용중인 닉네임입니다."),
+	IDEMPOTENCY_KEY_DUPLICATED("이미 처리된 거래입니다."),
 
 	// 500: INTERNAL SERVER ERROR
 	UNKNOWN_SERVER_ERROR("서버에서 알 수 없는 에러가 발생했습니다.");
