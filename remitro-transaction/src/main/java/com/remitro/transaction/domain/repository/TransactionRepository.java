@@ -14,4 +14,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 		+ "WHERE t.senderAccount.id = :accountId OR t.receiverAccount.id = :accountId "
 		+ "ORDER BY t.transactionAt DESC")
 	List<Transaction> findAllByAccountIdOrderByDateDesc(@Param("accountId") Long accountId);
+
+	boolean existsByIdempotencyKey(String idempotencyKey);
 }
