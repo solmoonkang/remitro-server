@@ -25,8 +25,4 @@ public class TransactionReadService {
 	public List<Transaction> findTransactionsByAccountId(Long accountId) {
 		return transactionRepository.findAllByAccountIdOrderByDateDesc(accountId);
 	}
-
-	public boolean existsByIdempotencyKey(String idempotencyKey) {
-		return transactionRepository.existsByIdempotencyKey(idempotencyKey);
-	}
 }
