@@ -4,8 +4,9 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
-    consumer:
-      group-id: remitro.transaction.group
+    listener:
+      retry-count: 2
+      retry-interval: 100
 
 server:
   port: 8083
