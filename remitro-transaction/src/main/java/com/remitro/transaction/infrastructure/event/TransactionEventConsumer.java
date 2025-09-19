@@ -38,16 +38,17 @@ public class TransactionEventConsumer {
 	private void handleTransferEvent(TransactionEventMessage eventMessage) {
 		final Account sender = accountReadService.findAccountByNumber(eventMessage.senderAccountNumber());
 		final Account receiver = accountReadService.findAccountByNumber(eventMessage.receiverAccountNumber());
-		transactionService.recordTransferTransaction(sender, receiver, eventMessage.amount());
+		transactionService.recordTransferTransaction(
+			sender, receiver, eventMessage.amount(), eventMessage.idempotencyKey());
 	}
 
 	private void handleDepositEvent(TransactionEventMessage eventMessage) {
 		final Account receiver = accountReadService.findAccountByNumber(eventMessage.receiverAccountNumber());
-		transactionService.recordDepositTransaction(receiver, eventMessage.amount());
+		transactionService.recordDepositTransaction(receiver, eventMessage.amount(), eventMessage.idempotencyKey());
 	}
 
 	private void handleWithdrawalEvent(TransactionEventMessage eventMessage) {
 		final Account sender = accountReadService.findAccountByNumber(eventMessage.senderAccountNumber());
-		transactionService.recordWithdrawalTransaction(sender, eventMessage.amount());
+		transactionService.recordWithdrawalTransaction(sender, eventMessage.amount(), eventMessage.idempotencyKey());
 	}
 }
