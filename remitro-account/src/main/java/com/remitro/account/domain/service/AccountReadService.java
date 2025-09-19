@@ -17,8 +17,8 @@ public class AccountReadService {
 
 	private final AccountRepository accountRepository;
 
-	public Account findAccountById(Long id) {
-		return accountRepository.findById(id)
+	public Account findAccountById(Long accountId) {
+		return accountRepository.findByAccountId(accountId)
 			.orElseThrow(() -> new NotFoundException(ErrorMessage.ACCOUNT_NOT_FOUND));
 	}
 
