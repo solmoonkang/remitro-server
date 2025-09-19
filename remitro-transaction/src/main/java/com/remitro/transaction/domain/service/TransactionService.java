@@ -29,21 +29,24 @@ public class TransactionService {
 	private final AccountReadService accountReadService;
 
 	@Transactional(propagation = Propagation.MANDATORY)
-	public void recordTransferTransaction(Account senderAccount, Account receiverAccount, Long amount) {
-		final Transaction sender = Transaction.createSenderTransaction(senderAccount, receiverAccount, amount);
-		final Transaction receiver = Transaction.createReceiverTransaction(senderAccount, receiverAccount, amount);
-		transactionWriteService.saveTransferTransaction(sender, receiver);
+	public void recordTransferTransaction(Account sender, Account receiver, Long amount, String idempotencyKey) {
+		transactionValidator.validateIdempotencyKeyNotDuplicated(idempotencyKey);
+		final Transaction outbound = Transaction.createSenderTransaction(sender, receiver, amount, idempotencyKey);
+		final Transaction inbound = Transaction.createReceiverTransaction(sender, receiver, amount, idempotencyKey);
+		transactionWriteService.saveTransferTransaction(outbound, inbound);
 	}
 
 	@Transactional(propagation = Propagation.MANDATORY)
-	public void recordDepositTransaction(Account receiverAccount, Long amount) {
-		final Transaction deposit = Transaction.createDepositTransaction(receiverAccount, amount);
+	public void recordDepositTransaction(Account receiver, Long amount, String idempotencyKey) {
+		transactionValidator.validateIdempotencyKeyNotDuplicated(idempotencyKey);
+		final Transaction deposit = Transaction.createDepositTransaction(receiver, amount, idempotencyKey);
 		transactionWriteService.saveDepositTransaction(deposit);
 	}
 
 	@Transactional(propagation = Propagation.MANDATORY)
-	public void recordWithdrawalTransaction(Account senderAccount, Long amount) {
-		final Transaction withdrawal = Transaction.createWithdrawalTransaction(senderAccount, amount);
+	public void recordWithdrawalTransaction(Account sender, Long amount, String idempotencyKey) {
+		transactionValidator.validateIdempotencyKeyNotDuplicated(idempotencyKey);
+		final Transaction withdrawal = Transaction.createWithdrawalTransaction(sender, amount, idempotencyKey);
 		transactionWriteService.saveWithdrawalTransaction(withdrawal);
 	}
 
