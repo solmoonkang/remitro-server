@@ -9,14 +9,19 @@ import com.remitro.account.application.dto.request.AccountDepositRequest;
 import com.remitro.account.application.dto.request.AccountPasswordRequest;
 import com.remitro.account.application.dto.request.AccountWithdrawRequest;
 import com.remitro.account.application.dto.request.CreateAccountRequest;
+import com.remitro.account.application.dto.request.CreatePublishedEventRequest;
 import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.dto.request.UpdateStatusRequest;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.mapper.AccountMapper;
+import com.remitro.account.application.mapper.EventMapper;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
-import com.remitro.account.infrastructure.event.AccountEventProducer;
 import com.remitro.common.auth.model.AuthMember;
+import com.remitro.common.common.entity.enums.EventType;
+import com.remitro.common.common.event.DepositEventMessage;
+import com.remitro.common.common.event.TransferEventMessage;
+import com.remitro.common.common.event.WithdrawEventMessage;
 import com.remitro.member.domain.model.Member;
 import com.remitro.member.domain.service.MemberReadService;
 
@@ -31,7 +36,7 @@ public class AccountService {
 	private final MemberReadService memberReadService;
 	private final AccountWriteService accountWriteService;
 	private final AccountReadService accountReadService;
-	private final AccountEventProducer accountEventProducer;
+	private final PublishedEventService publishedEventService;
 
 	@Transactional
 	public void createAccount(AuthMember authMember, CreateAccountRequest createAccountRequest) {
@@ -58,7 +63,10 @@ public class AccountService {
 		accountValidator.validateAmountPositive(accountDepositRequest.amount());
 		final Account receiver = accountReadService.findAccountById(accountId);
 		receiver.deposit(accountDepositRequest.amount());
-		accountEventProducer.publishDepositEvent(receiver.getAccountNumber(), accountDepositRequest.amount());
+
+		final DepositEventMessage depositEventMessage = EventMapper.toDepositEventMessage(
+			receiver.getAccountNumber(), accountDepositRequest.amount());
+		recordPublishedEventForAccount(receiver, EventType.DEPOSIT_EVENT, depositEventMessage);
 	}
 
 	@Transactional
@@ -67,7 +75,10 @@ public class AccountService {
 		final Account sender = accountReadService.findAccountById(accountId);
 		accountValidator.validateAccountPasswordMatch(accountWithdrawRequest.password(), sender.getPassword());
 		sender.withdraw(accountWithdrawRequest.amount());
-		accountEventProducer.publishWithdrawalEvent(sender.getAccountNumber(), accountWithdrawRequest.amount());
+
+		final WithdrawEventMessage withdrawEventMessage = EventMapper.toWithdrawEventMessage(
+			sender.getAccountNumber(), accountWithdrawRequest.amount());
+		recordPublishedEventForAccount(sender, EventType.WITHDRAWAL_EVENT, withdrawEventMessage);
 	}
 
 	@Transactional
@@ -83,8 +94,9 @@ public class AccountService {
 		sender.withdraw(transferFormRequest.amount());
 		receiver.deposit(transferFormRequest.amount());
 
-		accountEventProducer.publishTransferEvent(
+		final TransferEventMessage transferEventMessage = EventMapper.toTransferEventMessage(
 			sender.getAccountNumber(), receiver.getAccountNumber(), transferFormRequest.amount());
+		recordPublishedEventForAccount(sender, EventType.TRANSFER_EVENT, transferEventMessage);
 	}
 
 	@Transactional
@@ -93,5 +105,11 @@ public class AccountService {
 		accountValidator.validateAccountAccess(account.getMember().getId(), authMember.id());
 		accountValidator.validateAccountPasswordMatch(updateStatusRequest.password(), account.getPassword());
 		accountWriteService.updateAccountStatus(account, updateStatusRequest);
+	}
+
+	private <T> void recordPublishedEventForAccount(Account account, EventType eventType, T eventMessage) {
+		final CreatePublishedEventRequest createPublishedEventRequest = EventMapper.toCreatePublishedEventRequest(
+			account, eventType, eventMessage);
+		publishedEventService.recordPublishedEvent(createPublishedEventRequest);
 	}
 }
