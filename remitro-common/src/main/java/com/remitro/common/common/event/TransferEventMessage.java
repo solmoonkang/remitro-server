@@ -1,12 +1,10 @@
 package com.remitro.common.common.event;
 
-public record TransactionEventMessage(
+public record TransferEventMessage(
 	String senderAccountNumber,
 
 	String receiverAccountNumber,
 
-	Long amount,
-
-	String transactionType
+	Long amount
 ) {
 }
