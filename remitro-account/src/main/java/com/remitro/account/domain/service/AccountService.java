@@ -83,8 +83,8 @@ public class AccountService {
 
 	@Transactional
 	public void transferToAccount(AuthMember authMember, Long accountId, TransferFormRequest transferFormRequest) {
-		final Account sender = accountReadService.findAccountById(accountId);
-		final Account receiver = accountReadService.findAccountByNumber(transferFormRequest.receiverAccountNumber());
+		final Account sender = findAndLockSenderAccount(accountId, transferFormRequest.receiverAccountNumber());
+		final Account receiver = findAndLockReceiverAccount(accountId, transferFormRequest.receiverAccountNumber());
 
 		accountValidator.validateAccountAccess(sender.getMember().getId(), authMember.id());
 		accountValidator.validateAccountPasswordMatch(transferFormRequest.password(), sender.getPassword());
@@ -95,7 +95,7 @@ public class AccountService {
 		receiver.deposit(transferFormRequest.amount());
 
 		final TransferEventMessage transferEventMessage = EventMapper.toTransferEventMessage(
-			sender.getAccountNumber(), receiver.getAccountNumber(), transferFormRequest.amount());
+			sender, receiver, transferFormRequest);
 		recordPublishedEventForAccount(sender, EventType.TRANSFER_EVENT, transferEventMessage);
 	}
 
@@ -111,5 +111,27 @@ public class AccountService {
 		final CreatePublishedEventRequest createPublishedEventRequest = EventMapper.toCreatePublishedEventRequest(
 			account, eventType, eventMessage);
 		publishedEventService.recordPublishedEvent(createPublishedEventRequest);
+	}
+
+	private Account findAndLockSenderAccount(Long senderAccountId, String receiverAccountNumber) {
+		final Long receiverAccountId = accountReadService.findAccountIdByNumber(receiverAccountNumber);
+
+		if (senderAccountId < receiverAccountId) {
+			return accountReadService.findAccountById(senderAccountId);
+		}
+
+		accountReadService.findAccountById(receiverAccountId);
+		return accountReadService.findAccountById(senderAccountId);
+	}
+
+	private Account findAndLockReceiverAccount(Long senderAccountId, String receiverAccountNumber) {
+		final Long receiverAccountId = accountReadService.findAccountIdByNumber(receiverAccountNumber);
+
+		if (senderAccountId < receiverAccountId) {
+			accountReadService.findAccountById(senderAccountId);
+			return accountReadService.findAccountById(receiverAccountId);
+		}
+
+		return accountReadService.findAccountById(receiverAccountId);
 	}
 }
