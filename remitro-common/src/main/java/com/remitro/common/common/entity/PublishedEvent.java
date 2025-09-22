@@ -65,7 +65,7 @@ public class PublishedEvent extends BaseTimeEntity {
 		return new PublishedEvent(eventId, aggregateId, aggregateType, eventType, eventData);
 	}
 
-	public void updateEventStatus() {
+	public void markAsPublished() {
 		this.eventStatus = EventStatus.PUBLISHED;
 	}
 }
