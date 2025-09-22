@@ -30,4 +30,9 @@ public class AccountReadService {
 		return accountRepository.findByAccountNumber(accountNumber)
 			.orElseThrow(() -> new NotFoundException(ErrorMessage.ACCOUNT_NOT_FOUND));
 	}
+
+	public Long findAccountIdByNumber(String accountNumber) {
+		return accountRepository.findAccountIdByAccountNumber(accountNumber)
+			.orElseThrow(() -> new NotFoundException(ErrorMessage.ACCOUNT_NOT_FOUND));
+	}
 }
