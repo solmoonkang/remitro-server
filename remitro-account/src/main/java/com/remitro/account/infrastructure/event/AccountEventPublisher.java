@@ -33,6 +33,7 @@ public class AccountEventPublisher {
 		final List<PublishedEvent> pendingEvents = publishedEventRepository.findPendingEvents(PENDING, BATCH_SIZE);
 		validateIfNoEvents(pendingEvents);
 		pendingEvents.forEach(this::processAndSendEvent);
+		log.info("[✅ LOGGER] PENDING 이벤트 발행 처리를 완료했습니다.");
 	}
 
 	private void processAndSendEvent(PublishedEvent publishedEvent) {
@@ -40,7 +41,7 @@ public class AccountEventPublisher {
 			publishedEvent.getEventType().name(), publishedEvent.getEventId(), publishedEvent.getEventData());
 
 		kafkaTemplate.send(producerRecord).thenAccept(success -> {
-				publishedEvent.updateEventStatus();
+				publishedEvent.markAsPublished();
 				log.info("[✅ LOGGER] KAFKA 메시지 발행 성공");
 			})
 			.exceptionally(failure -> {
