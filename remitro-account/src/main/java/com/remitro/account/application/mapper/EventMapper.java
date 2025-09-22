@@ -3,6 +3,7 @@ package com.remitro.account.application.mapper;
 import java.util.UUID;
 
 import com.remitro.account.application.dto.request.CreatePublishedEventRequest;
+import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.domain.model.Account;
 import com.remitro.common.common.entity.enums.AggregateType;
 import com.remitro.common.common.entity.enums.EventType;
@@ -32,9 +33,10 @@ public class EventMapper {
 		return new WithdrawEventMessage(senderAccountNumber, amount);
 	}
 
-	public static TransferEventMessage toTransferEventMessage(String senderAccountNumber, String receiverAccountNumber,
-		Long amount) {
+	public static TransferEventMessage toTransferEventMessage(Account senderAccount, Account receiverAccount,
+		TransferFormRequest transferFormRequest) {
 
-		return new TransferEventMessage(senderAccountNumber, receiverAccountNumber, amount);
+		return new TransferEventMessage(senderAccount.getAccountNumber(), receiverAccount.getAccountNumber(),
+			transferFormRequest.amount());
 	}
 }
