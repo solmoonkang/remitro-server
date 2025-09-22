@@ -31,7 +31,7 @@ public class TransactionEventConsumer {
 			case TRANSFER -> handleTransferEvent(eventMessage);
 			case DEPOSIT -> handleDepositEvent(eventMessage);
 			case WITHDRAWAL -> handleWithdrawalEvent(eventMessage);
-			default -> throw new IllegalStateException("UNEXPECTED VALUE = " + eventMessage.transactionType());
+			default -> throw new IllegalStateException("[❎ ERROR] UNEXPECTED VALUE = " + eventMessage.transactionType());
 		}
 	}
 
