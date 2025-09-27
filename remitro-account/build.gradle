@@ -42,6 +42,12 @@ dependencies {
     // Spring Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // Spring Data Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.33.0'
+
     // Bean Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
