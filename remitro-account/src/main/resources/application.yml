@@ -5,6 +5,14 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
 
+  data:
+    redis:
+      url: redis://localhost:6379
+
+redisson:
+  singleServerConfig:
+    address: redis://localhost:6379
+
 server:
   port: 8082
 
