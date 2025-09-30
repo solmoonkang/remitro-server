@@ -4,7 +4,7 @@ import org.redisson.api.RLock;
 
 public interface DistributedLockRepository {
 
-	RLock getLock(String key);
+	RLock getLock(Long accountId);
 
-	RLock getMultiLock(String keyA, String keyB);
+	RLock getMultiLock(Long senderAccountId, Long receiverAccountId);
 }
