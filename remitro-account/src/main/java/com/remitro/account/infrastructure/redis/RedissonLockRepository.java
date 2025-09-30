@@ -12,23 +12,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RedissonLockRepository implements DistributedLockRepository {
 
-	public static final String DISTRIBUTED_LOCK_PREFIX = "redission:lock:";
+	public static final String DISTRIBUTED_LOCK_PREFIX = "REDISSON:LOCK:";
 
 	private final RedissonClient redissonClient;
 
 	@Override
-	public RLock getLock(String key) {
-		return redissonClient.getLock(generateLockKey(key));
+	public RLock getLock(Long accountId) {
+		return redissonClient.getLock(generateLockKey(accountId));
 	}
 
 	@Override
-	public RLock getMultiLock(String keyA, String keyB) {
-		final RLock lockA = redissonClient.getLock(generateLockKey(keyA));
-		final RLock lockB = redissonClient.getLock(generateLockKey(keyB));
+	public RLock getMultiLock(Long senderAccountId, Long receiverAccountId) {
+		final RLock lockA = redissonClient.getLock(generateLockKey(senderAccountId));
+		final RLock lockB = redissonClient.getLock(generateLockKey(receiverAccountId));
 		return redissonClient.getMultiLock(lockA, lockB);
 	}
 
-	private String generateLockKey(String key) {
-		return DISTRIBUTED_LOCK_PREFIX + key;
+	private String generateLockKey(Long accountId) {
+		return DISTRIBUTED_LOCK_PREFIX + accountId;
 	}
 }
