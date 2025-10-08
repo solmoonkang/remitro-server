@@ -99,26 +99,4 @@ public class AccountService {
 		accountValidator.validateAccountPasswordMatch(updateStatusRequest.password(), account.getPassword());
 		accountWriteService.updateAccountStatus(account, updateStatusRequest);
 	}
-
-	private Account findAndLockSenderAccount(Long senderAccountId, String receiverAccountNumber) {
-		final Long receiverAccountId = accountReadService.findAccountIdByNumber(receiverAccountNumber);
-
-		if (senderAccountId < receiverAccountId) {
-			return accountReadService.findAccountById(senderAccountId);
-		}
-
-		accountReadService.findAccountById(receiverAccountId);
-		return accountReadService.findAccountById(senderAccountId);
-	}
-
-	private Account findAndLockReceiverAccount(Long senderAccountId, String receiverAccountNumber) {
-		final Long receiverAccountId = accountReadService.findAccountIdByNumber(receiverAccountNumber);
-
-		if (senderAccountId < receiverAccountId) {
-			accountReadService.findAccountById(senderAccountId);
-			return accountReadService.findAccountById(receiverAccountId);
-		}
-
-		return accountReadService.findAccountById(receiverAccountId);
-	}
 }
