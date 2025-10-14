@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class DistributedLockManager {
 
 	public static final long MAX_LOCK_WAIT_TIME = 2000L;
-	public static final long MAX_LOCK_LEASE_TIME = 5000L;
 
 	private final DistributedLockRepository distributedLockRepository;
 
@@ -58,7 +57,7 @@ public class DistributedLockManager {
 	}
 
 	private void validateLockAcquired(RLock rLock) throws InterruptedException {
-		if (!rLock.tryLock(MAX_LOCK_WAIT_TIME, MAX_LOCK_LEASE_TIME, TimeUnit.MILLISECONDS)) {
+		if (!rLock.tryLock(MAX_LOCK_WAIT_TIME, TimeUnit.MILLISECONDS)) {
 			throw new ConflictException(ErrorMessage.LOCK_ACQUISITION_FAILED);
 		}
 	}
