@@ -18,7 +18,11 @@ public class RedissonConfig {
 	@Bean
 	public RedissonClient redissonClient() {
 		Config config = new Config();
-		config.useSingleServer().setAddress(redisProperties.getUrl());
+		String redisAddress = String.format("redis://%s:%d",
+			redisProperties.getHost(),
+			redisProperties.getPort());
+
+		config.useSingleServer().setAddress(redisAddress);
 		return Redisson.create(config);
 	}
 }
