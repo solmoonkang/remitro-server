@@ -7,7 +7,7 @@ import lombok.Builder;
 
 @Builder
 @Schema(description = "계좌 출금 요청 DTO")
-public record AccountWithdrawRequest(
+public record WithdrawFormRequest(
 	@Min(value = 1, message = "출금액은 1원 이상이어야 합니다.")
 	@Schema(description = "출금 금액", example = "1,000L")
 	Long amount,
