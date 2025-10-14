@@ -13,14 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.account.application.dto.request.AccountDepositRequest;
+import com.remitro.account.application.dto.request.DepositFormRequest;
 import com.remitro.account.application.dto.request.AccountPasswordRequest;
-import com.remitro.account.application.dto.request.AccountWithdrawRequest;
+import com.remitro.account.application.dto.request.WithdrawFormRequest;
 import com.remitro.account.application.dto.request.CreateAccountRequest;
 import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.dto.request.UpdateStatusRequest;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
+import com.remitro.account.domain.service.AccountDepositService;
 import com.remitro.account.domain.service.AccountService;
+import com.remitro.account.domain.service.AccountTransferService;
+import com.remitro.account.domain.service.AccountWithdrawService;
 import com.remitro.common.auth.annotation.Auth;
 import com.remitro.common.auth.model.AuthMember;
 
@@ -38,6 +41,9 @@ import lombok.RequiredArgsConstructor;
 public class AccountController {
 
 	private final AccountService accountService;
+	private final AccountDepositService accountDepositService;
+	private final AccountWithdrawService accountWithdrawService;
+	private final AccountTransferService accountTransferService;
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -96,9 +102,9 @@ public class AccountController {
 	})
 	public ResponseEntity<?> depositToAccount(
 		@PathVariable Long accountId,
-		@Valid @RequestBody AccountDepositRequest accountDepositRequest) {
+		@Valid @RequestBody DepositFormRequest depositFormRequest) {
 
-		accountService.depositToAccount(accountId, accountDepositRequest);
+		accountDepositService.depositToAccount(accountId, depositFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 입금이 성공적으로 완료되었습니다.");
 	}
 
@@ -113,9 +119,9 @@ public class AccountController {
 	})
 	public ResponseEntity<?> withdrawToAccount(
 		@PathVariable Long accountId,
-		@Valid @RequestBody AccountWithdrawRequest accountWithdrawRequest) {
+		@Valid @RequestBody WithdrawFormRequest withdrawFormRequest) {
 
-		accountService.withdrawToAccount(accountId, accountWithdrawRequest);
+		accountWithdrawService.withdrawToAccount(accountId, withdrawFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 출금이 성공적으로 완료되었습니다.");
 	}
 
@@ -134,7 +140,7 @@ public class AccountController {
 		@PathVariable Long accountId,
 		@Valid @RequestBody TransferFormRequest transferFormRequest) {
 
-		accountService.transferToAccount(authMember, accountId, transferFormRequest);
+		accountTransferService.transferToAccount(authMember, accountId, transferFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 송금이 성공적으로 완료되었습니다.");
 	}
 
