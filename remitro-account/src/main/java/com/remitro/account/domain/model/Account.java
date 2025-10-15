@@ -73,6 +73,7 @@ public class Account extends BaseTimeEntity {
 
 	public static Account createAccount(Member member, String accountNumber, String accountName, String password,
 		AccountType accountType) {
+
 		return new Account(member, accountNumber, accountName, password, accountType);
 	}
 
@@ -81,10 +82,6 @@ public class Account extends BaseTimeEntity {
 	}
 
 	public void withdraw(Long amount) {
-		if (this.balance < amount) {
-			throw new BadRequestException(ErrorMessage.INSUFFICIENT_FUNDS);
-		}
-
 		this.balance -= amount;
 	}
 
