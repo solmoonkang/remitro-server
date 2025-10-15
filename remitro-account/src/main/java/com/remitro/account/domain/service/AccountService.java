@@ -23,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountService {
 
+	// TODO: 이벤트 발행의 롤백 위험 (process... 트랜잭션 내에서 이벤트 기록 실패 시 금융 거래 전체 롤백 위험)
+
 	private final AccountValidator accountValidator;
 	private final MemberReadService memberReadService;
 	private final AccountWriteService accountWriteService;

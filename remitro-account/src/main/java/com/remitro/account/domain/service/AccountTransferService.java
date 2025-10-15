@@ -18,8 +18,11 @@ public class AccountTransferService {
 	private final DistributedLockManager distributedLockManager;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
+	private final IdempotencyService idempotencyService;
 
-	public void transferToAccount(AuthMember authMember, Long accountId, TransferFormRequest transferFormRequest) {
+	public void transferToAccount(AuthMember authMember, Long accountId, String idempotencyKey, TransferFormRequest transferFormRequest) {
+		idempotencyService.preventDuplicateRequestAndRecordKey(idempotencyKey);
+
 		final Long receiverId = accountReadService.findAccountIdByNumber(transferFormRequest.receiverAccountNumber());
 		final Long keyA = Math.min(accountId, receiverId);
 		final Long keyB = Math.max(accountId, receiverId);

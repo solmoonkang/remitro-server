@@ -17,8 +17,10 @@ public class AccountDepositService {
 	private final DistributedLockManager distributedLockManager;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
+	private final IdempotencyService idempotencyService;
 
-	public void depositToAccount(Long accountId, DepositFormRequest depositFormRequest) {
+	public void depositToAccount(Long accountId, String idempotencyKey, DepositFormRequest depositFormRequest) {
+		idempotencyService.preventDuplicateRequestAndRecordKey(idempotencyKey);
 		accountValidator.validateAmountPositive(depositFormRequest.amount());
 
 		distributedLockManager.executeProtectedDistributedLock(accountId, () -> {
