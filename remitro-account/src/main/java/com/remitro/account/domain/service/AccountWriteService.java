@@ -1,7 +1,9 @@
 package com.remitro.account.domain.service;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -30,7 +32,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AccountWriteService {
 
-	public static final int RANDOM_ACCOUNT_NUMBER_LENGTH = 8;
+	public static final int RANDOM_ACCOUNT_NUMBER_LENGTH = 10;
+	public static final int MAX_RETRY_ATTEMPTS = 3;
 
 	private final PasswordEncoder passwordEncoder;
 	private final AccountRepository accountRepository;
@@ -38,12 +41,8 @@ public class AccountWriteService {
 
 	public void saveAccount(Member member, CreateAccountRequest createAccountRequest) {
 		final AccountType accountType = AccountType.valueOf(createAccountRequest.accountType().toUpperCase());
-		final String accountNumber = accountType.getCode() + generateRandomAccountNumber();
 		final String encodedPassword = passwordEncoder.encode(createAccountRequest.password());
-
-		final Account account = Account.createAccount(
-			member, accountNumber, createAccountRequest.accountName(), encodedPassword, accountType);
-		accountRepository.save(account);
+		retryAccountCreation(member, createAccountRequest, accountType, encodedPassword);
 	}
 
 	public void updateAccountStatus(Account account, UpdateStatusRequest updateStatusRequest) {
@@ -80,14 +79,32 @@ public class AccountWriteService {
 	}
 
 	private String generateRandomAccountNumber() {
-		Random random = new Random();
 		StringBuilder randomNumberBuilder = new StringBuilder();
 
 		for (int i = 0; i < RANDOM_ACCOUNT_NUMBER_LENGTH; i++) {
-			randomNumberBuilder.append(random.nextInt(10));
+			randomNumberBuilder.append(ThreadLocalRandom.current().nextInt(10));
 		}
 
 		return randomNumberBuilder.toString();
+	}
+
+	private void retryAccountCreation(Member member, CreateAccountRequest createAccountRequest, AccountType accountType,
+		String encodedPassword) {
+
+		for (int i = 0; true; i++) {
+			final String accountNumber = accountType.getCode() + generateRandomAccountNumber();
+
+			try {
+				final Account account = Account.createAccount(
+					member, accountNumber, createAccountRequest.accountName(), encodedPassword, accountType);
+				accountRepository.save(account);
+				return;
+			} catch (DataIntegrityViolationException e) {
+				if (i == MAX_RETRY_ATTEMPTS - 1) {
+					throw new RuntimeException("계좌 번호 충돌이 반복되어 계좌 생성에 실패했습니다.");
+				}
+			}
+		}
 	}
 
 	private <T> void recordPublishedEventForAccount(Account account, EventType eventType, T eventMessage) {
