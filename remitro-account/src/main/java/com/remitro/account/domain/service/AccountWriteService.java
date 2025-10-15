@@ -1,6 +1,5 @@
 package com.remitro.account.domain.service;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,6 +23,8 @@ import com.remitro.common.common.entity.enums.EventType;
 import com.remitro.common.common.event.DepositEventMessage;
 import com.remitro.common.common.event.TransferEventMessage;
 import com.remitro.common.common.event.WithdrawEventMessage;
+import com.remitro.common.error.exception.ConflictException;
+import com.remitro.common.error.model.ErrorMessage;
 import com.remitro.member.domain.model.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -101,7 +102,7 @@ public class AccountWriteService {
 				return;
 			} catch (DataIntegrityViolationException e) {
 				if (i == MAX_RETRY_ATTEMPTS - 1) {
-					throw new RuntimeException("계좌 번호 충돌이 반복되어 계좌 생성에 실패했습니다.");
+					throw new ConflictException(ErrorMessage.ACCOUNT_NUMBER_COLLISION);
 				}
 			}
 		}
