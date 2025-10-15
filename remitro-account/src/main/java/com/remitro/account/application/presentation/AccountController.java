@@ -9,16 +9,17 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.account.application.dto.request.DepositFormRequest;
 import com.remitro.account.application.dto.request.AccountPasswordRequest;
-import com.remitro.account.application.dto.request.WithdrawFormRequest;
 import com.remitro.account.application.dto.request.CreateAccountRequest;
+import com.remitro.account.application.dto.request.DepositFormRequest;
 import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.dto.request.UpdateStatusRequest;
+import com.remitro.account.application.dto.request.WithdrawFormRequest;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.domain.service.AccountDepositService;
 import com.remitro.account.domain.service.AccountService;
@@ -102,9 +103,10 @@ public class AccountController {
 	})
 	public ResponseEntity<?> depositToAccount(
 		@PathVariable Long accountId,
+		@RequestHeader(name = "Idempotency-Key") String idempotencyKey,
 		@Valid @RequestBody DepositFormRequest depositFormRequest) {
 
-		accountDepositService.depositToAccount(accountId, depositFormRequest);
+		accountDepositService.depositToAccount(accountId, idempotencyKey, depositFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 입금이 성공적으로 완료되었습니다.");
 	}
 
@@ -119,9 +121,10 @@ public class AccountController {
 	})
 	public ResponseEntity<?> withdrawToAccount(
 		@PathVariable Long accountId,
+		@RequestHeader(name = "Idempotency-Key") String idempotencyKey,
 		@Valid @RequestBody WithdrawFormRequest withdrawFormRequest) {
 
-		accountWithdrawService.withdrawToAccount(accountId, withdrawFormRequest);
+		accountWithdrawService.withdrawToAccount(accountId, idempotencyKey, withdrawFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 출금이 성공적으로 완료되었습니다.");
 	}
 
@@ -138,9 +141,10 @@ public class AccountController {
 	public ResponseEntity<?> transferToAccount(
 		@Auth AuthMember authMember,
 		@PathVariable Long accountId,
+		@RequestHeader(name = "Idempotency-Key") String idempotencyKey,
 		@Valid @RequestBody TransferFormRequest transferFormRequest) {
 
-		accountTransferService.transferToAccount(authMember, accountId, transferFormRequest);
+		accountTransferService.transferToAccount(authMember, accountId, idempotencyKey, transferFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 송금이 성공적으로 완료되었습니다.");
 	}
 
