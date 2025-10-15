@@ -34,8 +34,10 @@ public enum ErrorMessage {
 	IDEMPOTENCY_KEY_DUPLICATED("이미 처리된 거래입니다."),
 	LOCK_ACQUISITION_FAILED("동시성 충돌로 인해 락 획득에 실패했습니다."),
 	LOCK_INTERRUPTED("분산 락 작업 중 스레드 인터럽트가 발생했습니다."),
+	ACCOUNT_NUMBER_COLLISION("계좌 번호 충돌이 반복되어 계좌 생성에 실패했습니다."),
 
 	// 500: INTERNAL SERVER ERROR
+
 	UNKNOWN_SERVER_ERROR("서버에서 알 수 없는 에러가 발생했습니다.");
 
 	private final String message;
