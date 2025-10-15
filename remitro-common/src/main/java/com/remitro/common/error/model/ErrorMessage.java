@@ -35,6 +35,8 @@ public enum ErrorMessage {
 	LOCK_ACQUISITION_FAILED("동시성 충돌로 인해 락 획득에 실패했습니다."),
 	LOCK_INTERRUPTED("분산 락 작업 중 스레드 인터럽트가 발생했습니다."),
 	ACCOUNT_NUMBER_COLLISION("계좌 번호 충돌이 반복되어 계좌 생성에 실패했습니다."),
+	IDEMPOTENCY_KEY_MISSING("멱등성 처리를 위해 요청 헤더에 ID가 누락되었습니다."),
+	DUPLICATE_IDEMPOTENCY_REQUEST("이미 완료된 멱등성 요청으로 처리할 수 없습니다."),
 
 	// 500: INTERNAL SERVER ERROR
 
