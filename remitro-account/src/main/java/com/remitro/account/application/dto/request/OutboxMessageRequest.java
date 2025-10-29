@@ -8,7 +8,7 @@ import lombok.Builder;
 
 @Builder
 @Schema(description = "이벤트 발행 요청 DTO")
-public record CreatePublishedEventRequest(
+public record OutboxMessageRequest(
 	@Schema(description = "이벤트 고유 ID", example = "0f5a7d8c-c2b3-4e4f-b67f-8d9e2a1b3c4d")
 	String eventId,
 
