@@ -1,26 +1,29 @@
-package com.remitro.account.domain.service;
+package com.remitro.account.domain.service.transaction;
 
 import org.springframework.stereotype.Service;
 
 import com.remitro.account.application.dto.request.DepositFormRequest;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
+import com.remitro.account.domain.service.AccountReadService;
+import com.remitro.account.domain.service.AccountWriteService;
+import com.remitro.account.domain.service.support.IdempotencyKeyHandler;
 import com.remitro.account.infrastructure.redis.DistributedLockManager;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AccountDepositService {
+public class DepositTransactionHandler {
 
 	private final AccountValidator accountValidator;
 	private final DistributedLockManager distributedLockManager;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
-	private final IdempotencyService idempotencyService;
+	private final IdempotencyKeyHandler idempotencyKeyHandler;
 
 	public void depositToAccount(Long accountId, String idempotencyKey, DepositFormRequest depositFormRequest) {
-		idempotencyService.preventDuplicateRequestAndRecordKey(idempotencyKey);
+		idempotencyKeyHandler.preventDuplicateRequestAndRecordKey(idempotencyKey);
 		accountValidator.validateAmountPositive(depositFormRequest.amount());
 
 		distributedLockManager.executeProtectedDistributedLock(accountId, () -> {

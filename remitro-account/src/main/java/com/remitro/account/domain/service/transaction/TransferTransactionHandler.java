@@ -1,10 +1,13 @@
-package com.remitro.account.domain.service;
+package com.remitro.account.domain.service.transaction;
 
 import org.springframework.stereotype.Service;
 
 import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
+import com.remitro.account.domain.service.AccountReadService;
+import com.remitro.account.domain.service.AccountWriteService;
+import com.remitro.account.domain.service.support.IdempotencyKeyHandler;
 import com.remitro.account.infrastructure.redis.DistributedLockManager;
 import com.remitro.common.auth.model.AuthMember;
 
@@ -12,16 +15,16 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AccountTransferService {
+public class TransferTransactionHandler {
 
 	private final AccountValidator accountValidator;
 	private final DistributedLockManager distributedLockManager;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
-	private final IdempotencyService idempotencyService;
+	private final IdempotencyKeyHandler idempotencyKeyHandler;
 
 	public void transferToAccount(AuthMember authMember, Long accountId, String idempotencyKey, TransferFormRequest transferFormRequest) {
-		idempotencyService.preventDuplicateRequestAndRecordKey(idempotencyKey);
+		idempotencyKeyHandler.preventDuplicateRequestAndRecordKey(idempotencyKey);
 
 		final Long receiverId = accountReadService.findAccountIdByNumber(transferFormRequest.receiverAccountNumber());
 		final Long keyA = Math.min(accountId, receiverId);
