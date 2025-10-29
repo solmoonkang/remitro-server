@@ -1,5 +1,6 @@
-package com.remitro.common.common.entity;
+package com.remitro.account.infrastructure.outbox.model;
 
+import com.remitro.common.common.entity.BaseTimeEntity;
 import com.remitro.common.common.entity.enums.AggregateType;
 import com.remitro.common.common.entity.enums.EventStatus;
 import com.remitro.common.common.entity.enums.EventType;
@@ -18,9 +19,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "PUBLISHED_EVENTS")
+@Table(name = "OUTBOX_MESSAGES")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PublishedEvent extends BaseTimeEntity {
+public class OutboxMessage extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +49,7 @@ public class PublishedEvent extends BaseTimeEntity {
 	@Column(name = "event_status", nullable = false)
 	private EventStatus eventStatus;
 
-	private PublishedEvent(String eventId, Long aggregateId, AggregateType aggregateType, EventType eventType,
+	private OutboxMessage(String eventId, Long aggregateId, AggregateType aggregateType, EventType eventType,
 		String eventData) {
 
 		this.eventId = eventId;
@@ -59,10 +60,10 @@ public class PublishedEvent extends BaseTimeEntity {
 		this.eventStatus = EventStatus.PENDING;
 	}
 
-	public static PublishedEvent createPublishedEvent(String eventId, Long aggregateId, AggregateType aggregateType,
+	public static OutboxMessage createOutboxMessage(String eventId, Long aggregateId, AggregateType aggregateType,
 		EventType eventType, String eventData) {
 
-		return new PublishedEvent(eventId, aggregateId, aggregateType, eventType, eventData);
+		return new OutboxMessage(eventId, aggregateId, aggregateType, eventType, eventData);
 	}
 
 	public void markAsPublished() {
