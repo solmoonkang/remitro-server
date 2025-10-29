@@ -21,10 +21,10 @@ import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.dto.request.UpdateStatusRequest;
 import com.remitro.account.application.dto.request.WithdrawFormRequest;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
-import com.remitro.account.domain.service.AccountDepositService;
+import com.remitro.account.domain.service.transaction.DepositTransactionHandler;
 import com.remitro.account.domain.service.AccountService;
-import com.remitro.account.domain.service.AccountTransferService;
-import com.remitro.account.domain.service.AccountWithdrawService;
+import com.remitro.account.domain.service.transaction.TransferTransactionHandler;
+import com.remitro.account.domain.service.transaction.WithdrawTransactionHandler;
 import com.remitro.common.auth.annotation.Auth;
 import com.remitro.common.auth.model.AuthMember;
 
@@ -42,9 +42,9 @@ import lombok.RequiredArgsConstructor;
 public class AccountController {
 
 	private final AccountService accountService;
-	private final AccountDepositService accountDepositService;
-	private final AccountWithdrawService accountWithdrawService;
-	private final AccountTransferService accountTransferService;
+	private final DepositTransactionHandler depositTransactionHandler;
+	private final WithdrawTransactionHandler withdrawTransactionHandler;
+	private final TransferTransactionHandler transferTransactionHandler;
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -106,7 +106,7 @@ public class AccountController {
 		@RequestHeader(name = "Idempotency-Key") String idempotencyKey,
 		@Valid @RequestBody DepositFormRequest depositFormRequest) {
 
-		accountDepositService.depositToAccount(accountId, idempotencyKey, depositFormRequest);
+		depositTransactionHandler.depositToAccount(accountId, idempotencyKey, depositFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 입금이 성공적으로 완료되었습니다.");
 	}
 
@@ -124,7 +124,7 @@ public class AccountController {
 		@RequestHeader(name = "Idempotency-Key") String idempotencyKey,
 		@Valid @RequestBody WithdrawFormRequest withdrawFormRequest) {
 
-		accountWithdrawService.withdrawToAccount(accountId, idempotencyKey, withdrawFormRequest);
+		withdrawTransactionHandler.withdrawToAccount(accountId, idempotencyKey, withdrawFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 출금이 성공적으로 완료되었습니다.");
 	}
 
@@ -144,7 +144,7 @@ public class AccountController {
 		@RequestHeader(name = "Idempotency-Key") String idempotencyKey,
 		@Valid @RequestBody TransferFormRequest transferFormRequest) {
 
-		accountTransferService.transferToAccount(authMember, accountId, idempotencyKey, transferFormRequest);
+		transferTransactionHandler.transferToAccount(authMember, accountId, idempotencyKey, transferFormRequest);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 송금이 성공적으로 완료되었습니다.");
 	}
 

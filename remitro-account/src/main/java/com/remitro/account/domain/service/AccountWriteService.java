@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.dto.request.CreateAccountRequest;
-import com.remitro.account.application.dto.request.CreatePublishedEventRequest;
+import com.remitro.account.application.dto.request.OutboxMessageRequest;
 import com.remitro.account.application.dto.request.DepositFormRequest;
 import com.remitro.account.application.dto.request.TransferFormRequest;
 import com.remitro.account.application.dto.request.UpdateStatusRequest;
@@ -19,6 +19,7 @@ import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.account.domain.model.enums.AccountType;
 import com.remitro.account.domain.repository.AccountRepository;
+import com.remitro.account.domain.service.support.OutboxMessageHandler;
 import com.remitro.common.common.entity.enums.EventType;
 import com.remitro.common.common.event.DepositEventMessage;
 import com.remitro.common.common.event.TransferEventMessage;
@@ -38,7 +39,7 @@ public class AccountWriteService {
 
 	private final PasswordEncoder passwordEncoder;
 	private final AccountRepository accountRepository;
-	private final PublishedEventService publishedEventService;
+	private final OutboxMessageHandler outboxMessageHandler;
 
 	public void saveAccount(Member member, CreateAccountRequest createAccountRequest) {
 		final AccountType accountType = AccountType.valueOf(createAccountRequest.accountType().toUpperCase());
@@ -109,8 +110,8 @@ public class AccountWriteService {
 	}
 
 	private <T> void recordPublishedEventForAccount(Account account, EventType eventType, T eventMessage) {
-		final CreatePublishedEventRequest createPublishedEventRequest = EventMapper.toCreatePublishedEventRequest(
+		final OutboxMessageRequest outboxMessageRequest = EventMapper.toOutboxMessageRequest(
 			account, eventType, eventMessage);
-		publishedEventService.recordPublishedEvent(createPublishedEventRequest);
+		outboxMessageHandler.recordOutboxMessage(outboxMessageRequest);
 	}
 }
