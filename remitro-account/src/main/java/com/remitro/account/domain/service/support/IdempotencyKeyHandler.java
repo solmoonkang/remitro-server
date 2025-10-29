@@ -1,4 +1,4 @@
-package com.remitro.account.domain.service;
+package com.remitro.account.domain.service.support;
 
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class IdempotencyService {
+public class IdempotencyKeyHandler {
 
 	public static final long IDEMPOTENCY_EXPIRATION_TIME = 3600;
 

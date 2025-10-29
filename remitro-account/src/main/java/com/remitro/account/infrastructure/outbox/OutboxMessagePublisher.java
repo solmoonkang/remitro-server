@@ -1,4 +1,4 @@
-package com.remitro.account.infrastructure.event;
+package com.remitro.account.infrastructure.outbox;
 
 import static com.remitro.common.common.entity.enums.EventStatus.*;
 
@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.account.infrastructure.repository.PublishedEventRepository;
-import com.remitro.common.common.entity.PublishedEvent;
+import com.remitro.account.infrastructure.outbox.model.OutboxMessage;
+import com.remitro.account.infrastructure.outbox.repository.OutboxMessageRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,24 +19,24 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AccountEventPublisher {
+public class OutboxMessagePublisher {
 
 	public static final long FIXED_DELAY_MILLISECONDS = 1000L;
 	public static final int BATCH_SIZE = 100;
 
 	private final KafkaTemplate<String, String> kafkaTemplate;
-	private final PublishedEventRepository publishedEventRepository;
+	private final OutboxMessageRepository outboxMessageRepository;
 
 	@Scheduled(fixedDelay = FIXED_DELAY_MILLISECONDS)
 	@Transactional
 	public void publishPendingEvents() {
-		final List<PublishedEvent> pendingEvents = publishedEventRepository.findPendingEvents(PENDING, BATCH_SIZE);
+		final List<OutboxMessage> pendingEvents = outboxMessageRepository.findPendingEvents(PENDING, BATCH_SIZE);
 		validateIfNoEvents(pendingEvents);
 		pendingEvents.forEach(this::processAndSendEvent);
 		log.info("[✅ LOGGER] PENDING 이벤트 발행 처리를 완료했습니다.");
 	}
 
-	private void processAndSendEvent(PublishedEvent publishedEvent) {
+	private void processAndSendEvent(OutboxMessage publishedEvent) {
 		final ProducerRecord<String, String> producerRecord = new ProducerRecord<>(
 			publishedEvent.getEventType().name(), publishedEvent.getEventId(), publishedEvent.getEventData());
 
@@ -50,7 +50,7 @@ public class AccountEventPublisher {
 			});
 	}
 
-	private void validateIfNoEvents(List<PublishedEvent> pendingEvents) {
+	private void validateIfNoEvents(List<OutboxMessage> pendingEvents) {
 		if (pendingEvents.isEmpty()) {
 			log.info("[✅ LOGGER] 발행할 PENDING 이벤트가 없습니다.");
 			return;
