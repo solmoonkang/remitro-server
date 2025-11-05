@@ -31,6 +31,7 @@ public enum ErrorMessage {
 	// 409: CONFLICT
 	EMAIL_DUPLICATED("이미 사용중인 이메일입니다."),
 	NICKNAME_DUPLICATED("이미 사용중인 닉네임입니다."),
+	PHONE_NUMBER_DUPLICATED("이미 사용중인 전화번호입니다."),
 	IDEMPOTENCY_KEY_DUPLICATED("이미 처리된 거래입니다."),
 	LOCK_ACQUISITION_FAILED("동시성 충돌로 인해 락 획득에 실패했습니다."),
 	LOCK_INTERRUPTED("분산 락 작업 중 스레드 인터럽트가 발생했습니다."),
