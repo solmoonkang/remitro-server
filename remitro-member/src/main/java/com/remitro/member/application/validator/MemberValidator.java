@@ -29,6 +29,12 @@ public class MemberValidator {
 		}
 	}
 
+	public void validatePhoneNumberNotDuplicated(String phoneNumber) {
+		if (memberRepository.existsByPhoneNumber(phoneNumber)) {
+			throw new ConflictException(ErrorMessage.PHONE_NUMBER_DUPLICATED);
+		}
+	}
+
 	public void validatePasswordMatche(String password, String checkPassword) {
 		if (!password.equals(checkPassword)) {
 			throw new BadRequestException(ErrorMessage.INVALID_PASSWORD);
