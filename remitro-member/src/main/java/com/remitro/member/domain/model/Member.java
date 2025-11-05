@@ -4,6 +4,8 @@ import com.remitro.common.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,23 +28,32 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "email", unique = true, nullable = false)
 	private String email;
 
-	@Column(name = "password", nullable = false)
-	private String password;
+	@Column(name = "hashed_password", nullable = false)
+	private String hashedPassword;
 
 	@Column(name = "nickname", unique = true, nullable = false)
 	private String nickname;
 
+	@Column(name = "phone_number", unique = true, nullable = false)
+	private String phoneNumber;
+
 	@Column(name = "refresh_token")
 	private String refreshToken;
 
-	private Member(String email, String password, String nickname) {
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role", nullable = false)
+	private Role role;
+
+	private Member(String email, String hashedPassword, String nickname, String phoneNumber) {
 		this.email = email;
-		this.password = password;
+		this.hashedPassword = hashedPassword;
 		this.nickname = nickname;
+		this.phoneNumber = phoneNumber;
+		this.role = Role.USER;
 	}
 
-	public static Member createMember(String email, String password, String nickname) {
-		return new Member(email, password, nickname);
+	public static Member createMember(String email, String password, String nickname, String phoneNumber) {
+		return new Member(email, password, nickname, phoneNumber);
 	}
 
 	public void updateRefreshToken(String refreshToken) {
