@@ -1,61 +1,67 @@
-# Remitro Server
+# 💸 REMITRO-SERVER: 금융 비즈니스 백엔드 심층 분석 프로젝트
 
-### 프로젝트 소개
+### 🚀프로젝트 목표 및 구현 취지
 
-Remitro Server는 온라인 뱅킹 서비스를 위한 마이크로서비스 기반 백엔드 시스템입니다. 계좌, 회원, 거래내역 등 독립적인 서비스로 구성되어 유연성과 확장성을 높였습니다.
+본 프로젝트는 금융 시스템의 내부 동작 원리와 핵심 비즈니스 규칙을 깊이 있게 탐구하고 직접 구현하는 것을 목표로 합니다.
+
+단순한 기능 구현을 넘어, 복잡한 비즈니스 환경에 대한 이해와 대처 능력을 기르는 것에 중점을 둡니다.
+
+#### 학습 목표
+
+- **정합성 및 트랜잭션**: 금융 비즈니스의 최우선 가치인 데이터 정합성을 보장하는 **분산 트랜잭션 처리 기법** (Outbox Pattern, 분산 락)을 학습하고 구현합니다.
+- **동시성 제어**: 다중 사용자 환경에서 잔액 불일치(Race Condition)를 방지하는 **동시성 제어 메커니즘**을 심도 있게 이해하고 적용합니다.
+- **보안 탐구**: 금융 거래에 필수적인 **이중 인증, 멱등성 보장, 안전한 데이터 저장** 등 보안 정책을 직접 설계하고 구현합니다.
+- **MSA 아키텍처**: 서비스 디스커버리, 게이트웨이 등 실제 마이크로 서비스 환경을 구성하고 운영하는 경험을 획득합니다.
 
 ---
 
-### 아키텍처
+### 🛠️아키텍처 및 모듈 구조
 
 ![마이크로서비스 아키텍처 다이어그램](image/microservice-architecture-diagram.jpeg)
 
-* **마이크로서비스**: 각 비즈니스 도메인(회원, 계좌, 거래)이 독립적인 서비스로 분리되어 있습니다.
-* **서비스 디스커버리**: 유레카 서버를 통해 각 서비스의 위치를 관리합니다.
-* **API 게이트웨이**: 모든 외부 요청의 단일 진입점으로, 요청을 적절한 서비스로 라우팅합니다.
+#### 모듈 구조
+
+| 모듈명               | 책임 영역                   | 특징                                   |
+|-------------------|-------------------------|--------------------------------------|
+| **api-gateway**   | 단일 진입점, 라우팅, 인증 필터      | 서비스별 요청 분산, 공통 보안 처리                 |
+| **eureka-server** | 서비스 디스커버리               | MSA 내 서비스 위치 등록 및 조회                 |
+| **member**        | 사용자 인증, 회원 정보 관리        | JWT 발급, 로그인/회원가입 처리                  |
+| **account**       | 핵심 계좌 및 잔액 관리           | 쓰기(Command) 전용, 분산 락, 멱등성, Outbox 적용 |
+| **transaction**   | 거래 원장 기록 및 조회           | 읽기(Query) 전용, Kafka 이벤트 수신, 불변 원장 기록 |
+| **common**        | 공통 DTO, Exception, Util | 모든 모듈이 공유하는 공통 클래스 및 정의              |
+
+#### 핵심 기술 스택
+
+| 영역          | 기술                                   | 활용 목적                         |
+|-------------|--------------------------------------|-------------------------------|
+| **서비스 인프라** | Netflix Eureka, Spring Cloud Gateway | MSA 서비스 관리 및 라우팅              |
+| **동시성/캐시**  | Redis (Redisson)                     | 분산 락을 통한 잔액 직렬화, 멱등성 키 저장     |
+| **메시징/정합성** | Apache Kafka                         | Outbox Pattern을 통한 이벤트 비동기 전파 |
 
 ---
 
-### 기술 스택
+### 🔒핵심 비즈니스 및 보안 정책
 
-| 분류          | 기술                                          | 아이콘                                                                                                                                                                                                                                                          |
-|-------------|---------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **백엔드**     | Java 17<br>Spring Boot 3.5.5                | ![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white)<br>![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)                                     |
-| **서비스 관리**  | Spring Cloud Eureka<br>Spring Cloud Gateway | ![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-6DB33F?style=for-the-badge&logo=spring&logoColor=white)<br>![Spring Cloud Gateway](https://img.shields.io/badge/Spring%20Cloud%20Gateway-6DB33F?style=for-the-badge&logo=spring&logoColor=white) |
-| **데이터베이스**  | MySQL<br>H2 (테스트용)                          | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)<br>![H2 Database](https://img.shields.io/badge/H2%20Database-4479A1?style=for-the-badge&logo=h2&logoColor=white)                                          |
-| **API 문서화** | Swagger (OpenAPI 3.0)                       | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white)                                                                                                                                                     |
-| **의존성 관리**  | Gradle                                      | ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)                                                                                                                                                        |
+#### 데이터 정합성 및 동시성 정책
 
----
+- **트랜잭션 원자성**: 계좌 잔액의 변경과 해당 거래에 대한 이벤트 기록(Outbox)은 DB에서 단일 트랜잭션으로 묶여야 합니다.
+- **잔액 직렬화(Locking)**: 하나의 계좌에 대한 모든 잔액 변경 요청(입/출금)은 분산 락을 통해 순차적으로(직렬화) 처리되어야 합니다.
+- **교착 상태 방지**: 송금 거래 시, 송금 계좌와 수취 계좌 두 개에 락을 걸어야 합니다. 이떄 락을 획득하는 순서는 계좌 ID를 기준으로 오름차순하여 영구적인 교착 상태(Deadlock)을 방지합니다.
+- **원장 불변성**: transaction 모듈에 기록된 거래 원장 내역은 한 번만 기록되면 UPDATE나 DELETE가 불가능한 불변 데이터여야 합니다.
 
-### 모듈 구조
+#### 보안 및 유효성 정책
 
-* `remitro-common`: 여러 서비스에서 공유하는 공통 도메인 모델, 유틸리티, 예외 처리 등을 담고 있습니다.
-* `remitro-config`: 중앙 집중식 설정을 관리하는 설정 서버입니다.
-* `remitro-eureka-server`: 마이크로서비스의 위치를 등록하고 찾아주는 서비스 디스커버리 서버입니다.
-* `remitro-api-gateway`: 모든 외부 요청의 단일 진입점으로, 인증 및 라우팅을 담당합니다.
-* `remitro-member`: 회원가입, 로그인 등 회원 관련 비즈니스 로직을 처리하는 서비스입니다.
-* `remitro-account`: 계좌 생성, 입출금, 송금 등 계좌 관련 비즈니스 로직을 처리하는 서비스입니다.
-* `remitro-transaction`: 모든 거래내역을 기록하고 조회하는 서비스입니다.
+- **이중 인증(거래)**: API 접근은 JWT로 인증하지만, 송금 및 출금 같은 민감한 거랜ㄴ 요청 바디에 포함된 계좌 비밀번호를 해시 검증하여 거래 권한을 추가로 확인해야 합니다.
+- **멱등성 보장**: 송금 및 입금 요청 시, 클라이언트는 X-Idempotency-Key 헤더를 필수로 전송해야 합니다. 서버는 이를 확인해 중복 실행을 방지하고, 성공 또는 진행 중인 키에 대해서는 오류(
+  409)를 반환해야 합니다.
+- **비밀번호 저장**: 모든 비밀번호(로그인, 계좌)는 평문으로 저장되어서는 안 되며, BCrypt와 같은 단방향 해싱 앍리즘을 사용하여 salt와 함께 저장되어야 합니다.
+- **거래 한도**: 입금 및 출금 금액은 1원 이상이어야 하며, 시스템에서 정의하는 최대 한도를 초과할 수 없습니다.
 
 ---
 
-### 실행 방법
+### ⚙️구현 시 주의사항 및 가이드라인
 
-1. **Git 클론**: `git clone https://github.com/solmoonkang/remitro-server.git`
-2. **환경 설정**: `remitro-config` Git 저장소에 DB 연결 정보, 포트 등 환경 파일을 설정합니다.
-3. **서비스 실행**: 다음 순서대로 각 서비스를 실행합니다.
-    * `remitro-eureka-server`
-    * `remitro-config`
-    * `remitro-api-gateway`
-    * `remitro-member`
-    * `remitro-account`
-    * `remitro-transaction`
-
-*(각 모듈 폴더에서 `./gradlew bootRun` 또는 IDE를 통해 실행)*
-
----
-
-### API 문서
-
-* **API 문서 URL**: `http://localhost:[API-Gateway-Port]/swagger-ui.html`
+- **서비스 디스커버리**: 각 member, account, transaction 모듈은 eureka-server에 자신의 정보를 등록하고, 상호 통신 시 유레카를 통해 서비스 위치를 조회해야 합니다.
+- **게이트웨이 역할**: api-gateway는 JWT 유효성 검사를 수행하고, 인증된 사용자 ID를 내부 서비스로 전달하는 역할을 수행해야 합니다.
+- **Outbox Polling**: account 모듈 내에서 별도의 스케줄러를 구성하여, DB의 OUTBOX_MESSAGES 테이블을 모니터링하고 Kafka로 이벤트를 릴레이하는 Publisher 로직이
+  필수적입니다.
