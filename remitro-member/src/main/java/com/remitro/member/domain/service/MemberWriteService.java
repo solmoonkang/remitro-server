@@ -19,7 +19,9 @@ public class MemberWriteService {
 
 	public void saveMember(SignUpRequest signUpRequest) {
 		final String encodedPassword = passwordEncoder.encode(signUpRequest.password());
-		final Member member = Member.createMember(signUpRequest.email(), encodedPassword, signUpRequest.nickname());
+		final Member member = Member.createMember(
+			signUpRequest.email(), encodedPassword, signUpRequest.nickname(), signUpRequest.phoneNumber()
+		);
 		memberRepository.save(member);
 	}
 
