@@ -21,6 +21,10 @@ public record SignUpRequest(
 
 	@NotBlank(message = "사용자 닉네임을 입력해주세요.")
 	@Schema(name = "사용자 닉네임", example = "memberNickname")
-	String nickname
+	String nickname,
+
+	@NotBlank(message = "사용자 전화번호를 입력해주세요.")
+	@Schema(name = "사용자 전화번호", example = "010-1234-5678")
+	String phoneNumber
 ) {
 }
