@@ -4,8 +4,6 @@ import com.remitro.common.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,16 +38,11 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "refresh_token")
 	private String refreshToken;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "role", nullable = false)
-	private Role role;
-
 	private Member(String email, String hashedPassword, String nickname, String phoneNumber) {
 		this.email = email;
 		this.hashedPassword = hashedPassword;
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
-		this.role = Role.USER;
 	}
 
 	public static Member createMember(String email, String password, String nickname, String phoneNumber) {
