@@ -11,12 +11,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,7 +22,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "ACCOUNTS")
+@Table(name = "ACCOUNTS", indexes = {
+	@Index(name = "idx_member_id", columnList = "member_id"),
+	@Index(name = "idx_account_number", columnList = "account_number", unique = true)
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseTimeEntity {
 
@@ -33,24 +34,20 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_id", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false)
-	private Member member;
+	@Column(name = "member_id", nullable = false)
+	private Long memberId;
 
-	@Column(name = "account_number", unique = true, nullable = false)
+	@Column(name = "account_number", unique = true, nullable = false, length = 20)
 	private String accountNumber;
 
-	@Column(name = "account_name", unique = true, length = 50)
+	@Column(name = "account_name", length = 50)
 	private String accountName;
 
 	@Column(name = "balance", nullable = false)
 	private Long balance;
 
-	@Column(name = "password", nullable = false, length = 4)
-	private String password;
-
-	@Column(name = "is_activated", nullable = false)
-	private boolean isActivated;
+	@Column(name = "hashed_password", nullable = false)
+	private String hashedPassword;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "account_type", nullable = false)
@@ -60,13 +57,14 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_status", nullable = false)
 	private AccountStatus accountStatus;
 
-	private Account(Member member, String accountNumber, String accountName, String password, AccountType accountType) {
-		this.member = member;
+	private Account(Long memberId, String accountNumber, String accountName, String hashedPassword,
+		AccountType accountType) {
+
+		this.memberId = memberId;
 		this.accountNumber = accountNumber;
 		this.accountName = accountName;
 		this.balance = 0L;
-		this.password = password;
-		this.isActivated = true;
+		this.hashedPassword = hashedPassword;
 		this.accountType = accountType;
 		this.accountStatus = AccountStatus.NORMAL;
 	}
