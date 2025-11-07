@@ -1,7 +1,7 @@
 package com.remitro.common.auth.provider;
 
-import static com.remitro.common.common.util.JwtClaimsConstant.*;
-import static com.remitro.common.common.util.TokenConstant.*;
+import static com.remitro.common.util.JwtClaimsConstant.*;
+import static com.remitro.common.util.TokenConstant.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

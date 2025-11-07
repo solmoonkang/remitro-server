@@ -1,4 +1,4 @@
-package com.remitro.common.common.entity;
+package com.remitro.common.domain;
 
 import java.time.LocalDateTime;
 

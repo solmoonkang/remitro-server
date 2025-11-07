@@ -1,4 +1,4 @@
-package com.remitro.common.common.event;
+package com.remitro.common.infra;
 
 public record WithdrawEventMessage(
 	String senderAccountNumber,
