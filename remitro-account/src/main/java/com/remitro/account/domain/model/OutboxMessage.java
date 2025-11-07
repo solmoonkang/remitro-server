@@ -1,9 +1,9 @@
-package com.remitro.account.infrastructure.outbox.model;
+package com.remitro.account.domain.model;
 
-import com.remitro.common.common.entity.BaseTimeEntity;
-import com.remitro.common.common.entity.enums.AggregateType;
-import com.remitro.common.common.entity.enums.EventStatus;
-import com.remitro.common.common.entity.enums.EventType;
+import com.remitro.account.domain.model.enums.EventType;
+import com.remitro.common.domain.BaseTimeEntity;
+import com.remitro.common.domain.enums.AggregateType;
+import com.remitro.common.domain.enums.EventStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
