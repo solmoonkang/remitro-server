@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.remitro.account.infrastructure.outbox.model.OutboxMessage;
-import com.remitro.common.common.entity.enums.EventStatus;
+import com.remitro.account.domain.model.OutboxMessage;
+import com.remitro.common.domain.enums.EventStatus;
 
 public interface OutboxMessageRepository extends JpaRepository<OutboxMessage, Long> {
 

@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.dto.request.OutboxMessageRequest;
-import com.remitro.account.infrastructure.outbox.model.OutboxMessage;
+import com.remitro.account.domain.model.OutboxMessage;
 import com.remitro.account.infrastructure.outbox.repository.OutboxMessageRepository;
 
 import lombok.RequiredArgsConstructor;

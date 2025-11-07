@@ -1,6 +1,6 @@
 package com.remitro.account.infrastructure.outbox;
 
-import static com.remitro.common.common.entity.enums.EventStatus.*;
+import static com.remitro.common.domain.enums.EventStatus.*;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.account.infrastructure.outbox.model.OutboxMessage;
+import com.remitro.account.domain.model.OutboxMessage;
 import com.remitro.account.infrastructure.outbox.repository.OutboxMessageRepository;
 
 import lombok.RequiredArgsConstructor;
