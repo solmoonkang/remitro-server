@@ -11,12 +11,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,7 +22,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "TRANSACTIONS")
+@Table(name = "TRANSACTIONS", indexes = {
+	@Index(name = "idx_sender_account_id", columnList = "sender_account_id"),
+	@Index(name = "idx_receiver_account_id", columnList = "receiver_account_id")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Transaction {
 
@@ -33,13 +34,14 @@ public class Transaction {
 	@Column(name = "transaction_id", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "sender_account_id")
-	private Account senderAccount;
+	@Column(name = "event_id", unique = true, nullable = false, length = 36)
+	private String eventId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "receiver_account_id")
-	private Account receiverAccount;
+	@Column(name = "sender_account_id")
+	private Long senderAccountId;
+
+	@Column(name = "receiver_account_id")
+	private Long receiverAccountId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "transaction_type", nullable = false)
@@ -48,25 +50,26 @@ public class Transaction {
 	@Column(name = "amount")
 	private Long amount;
 
-	@Column(name = "balance_snapshot")
-	private Long balanceSnapshot;
+	@Column(name = "sender_balance_snapshot")
+	private Long senderBalanceSnapshot;
+
+	@Column(name = "receiver_balance_snapshot")
+	private Long receiverBalanceSnapshot;
 
 	@Column(name = "transaction_at")
 	private LocalDateTime transactionAt;
 
-	@Column(name = "idempotency_key", unique = true, nullable = false)
-	private String idempotencyKey;
+	private Transaction(String eventId, Long senderAccountId, Long receiverAccountId, TransactionType transactionType,
+		Long amount, Long senderBalanceSnapshot, Long receiverBalanceSnapshot) {
 
-	private Transaction(Account senderAccount, Account receiverAccount, TransactionType transactionType, Long amount,
-		Long balanceSnapshot, String idempotencyKey) {
-
-		this.senderAccount = senderAccount;
-		this.receiverAccount = receiverAccount;
+		this.eventId = eventId;
+		this.senderAccountId = senderAccountId;
+		this.receiverAccountId = receiverAccountId;
 		this.transactionType = transactionType;
 		this.amount = amount;
-		this.balanceSnapshot = balanceSnapshot;
+		this.senderBalanceSnapshot = senderBalanceSnapshot;
+		this.receiverBalanceSnapshot = receiverBalanceSnapshot;
 		this.transactionAt = LocalDateTime.now();
-		this.idempotencyKey = idempotencyKey;
 	}
 
 	public static Transaction createSenderTransaction(Account senderAccount, Account receiverAccount, Long amount,
