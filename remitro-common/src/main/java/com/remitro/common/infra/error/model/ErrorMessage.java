@@ -1,4 +1,4 @@
-package com.remitro.common.error.model;
+package com.remitro.common.infra.error.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,9 +38,10 @@ public enum ErrorMessage {
 	ACCOUNT_NUMBER_COLLISION("계좌 번호 충돌이 반복되어 계좌 생성에 실패했습니다."),
 	IDEMPOTENCY_KEY_MISSING("멱등성 처리를 위해 요청 헤더에 ID가 누락되었습니다."),
 	DUPLICATE_IDEMPOTENCY_REQUEST("이미 완료된 멱등성 요청으로 처리할 수 없습니다."),
+	MEMBER_INACTIVE("비활성화된 사용자입니다."),
 
 	// 500: INTERNAL SERVER ERROR
-
+	ACCOUNT_NUMBER_GENERATION_FAILED("계좌 번호 생성에 실패했습니다."),
 	UNKNOWN_SERVER_ERROR("서버에서 알 수 없는 에러가 발생했습니다.");
 
 	private final String message;

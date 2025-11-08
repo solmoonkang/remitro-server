@@ -1,4 +1,4 @@
-package com.remitro.common.config;
+package com.remitro.common.infra.config;
 
 import static org.springframework.http.HttpMethod.*;
 
@@ -16,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.remitro.common.auth.filter.JwtAuthenticationFilter;
-import com.remitro.common.auth.provider.JwtProvider;
+import com.remitro.common.infra.auth.filter.JwtAuthenticationFilter;
+import com.remitro.common.infra.auth.provider.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 

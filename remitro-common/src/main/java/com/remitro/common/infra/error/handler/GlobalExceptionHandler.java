@@ -1,4 +1,4 @@
-package com.remitro.common.error.handler;
+package com.remitro.common.infra.error.handler;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.remitro.common.error.exception.BadRequestException;
-import com.remitro.common.error.exception.ConflictException;
-import com.remitro.common.error.exception.ForbiddenException;
-import com.remitro.common.error.exception.InternalServerException;
-import com.remitro.common.error.exception.NotFoundException;
-import com.remitro.common.error.exception.UnauthorizedException;
-import com.remitro.common.error.model.ErrorResponse;
+import com.remitro.common.infra.error.exception.BadRequestException;
+import com.remitro.common.infra.error.exception.ConflictException;
+import com.remitro.common.infra.error.exception.ForbiddenException;
+import com.remitro.common.infra.error.exception.InternalServerException;
+import com.remitro.common.infra.error.exception.NotFoundException;
+import com.remitro.common.infra.error.exception.UnauthorizedException;
+import com.remitro.common.infra.error.model.ErrorResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.remitro.common.auth.annotation;
+package com.remitro.common.infra.auth.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

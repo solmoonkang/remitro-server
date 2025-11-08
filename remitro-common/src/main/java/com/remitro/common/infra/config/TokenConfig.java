@@ -1,4 +1,4 @@
-package com.remitro.common.config;
+package com.remitro.common.infra.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

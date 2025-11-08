@@ -1,4 +1,4 @@
-package com.remitro.common.auth.model;
+package com.remitro.common.infra.auth.model;
 
 public record AuthMember(
 	Long id,

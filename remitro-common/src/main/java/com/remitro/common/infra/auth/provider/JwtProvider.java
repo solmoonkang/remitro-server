@@ -1,7 +1,7 @@
-package com.remitro.common.auth.provider;
+package com.remitro.common.infra.auth.provider;
 
-import static com.remitro.common.util.JwtClaimsConstant.*;
-import static com.remitro.common.util.TokenConstant.*;
+import static com.remitro.common.infra.util.JwtClaimsConstant.*;
+import static com.remitro.common.infra.util.TokenConstant.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -12,8 +12,8 @@ import javax.crypto.SecretKey;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.remitro.common.auth.model.AuthMember;
-import com.remitro.common.config.TokenConfig;
+import com.remitro.common.infra.auth.model.AuthMember;
+import com.remitro.common.infra.config.TokenConfig;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

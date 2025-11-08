@@ -1,4 +1,4 @@
-package com.remitro.common.auth.filter;
+package com.remitro.common.infra.auth.filter;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -7,10 +7,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import com.remitro.common.auth.model.AuthMember;
-import com.remitro.common.auth.provider.JwtProvider;
-import com.remitro.common.error.exception.UnauthorizedException;
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.infra.auth.model.AuthMember;
+import com.remitro.common.infra.auth.provider.JwtProvider;
+import com.remitro.common.infra.error.exception.UnauthorizedException;
+import com.remitro.common.infra.error.model.ErrorMessage;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
