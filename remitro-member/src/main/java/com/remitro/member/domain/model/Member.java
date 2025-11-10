@@ -1,7 +1,5 @@
 package com.remitro.member.domain.model;
 
-import java.time.LocalDateTime;
-
 import com.remitro.common.contract.member.ActivityStatus;
 import com.remitro.common.domain.BaseTimeEntity;
 
@@ -21,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "MEMBERS", indexes = {
-	@Index(name = "idx_members_activity_status_last_login_at", columnList = "activity_status, last_login_at")
+	@Index(name = "idx_members_activity_status", columnList = "activity_status")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
@@ -50,9 +48,6 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "activity_status", nullable = false)
 	private ActivityStatus activityStatus;
 
-	@Column(name = "last_login_at")
-	private LocalDateTime lastLoginAt;
-
 	private Member(String email, String hashedPassword, String nickname, String phoneNumber) {
 		this.email = email;
 		this.hashedPassword = hashedPassword;
@@ -67,17 +62,5 @@ public class Member extends BaseTimeEntity {
 
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
-	}
-
-	public void updateActivityStatus(ActivityStatus activityStatus) {
-		this.activityStatus = activityStatus;
-	}
-
-	public void markLoginSuceess() {
-		this.lastLoginAt = LocalDateTime.now();
-
-		if (this.activityStatus == ActivityStatus.DORMANT || this.activityStatus == ActivityStatus.LOCKED) {
-			this.activityStatus = ActivityStatus.ACTIVE;
-		}
 	}
 }
