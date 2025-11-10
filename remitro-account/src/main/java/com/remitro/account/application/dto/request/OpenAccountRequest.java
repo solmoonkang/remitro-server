@@ -1,13 +1,15 @@
 package com.remitro.account.application.dto.request;
 
+import com.remitro.account.domain.model.enums.AccountType;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "계좌 생성 요청 DTO")
-public record CreateAccountRequest(
+@Schema(description = "계좌 개설 요청 DTO")
+public record OpenAccountRequest(
 	@NotBlank(message = "계좌 이름을 입력해주세요.")
 	@Schema(description = "계좌 이름", example = "accountName")
 	String accountName,
@@ -19,6 +21,6 @@ public record CreateAccountRequest(
 
 	@NotBlank(message = "계좌 타입을 입력해주세요.")
 	@Schema(description = "계좌 타입", example = "CHECKING, SAVINGS, DEPOSIT")
-	String accountType
+	AccountType accountType
 ) {
 }
