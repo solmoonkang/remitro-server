@@ -1,12 +1,18 @@
 package com.remitro.member.domain.model;
 
-import com.remitro.common.common.entity.BaseTimeEntity;
+import java.time.LocalDateTime;
+
+import com.remitro.common.contract.member.ActivityStatus;
+import com.remitro.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,7 +20,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "MEMBERS")
+@Table(name = "MEMBERS", indexes = {
+	@Index(name = "idx_members_activity_status_last_login_at", columnList = "activity_status, last_login_at")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
@@ -38,11 +46,19 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "refresh_token")
 	private String refreshToken;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "activity_status", nullable = false)
+	private ActivityStatus activityStatus;
+
+	@Column(name = "last_login_at")
+	private LocalDateTime lastLoginAt;
+
 	private Member(String email, String hashedPassword, String nickname, String phoneNumber) {
 		this.email = email;
 		this.hashedPassword = hashedPassword;
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
+		this.activityStatus = ActivityStatus.ACTIVE;
 	}
 
 	public static Member createMember(String email, String password, String nickname, String phoneNumber) {
@@ -53,7 +69,15 @@ public class Member extends BaseTimeEntity {
 		this.refreshToken = refreshToken;
 	}
 
-	public void updateNickname(String nickname) {
-		this.nickname = nickname;
+	public void updateActivityStatus(ActivityStatus activityStatus) {
+		this.activityStatus = activityStatus;
+	}
+
+	public void markLoginSuceess() {
+		this.lastLoginAt = LocalDateTime.now();
+
+		if (this.activityStatus == ActivityStatus.DORMANT || this.activityStatus == ActivityStatus.LOCKED) {
+			this.activityStatus = ActivityStatus.ACTIVE;
+		}
 	}
 }
