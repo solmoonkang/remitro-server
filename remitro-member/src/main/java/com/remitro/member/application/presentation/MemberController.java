@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.common.auth.annotation.Auth;
-import com.remitro.common.auth.model.AuthMember;
+import com.remitro.common.infra.auth.annotation.Auth;
+import com.remitro.common.infra.auth.model.AuthMember;
 import com.remitro.member.application.dto.request.SignUpRequest;
 import com.remitro.member.application.dto.response.MemberInfoResponse;
 import com.remitro.member.domain.service.MemberService;
