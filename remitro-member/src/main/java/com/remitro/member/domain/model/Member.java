@@ -56,7 +56,7 @@ public class Member extends BaseTimeEntity {
 		this.activityStatus = ActivityStatus.ACTIVE;
 	}
 
-	public static Member createMember(String email, String password, String nickname, String phoneNumber) {
+	public static Member create(String email, String password, String nickname, String phoneNumber) {
 		return new Member(email, password, nickname, phoneNumber);
 	}
 
