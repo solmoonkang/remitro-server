@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "MEMBER_OUTBOX_MESSAGES", indexes = {
-	@Index(name = "idx_outbox_id_status", columnList = "id, event_status")
+	@Index(name = "idx_outbox_event_status_id", columnList = "event_status, outbox_message_id")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OutboxMessage extends BaseTimeEntity {
