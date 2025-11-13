@@ -3,8 +3,8 @@ package com.remitro.account.domain.model;
 import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.account.domain.model.enums.AccountType;
 import com.remitro.common.domain.BaseTimeEntity;
-import com.remitro.common.error.exception.BadRequestException;
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.infra.error.exception.BadRequestException;
+import com.remitro.common.infra.error.model.ErrorMessage;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -68,7 +68,7 @@ public class Account extends BaseTimeEntity {
 		this.accountStatus = AccountStatus.NORMAL;
 	}
 
-	public static Account createAccount(Long memberId, String accountNumber, String accountName, String hashedPassword,
+	public static Account create(Long memberId, String accountNumber, String accountName, String hashedPassword,
 		AccountType accountType) {
 
 		return new Account(memberId, accountNumber, accountName, hashedPassword, accountType);
