@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.remitro.account.domain.model.Account;
+import com.remitro.account.domain.model.enums.AccountType;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
@@ -20,4 +21,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
 	@Query("SELECT a.id FROM Account a WHERE a.accountNumber = :accountNumber")
 	Optional<Long> findAccountIdByAccountNumber(@Param("accountNumber") String accountNumber);
+
+	boolean existsByAccountNumber(String accountNumber);
+
+	boolean existsByMemberIdAndAccountType(Long memberId, AccountType accountType);
 }
