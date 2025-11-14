@@ -14,10 +14,12 @@ import com.remitro.member.domain.model.OutboxMessage;
 import com.remitro.member.domain.repository.OutboxMessageRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class OutboxMessagePublisher {
+public class MemberOutboxPublisher {
 
 	private static final int PUBLISH_BATCH_SIZE = 500;
 
@@ -42,7 +44,11 @@ public class OutboxMessagePublisher {
 				message.markPublished();
 				outboxMessageRepository.save(message);
 			} catch (Exception e) {
-				// 상태 유지 PENDING -> 다음 배치에 재시도
+				log.error("[✅ LOGGER] KAFKA 메시지 발행에 실패했습니다. (eventId={}, aggregateId={}): {}",
+					message.getEventId(),
+					message.getAggregateId(),
+					e.getMessage()
+				);
 			}
 		}
 	}
