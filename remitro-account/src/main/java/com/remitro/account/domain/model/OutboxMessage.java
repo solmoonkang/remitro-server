@@ -1,9 +1,11 @@
 package com.remitro.account.domain.model;
 
-import com.remitro.account.domain.model.enums.EventType;
+import java.util.UUID;
+
 import com.remitro.common.domain.BaseTimeEntity;
 import com.remitro.common.domain.enums.AggregateType;
 import com.remitro.common.domain.enums.EventStatus;
+import com.remitro.common.domain.enums.EventType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,13 +21,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "OUTBOX_MESSAGES")
+@Table(name = "ACCOUNT_OUTBOX_MESSAGES")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OutboxMessage extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "published_event_id", nullable = false)
+	@Column(name = "outbox_message_id", nullable = false)
 	private Long id;
 
 	@Column(name = "event_id", unique = true, nullable = false, length = 36)
@@ -60,13 +62,13 @@ public class OutboxMessage extends BaseTimeEntity {
 		this.eventStatus = EventStatus.PENDING;
 	}
 
-	public static OutboxMessage createOutboxMessage(String eventId, Long aggregateId, AggregateType aggregateType,
+	public static OutboxMessage create(Long aggregateId, AggregateType aggregateType,
 		EventType eventType, String eventData) {
 
-		return new OutboxMessage(eventId, aggregateId, aggregateType, eventType, eventData);
+		return new OutboxMessage(UUID.randomUUID().toString(), aggregateId, aggregateType, eventType, eventData);
 	}
 
-	public void markAsPublished() {
+	public void markPublished() {
 		this.eventStatus = EventStatus.PUBLISHED;
 	}
 }
