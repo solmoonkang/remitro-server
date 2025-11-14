@@ -3,8 +3,8 @@ package com.remitro.member.domain.service.auth;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.auth.model.AuthMember;
-import com.remitro.common.auth.provider.JwtProvider;
+import com.remitro.common.infra.auth.model.AuthMember;
+import com.remitro.common.infra.auth.provider.JwtProvider;
 import com.remitro.member.application.dto.request.LoginRequest;
 import com.remitro.member.application.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
@@ -27,7 +27,7 @@ public class AuthenticationService {
 	@Transactional
 	public TokenResponse loginMember(LoginRequest loginRequest) {
 		final Member member = memberReadService.findMemberByEmail(loginRequest.email());
-		memberValidator.validateLoginPassword(loginRequest.password(), member.getPassword());
+		memberValidator.validateLoginPassword(loginRequest.password(), member.getHashedPassword());
 
 		final String accessToken = generateAccessToken(member);
 		final String refreshToken = generateRefreshToken(member);
