@@ -1,7 +1,7 @@
 package com.remitro.account.application.dto.request;
 
-import com.remitro.account.domain.model.enums.EventType;
 import com.remitro.common.domain.enums.AggregateType;
+import com.remitro.common.domain.enums.EventType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
