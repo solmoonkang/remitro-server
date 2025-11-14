@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 @Schema(name = "계좌 개설 응답 DTO")
-public record OpenAccontCreationResponse(
+public record OpenAccountCreationResponse(
 	@Schema(description = "계좌 ID", example = "999L")
 	Long accountId,
 
