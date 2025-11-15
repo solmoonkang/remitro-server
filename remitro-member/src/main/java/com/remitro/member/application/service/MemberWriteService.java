@@ -1,4 +1,4 @@
-package com.remitro.member.domain.service;
+package com.remitro.member.application.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

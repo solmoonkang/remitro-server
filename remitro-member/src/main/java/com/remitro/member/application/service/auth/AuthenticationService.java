@@ -1,4 +1,4 @@
-package com.remitro.member.domain.service.auth;
+package com.remitro.member.application.service.auth;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,10 +8,10 @@ import com.remitro.common.infra.auth.provider.JwtProvider;
 import com.remitro.member.application.dto.request.LoginRequest;
 import com.remitro.member.application.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
+import com.remitro.member.application.service.MemberReadService;
 import com.remitro.member.application.validator.MemberValidator;
 import com.remitro.member.application.validator.TokenValidator;
 import com.remitro.member.domain.model.Member;
-import com.remitro.member.domain.service.MemberReadService;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.remitro.member.application.presentation;
+package com.remitro.member.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.member.application.dto.request.LoginRequest;
 import com.remitro.member.application.dto.response.TokenResponse;
-import com.remitro.member.domain.service.auth.AuthenticationService;
+import com.remitro.member.application.service.auth.AuthenticationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

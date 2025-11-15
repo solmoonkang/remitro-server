@@ -1,4 +1,4 @@
-package com.remitro.member.application.presentation;
+package com.remitro.member.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import com.remitro.common.infra.auth.annotation.Auth;
 import com.remitro.common.infra.auth.model.AuthMember;
 import com.remitro.member.application.dto.request.SignUpRequest;
 import com.remitro.member.application.dto.response.MemberInfoResponse;
-import com.remitro.member.domain.service.MemberService;
+import com.remitro.member.application.service.MemberService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
