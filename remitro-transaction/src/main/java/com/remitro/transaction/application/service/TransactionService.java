@@ -1,4 +1,4 @@
-package com.remitro.transaction.domain.service;
+package com.remitro.transaction.application.service;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
-import com.remitro.account.domain.service.AccountReadService;
-import com.remitro.common.auth.model.AuthMember;
+import com.remitro.account.application.service.AccountReadService;
+import com.remitro.common.infra.auth.model.AuthMember;
 import com.remitro.transaction.application.dto.response.TransactionDetailResponse;
 import com.remitro.transaction.application.mapper.TransactionMapper;
 import com.remitro.transaction.application.validator.TransactionValidator;

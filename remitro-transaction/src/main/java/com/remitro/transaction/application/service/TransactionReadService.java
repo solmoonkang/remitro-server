@@ -1,4 +1,4 @@
-package com.remitro.transaction.domain.service;
+package com.remitro.transaction.application.service;
 
 import java.util.List;
 

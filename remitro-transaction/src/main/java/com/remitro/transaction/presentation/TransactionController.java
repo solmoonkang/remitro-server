@@ -1,4 +1,4 @@
-package com.remitro.transaction.application.presentation;
+package com.remitro.transaction.presentation;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitro.common.auth.annotation.Auth;
 import com.remitro.common.auth.model.AuthMember;
 import com.remitro.transaction.application.dto.response.TransactionDetailResponse;
-import com.remitro.transaction.domain.service.TransactionService;
+import com.remitro.transaction.application.service.TransactionService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
