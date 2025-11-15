@@ -20,6 +20,7 @@ public class AccountService {
 	private final AccountValidator accountValidator;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
+	private final OpenAccountIdempotencyService openAccountIdempotencyService;
 
 	@Transactional
 	public OpenAccountCreationResponse openAccount(
@@ -27,10 +28,14 @@ public class AccountService {
 		String idempotencyKey,
 		OpenAccountRequest openAccountRequest) {
 
+		openAccountIdempotencyService.validateOpenAccountIdempotency(memberId, idempotencyKey);
+
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
 		accountValidator.validateMemberIsActive(member);
+
 		final Account account = accountWriteService.saveAccount(member, openAccountRequest);
 		accountWriteService.appendAccountOpenedEventOutbox(account);
+
 		return AccountMapper.toOpenAccountCreationResponse(account);
 	}
 }
