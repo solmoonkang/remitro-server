@@ -29,5 +29,4 @@ public class AccountService {
 		accountWriteService.appendAccountOpenedEventOutbox(account);
 		return AccountMapper.toOpenAccountCreationResponse(account);
 	}
-
 }
