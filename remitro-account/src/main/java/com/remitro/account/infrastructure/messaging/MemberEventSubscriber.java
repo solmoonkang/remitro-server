@@ -42,7 +42,7 @@ public class MemberEventSubscriber {
 					() -> memberProjectionRepository.save(member)
 				);
 		} catch (Exception e) {
-			log.error("[✅ LOGGER] 사용자 상태 변경 이벤트를 처리하지 못했습니다: {}", e.getMessage());
+			log.error("[✅ LOGGER] 사용자 상태 변경 이벤트를 처리하지 못했습니다", e);
 			throw e;
 		}
 	}
