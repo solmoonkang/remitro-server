@@ -15,14 +15,14 @@ public class ValueRedisRepository {
 
 	private final RedisTemplate<String, String> stringRedisTemplate;
 
-	public boolean setIfAbsent(String idempotencyKey, String value, long expirationTime) {
+	public boolean setIfAbsent(String openAccountKey, String value, long expirationTime) {
 		Boolean isNewKey = stringRedisTemplate.opsForValue()
-			.setIfAbsent(generateIdempotencyKey(idempotencyKey), value, expirationTime, TimeUnit.SECONDS);
+			.setIfAbsent(generateIdempotencyKey(openAccountKey), value, expirationTime, TimeUnit.SECONDS);
 
 		return Boolean.TRUE.equals(isNewKey);
 	}
 
-	private String generateIdempotencyKey(String idempotencyKey) {
-		return IDEMPOTENCY_PREFIX + idempotencyKey;
+	private String generateIdempotencyKey(String openAccountKey) {
+		return IDEMPOTENCY_PREFIX + openAccountKey;
 	}
 }
