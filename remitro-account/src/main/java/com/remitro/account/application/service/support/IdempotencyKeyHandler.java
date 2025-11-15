@@ -1,4 +1,4 @@
-package com.remitro.account.domain.service.support;
+package com.remitro.account.application.service.support;
 
 import org.springframework.stereotype.Service;
 

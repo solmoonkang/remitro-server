@@ -1,4 +1,4 @@
-package com.remitro.account.domain.service;
+package com.remitro.account.application.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,11 @@ public class AccountService {
 	private final AccountWriteService accountWriteService;
 
 	@Transactional
-	public OpenAccountCreationResponse openAccount(Long memberId, OpenAccountRequest openAccountRequest) {
+	public OpenAccountCreationResponse openAccount(
+		Long memberId,
+		String idempotencyKey,
+		OpenAccountRequest openAccountRequest) {
+
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
 		accountValidator.validateMemberIsActive(member);
 		final Account account = accountWriteService.saveAccount(member, openAccountRequest);

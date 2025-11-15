@@ -1,4 +1,4 @@
-package com.remitro.account.domain.service;
+package com.remitro.account.application.service;
 
 import static com.remitro.account.domain.constant.AccountConstant.*;
 
