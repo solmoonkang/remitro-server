@@ -1,6 +1,6 @@
 spring:
   application:
-    name: remitro-account
+    name: remitro-account   # remitro-config가 remitro-account-*.yml을 찾아준다.
 
   config:
-    import: "optional:configserver:http://localhost:8888"
+    import: "optional:configserver:http://localhost:8888"   # 어디에서 설정을 받을지 선언한다.
