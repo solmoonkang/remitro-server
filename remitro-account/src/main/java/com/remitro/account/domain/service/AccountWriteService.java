@@ -1,31 +1,20 @@
 package com.remitro.account.domain.service;
 
+import static com.remitro.account.domain.constant.AccountConstant.*;
+
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
-import com.remitro.account.application.dto.request.OutboxMessageRequest;
-import com.remitro.account.application.dto.request.DepositFormRequest;
-import com.remitro.account.application.dto.request.TransferFormRequest;
-import com.remitro.account.application.dto.request.UpdateStatusRequest;
-import com.remitro.account.application.dto.request.WithdrawFormRequest;
-import com.remitro.account.application.mapper.EventMapper;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.OutboxMessage;
-import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.account.domain.model.enums.AccountType;
 import com.remitro.account.domain.model.read.MemberProjection;
 import com.remitro.account.domain.repository.AccountRepository;
 import com.remitro.account.domain.repository.OutboxMessageRepository;
-import com.remitro.account.domain.service.support.OutboxMessageHandler;
 import com.remitro.common.contract.account.AccountOpenedEvent;
 import com.remitro.common.domain.enums.AggregateType;
 import com.remitro.common.domain.enums.EventType;
@@ -38,9 +27,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AccountWriteService {
-
-	private static final int MAX_ACCOUNT_NUMBER_ATTEMPTS = 5;
-	private static final DateTimeFormatter ACCOUNT_NUMBER_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
 
 	private final PasswordEncoder passwordEncoder;
 	private final AccountRepository accountRepository;
@@ -79,9 +65,9 @@ public class AccountWriteService {
 	}
 
 	private String generateUniqueAccountNumber(AccountType accountType) {
-		for (int attempt = 0; attempt < MAX_ACCOUNT_NUMBER_ATTEMPTS; attempt++) {
+		for (int attempt = 0; attempt < ACCOUNT_NUMBER_GENERATION_MAX_ATTEMPTS; attempt++) {
 			String accountNumber = accountType.getCode()
-				+ LocalDateTime.now().format(ACCOUNT_NUMBER_FORMAT)
+				+ LocalDateTime.now().format(ACCOUNT_NUMBER_GENERATION_FORMAT)
 				+ RandomStringUtils.randomNumeric(5);
 
 			if (!accountRepository.existsByAccountNumber(accountNumber))
