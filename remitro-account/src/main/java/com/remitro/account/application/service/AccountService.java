@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
+import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.validator.AccountValidator;
@@ -37,5 +38,11 @@ public class AccountService {
 		accountWriteService.appendAccountOpenedEventOutbox(account);
 
 		return AccountMapper.toOpenAccountCreationResponse(account);
+	}
+
+	public AccountDetailResponse findAccountDetail(Long memberId, Long accountId) {
+		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
+		final Account account = accountReadService.findAccountByIdAndMemberId(member.getMemberId(), accountId);
+		return AccountMapper.toAccountDetailResponse(account);
 	}
 }
