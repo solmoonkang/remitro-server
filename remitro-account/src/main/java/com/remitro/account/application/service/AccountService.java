@@ -8,7 +8,7 @@ import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
-import com.remitro.account.domain.model.read.MemberProjection;
+import com.remitro.account.domain.model.MemberProjection;
 
 import lombok.RequiredArgsConstructor;
 
