@@ -3,7 +3,7 @@ package com.remitro.account.application.validator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.remitro.account.domain.model.read.MemberProjection;
+import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.repository.AccountRepository;
 import com.remitro.common.contract.member.ActivityStatus;
 import com.remitro.common.infra.error.exception.BadRequestException;
