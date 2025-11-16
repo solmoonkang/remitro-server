@@ -4,7 +4,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.account.domain.model.read.MemberProjection;
+import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.repository.MemberProjectionRepository;
 import com.remitro.common.contract.member.MemberStatusChangedEvent;
 import com.remitro.common.infra.util.JsonUtil;
