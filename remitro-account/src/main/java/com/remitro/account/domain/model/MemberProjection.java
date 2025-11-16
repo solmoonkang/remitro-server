@@ -1,8 +1,9 @@
-package com.remitro.account.domain.model.read;
+package com.remitro.account.domain.model;
 
 import java.time.LocalDateTime;
 
 import com.remitro.common.contract.member.ActivityStatus;
+import com.remitro.common.contract.member.KycStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,13 +29,18 @@ public class MemberProjection {
 	@Column(name = "activity_status", nullable = false)
 	private ActivityStatus activityStatus;
 
-	@Column(name = "update_at", nullable = false)
-	private LocalDateTime updateAt;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "kyc_status", nullable = false)
+	private KycStatus kycStatus;
 
-	private MemberProjection(Long memberId, ActivityStatus activityStatus, LocalDateTime updateAt) {
+	@Column(name = "updated_at", nullable = false)
+	private LocalDateTime updatedAt;
+
+	private MemberProjection(Long memberId, ActivityStatus activityStatus, LocalDateTime updatedAt) {
 		this.memberId = memberId;
 		this.activityStatus = activityStatus;
-		this.updateAt = updateAt;
+		this.updatedAt = updatedAt;
+		this.kycStatus = KycStatus.UNVERIFIED;
 	}
 
 	public static MemberProjection create(Long memberId, ActivityStatus activityStatus) {
@@ -43,6 +49,6 @@ public class MemberProjection {
 
 	public void update(ActivityStatus activityStatus) {
 		this.activityStatus = activityStatus;
-		this.updateAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
 	}
 }
