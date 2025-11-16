@@ -1,6 +1,9 @@
 package com.remitro.member.domain.model;
 
+import java.time.LocalDateTime;
+
 import com.remitro.common.contract.member.ActivityStatus;
+import com.remitro.common.contract.member.KycStatus;
 import com.remitro.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -48,12 +51,20 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "activity_status", nullable = false)
 	private ActivityStatus activityStatus;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "kyc_status", nullable = false)
+	private KycStatus kycStatus;
+
+	@Column(name = "kyc_verified_at")
+	private LocalDateTime kycVerifiedAt;
+
 	private Member(String email, String hashedPassword, String nickname, String phoneNumber) {
 		this.email = email;
 		this.hashedPassword = hashedPassword;
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
 		this.activityStatus = ActivityStatus.ACTIVE;
+		this.kycStatus = KycStatus.UNVERIFIED;
 	}
 
 	public static Member create(String email, String password, String nickname, String phoneNumber) {
@@ -62,5 +73,10 @@ public class Member extends BaseTimeEntity {
 
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+
+	public void verifyKyc() {
+		this.kycStatus = KycStatus.VERIFIED;
+		this.kycVerifiedAt = LocalDateTime.now();
 	}
 }
