@@ -3,8 +3,6 @@ package com.remitro.account.domain.model;
 import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.account.domain.model.enums.AccountType;
 import com.remitro.common.domain.BaseTimeEntity;
-import com.remitro.common.infra.error.exception.BadRequestException;
-import com.remitro.common.infra.error.model.ErrorMessage;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,7 +54,11 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_status", nullable = false)
 	private AccountStatus accountStatus;
 
-	private Account(Long memberId, String accountNumber, String accountName, String hashedPassword,
+	private Account(
+		Long memberId,
+		String accountNumber,
+		String accountName,
+		String hashedPassword,
 		AccountType accountType) {
 
 		this.memberId = memberId;
@@ -68,25 +70,13 @@ public class Account extends BaseTimeEntity {
 		this.accountStatus = AccountStatus.NORMAL;
 	}
 
-	public static Account create(Long memberId, String accountNumber, String accountName, String hashedPassword,
+	public static Account create(
+		Long memberId,
+		String accountNumber,
+		String accountName,
+		String hashedPassword,
 		AccountType accountType) {
 
 		return new Account(memberId, accountNumber, accountName, hashedPassword, accountType);
-	}
-
-	public void deposit(Long amount) {
-		this.balance += amount;
-	}
-
-	public void withdraw(Long amount) {
-		this.balance -= amount;
-	}
-
-	public void updateAccountStatus(AccountStatus accountStatus) {
-		if (this.accountStatus == AccountStatus.TERMINATED) {
-			throw new BadRequestException(ErrorMessage.INVALID_STATUS_CHANGE);
-		}
-
-		this.accountStatus = accountStatus;
 	}
 }
