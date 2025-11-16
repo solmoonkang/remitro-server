@@ -12,7 +12,7 @@ import com.remitro.account.application.dto.request.OpenAccountRequest;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.OutboxMessage;
 import com.remitro.account.domain.model.enums.AccountType;
-import com.remitro.account.domain.model.read.MemberProjection;
+import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.repository.AccountRepository;
 import com.remitro.account.domain.repository.OutboxMessageRepository;
 import com.remitro.common.contract.account.AccountOpenedEvent;
