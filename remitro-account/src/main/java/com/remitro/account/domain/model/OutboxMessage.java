@@ -51,7 +51,11 @@ public class OutboxMessage extends BaseTimeEntity {
 	@Column(name = "event_status", nullable = false)
 	private EventStatus eventStatus;
 
-	private OutboxMessage(String eventId, Long aggregateId, AggregateType aggregateType, EventType eventType,
+	private OutboxMessage(
+		String eventId,
+		Long aggregateId,
+		AggregateType aggregateType,
+		EventType eventType,
 		String eventData) {
 
 		this.eventId = eventId;
@@ -62,8 +66,11 @@ public class OutboxMessage extends BaseTimeEntity {
 		this.eventStatus = EventStatus.PENDING;
 	}
 
-	public static OutboxMessage create(Long aggregateId, AggregateType aggregateType,
-		EventType eventType, String eventData) {
+	public static OutboxMessage create(
+		Long aggregateId,
+		AggregateType aggregateType,
+		EventType eventType,
+		String eventData) {
 
 		return new OutboxMessage(UUID.randomUUID().toString(), aggregateId, aggregateType, eventType, eventData);
 	}
