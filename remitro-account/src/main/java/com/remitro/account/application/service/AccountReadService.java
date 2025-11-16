@@ -2,7 +2,7 @@ package com.remitro.account.application.service;
 
 import org.springframework.stereotype.Service;
 
-import com.remitro.account.domain.model.read.MemberProjection;
+import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.repository.MemberProjectionRepository;
 import com.remitro.common.infra.error.exception.NotFoundException;
 import com.remitro.common.infra.error.model.ErrorMessage;
