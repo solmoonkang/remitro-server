@@ -10,9 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 	exclude = {RedissonAutoConfiguration.class}
 )
 @EnableJpaAuditing
-@ComponentScan(
-	basePackages = {"com.remitro.account", "com.remitro.member", "com.remitro.common"}
-)
+@ComponentScan(basePackages = "com.remitro.common")
 public class AccountServiceApplication {
 
 	public static void main(String[] args) {
