@@ -25,6 +25,9 @@ public class MemberProjection {
 	@Column(name = "member_id", nullable = false)
 	private Long memberId;
 
+	@Column(name = "nickname", nullable = false, length = 50)
+	private String nickname;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "activity_status", nullable = false)
 	private ActivityStatus activityStatus;
@@ -36,15 +39,16 @@ public class MemberProjection {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
-	private MemberProjection(Long memberId, ActivityStatus activityStatus, LocalDateTime updatedAt) {
+	private MemberProjection(Long memberId, String nickname, ActivityStatus activityStatus, LocalDateTime updatedAt) {
 		this.memberId = memberId;
+		this.nickname = nickname;
 		this.activityStatus = activityStatus;
 		this.updatedAt = updatedAt;
 		this.kycStatus = KycStatus.UNVERIFIED;
 	}
 
-	public static MemberProjection create(Long memberId, ActivityStatus activityStatus) {
-		return new MemberProjection(memberId, activityStatus, LocalDateTime.now());
+	public static MemberProjection create(Long memberId, String nickname, ActivityStatus activityStatus) {
+		return new MemberProjection(memberId, nickname, activityStatus, LocalDateTime.now());
 	}
 
 	public void update(ActivityStatus activityStatus) {
