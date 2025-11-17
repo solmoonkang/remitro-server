@@ -2,6 +2,7 @@ package com.remitro.account.application.mapper;
 
 import java.util.List;
 
+import com.remitro.account.application.dto.response.AccountBalanceResponse;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.dto.response.AccountSummaryResponse;
 import com.remitro.account.application.dto.response.AccountsSummaryResponse;
@@ -16,7 +17,10 @@ import lombok.NoArgsConstructor;
 public class AccountMapper {
 
 	public static OpenAccountCreationResponse toOpenAccountCreationResponse(Account account) {
-		return new OpenAccountCreationResponse(account.getId(), account.getAccountNumber());
+		return new OpenAccountCreationResponse(
+			account.getId(),
+			account.getAccountNumber()
+		);
 	}
 
 	public static AccountDetailResponse toAccountDetailResponse(Account account) {
@@ -49,6 +53,12 @@ public class AccountMapper {
 			accounts.stream()
 				.map(AccountMapper::toAccountSummaryResponse)
 				.toList()
+		);
+	}
+
+	public static AccountBalanceResponse toAccountBalanceResponse(Account account) {
+		return new AccountBalanceResponse(
+			account.getBalance()
 		);
 	}
 }
