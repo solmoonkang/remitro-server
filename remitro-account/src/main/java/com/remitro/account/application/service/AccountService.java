@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
+import com.remitro.account.application.dto.response.AccountBalanceResponse;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.dto.response.AccountsSummaryResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
@@ -52,5 +53,15 @@ public class AccountService {
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
 		final List<Account> accounts = accountReadService.findAllAccountByMemberId(memberId);
 		return AccountMapper.toAccountsSummaryResponse(member, accounts);
+	}
+
+	public AccountBalanceResponse findAccountBalance(Long memberId, Long accountId) {
+		final Account account = accountReadService.findAccountByIdAndMemberId(memberId, accountId);
+		return AccountMapper.toAccountBalanceResponse(account);
+	}
+
+	@Transactional
+	public void deposit(Long memberId, Long accountId) {
+
 	}
 }
