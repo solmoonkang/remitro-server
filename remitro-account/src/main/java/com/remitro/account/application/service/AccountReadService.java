@@ -1,5 +1,7 @@
 package com.remitro.account.application.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.remitro.account.domain.model.Account;
@@ -26,5 +28,9 @@ public class AccountReadService {
 	public Account findAccountByIdAndMemberId(Long memberId, Long accountId) {
 		return accountRepository.findByIdAndMemberId(memberId, accountId)
 			.orElseThrow(() -> new NotFoundException(ErrorMessage.ACCOUNT_NOT_FOUND));
+	}
+
+	public List<Account> findAllAccountByMemberId(Long memberId) {
+		return accountRepository.findAccountsByMemberId(memberId);
 	}
 }
