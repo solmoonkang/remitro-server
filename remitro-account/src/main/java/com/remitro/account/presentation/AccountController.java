@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
+import com.remitro.account.application.dto.response.AccountBalanceResponse;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.dto.response.AccountsSummaryResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
@@ -85,5 +86,20 @@ public class AccountController {
 	})
 	public ResponseEntity<AccountsSummaryResponse> getMemberAccounts(@Auth AuthMember authMember) {
 		return ResponseEntity.ok().body(accountService.findMemberAccounts(authMember.id()));
+	}
+
+	@GetMapping("/{accountId}/balance")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "계좌 잔액 조회", description = "사용자 인증 후 특정 계좌의 잔액을 조회합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "🎉 계좌 잔액 조회 성공"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자 또는 계좌"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<AccountBalanceResponse> getAccountBalance(
+		@Auth AuthMember authMember,
+		@PathVariable Long accountId) {
+
+		return ResponseEntity.ok().body(accountService.findAccountBalance(authMember.id(), accountId));
 	}
 }
