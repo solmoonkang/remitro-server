@@ -33,6 +33,7 @@ public class MemberEventSubscriber {
 
 			final MemberProjection member = MemberProjection.create(
 				memberStatusChangedEvent.memberId(),
+				memberStatusChangedEvent.nickname(),
 				memberStatusChangedEvent.activityStatus()
 			);
 
