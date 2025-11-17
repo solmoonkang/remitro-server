@@ -1,10 +1,13 @@
 package com.remitro.account.application.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
+import com.remitro.account.application.dto.response.AccountsSummaryResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.validator.AccountValidator;
@@ -41,8 +44,13 @@ public class AccountService {
 	}
 
 	public AccountDetailResponse findAccountDetail(Long memberId, Long accountId) {
-		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
-		final Account account = accountReadService.findAccountByIdAndMemberId(member.getMemberId(), accountId);
+		final Account account = accountReadService.findAccountByIdAndMemberId(memberId, accountId);
 		return AccountMapper.toAccountDetailResponse(account);
+	}
+
+	public AccountsSummaryResponse findMemberAccounts(Long memberId) {
+		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
+		final List<Account> accounts = accountReadService.findAllAccountByMemberId(memberId);
+		return AccountMapper.toAccountsSummaryResponse(member, accounts);
 	}
 }
