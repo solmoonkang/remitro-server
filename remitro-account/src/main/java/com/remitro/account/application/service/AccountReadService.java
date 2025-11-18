@@ -33,4 +33,9 @@ public class AccountReadService {
 	public List<Account> findAllAccountByMemberId(Long memberId) {
 		return accountRepository.findAccountsByMemberId(memberId);
 	}
+
+	public Account loadAccountWithLock(Long accountId) {
+		return accountRepository.findByIdWithLock(accountId)
+			.orElseThrow(() -> new NotFoundException(ErrorMessage.ACCOUNT_NOT_FOUND));
+	}
 }
