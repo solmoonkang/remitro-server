@@ -2,10 +2,13 @@ package com.remitro.account.application.mapper;
 
 import java.util.List;
 
+import com.remitro.account.application.dto.request.deposit.DepositCommand;
+import com.remitro.account.application.dto.request.deposit.DepositRequest;
 import com.remitro.account.application.dto.response.AccountBalanceResponse;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.dto.response.AccountSummaryResponse;
 import com.remitro.account.application.dto.response.AccountsSummaryResponse;
+import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
@@ -58,6 +61,28 @@ public class AccountMapper {
 
 	public static AccountBalanceResponse toAccountBalanceResponse(Account account) {
 		return new AccountBalanceResponse(
+			account.getBalance()
+		);
+	}
+
+	public static DepositCommand toDepositCommand(
+		Long memberId,
+		String idempotencyKey,
+		Long accountId,
+		DepositRequest depositRequest) {
+
+		return new DepositCommand(
+			memberId,
+			accountId,
+			depositRequest.amount(),
+			idempotencyKey
+		);
+	}
+
+	public static DepositResponse toDepositResponse(Account account, DepositCommand depositCommand) {
+		return new DepositResponse(
+			depositCommand.accountId(),
+			depositCommand.amount(),
 			account.getBalance()
 		);
 	}
