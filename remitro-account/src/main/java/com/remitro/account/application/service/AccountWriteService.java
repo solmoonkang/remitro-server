@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
 import com.remitro.account.domain.model.Account;
+import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.model.OutboxMessage;
 import com.remitro.account.domain.model.enums.AccountType;
-import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.repository.AccountRepository;
 import com.remitro.account.domain.repository.OutboxMessageRepository;
 import com.remitro.common.contract.account.AccountOpenedEvent;
@@ -62,6 +62,10 @@ public class AccountWriteService {
 		);
 
 		outboxMessageRepository.save(outboxMessage);
+	}
+
+	public void increaseBalance(Account account, Long amount) {
+		account.increaseBalance(amount);
 	}
 
 	private String generateUniqueAccountNumber(AccountType accountType) {
