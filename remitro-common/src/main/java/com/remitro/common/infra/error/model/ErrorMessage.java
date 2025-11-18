@@ -15,6 +15,7 @@ public enum ErrorMessage {
 	INVALID_AMOUNT("금액은 0보다 커야 합니다."),
 	INVALID_TRANSFER("유효하지 않은 송금입니다."),
 	INVALID_STATUS_CHANGE("이미 해지된 계좌는 상태를 변경할 수 없습니다."),
+	INACTIVE_ACCOUNT_STATUS("정상 상태의 계좌가 아닙니다."),
 
 	// 401: UNAUTHORIZED
 	TOKEN_EXPIRED("이미 만료된 토큰입니다."),
