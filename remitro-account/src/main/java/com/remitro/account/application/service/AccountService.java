@@ -6,11 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
+import com.remitro.account.application.dto.request.deposit.DepositCommand;
 import com.remitro.account.application.dto.response.AccountBalanceResponse;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.dto.response.AccountsSummaryResponse;
+import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
+import com.remitro.account.application.service.distributedlock.DistributedLockManager;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
@@ -22,10 +25,15 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountService {
 
+	public static final String OPEN_ACCOUNT_PREFIX = "OPEN_ACCOUNT:";
+	public static final String DEPOSIT_PREFIX = "DEPOSIT:";
+
 	private final AccountValidator accountValidator;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
-	private final OpenAccountIdempotencyService openAccountIdempotencyService;
+	private final IdempotencyService idempotencyService;
+	private final AccountOutboxService accountOutboxService;
+	private final DistributedLockManager distributedLockManager;
 
 	@Transactional
 	public OpenAccountCreationResponse openAccount(
@@ -33,7 +41,7 @@ public class AccountService {
 		String idempotencyKey,
 		OpenAccountRequest openAccountRequest) {
 
-		openAccountIdempotencyService.validateOpenAccountIdempotency(memberId, idempotencyKey);
+		idempotencyService.validateIdempotencyFirstRequest(memberId, idempotencyKey, OPEN_ACCOUNT_PREFIX);
 
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
 		accountValidator.validateMemberIsActive(member);
@@ -60,8 +68,32 @@ public class AccountService {
 		return AccountMapper.toAccountBalanceResponse(account);
 	}
 
-	@Transactional
-	public void deposit(Long memberId, Long accountId) {
+	// TODO: 현재까지 입금 서비스가 제대로 동작하는지를 한 번 더 검증해야 하며, 추가로 Kafka를 통해 Transaction 모듈까지의 흐름을 연결시켜야 한다.
 
+	public DepositResponse deposit(DepositCommand depositCommand) {
+		idempotencyService.validateIdempotencyFirstRequest(
+			depositCommand.memberId(),
+			depositCommand.idempotencyKey(),
+			DEPOSIT_PREFIX
+		);
+
+		return distributedLockManager.executeWithAccountLock(
+			depositCommand.accountId(),
+			() -> runDepositTransaction(depositCommand)
+		);
+	}
+
+	@Transactional
+	protected DepositResponse runDepositTransaction(DepositCommand depositCommand) {
+		final Account account = accountReadService.loadAccountWithLock(depositCommand.accountId());
+
+		accountValidator.validateAccountOwner(account.getMemberId(), depositCommand.memberId());
+		accountValidator.validateAccountStatusNormal(account.getAccountStatus());
+		accountValidator.validateAmountPositive(depositCommand.amount());
+
+		accountWriteService.increaseBalance(account, depositCommand.amount());
+		accountOutboxService.appendDepositEvent(account, depositCommand.amount());
+
+		return AccountMapper.toDepositResponse(account, depositCommand);
 	}
 }
