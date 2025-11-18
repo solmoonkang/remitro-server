@@ -10,31 +10,30 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class OpenAccountIdempotencyService {
+public class IdempotencyService {
 
+	public static final String IDEMPOTENCY_MARKER_VALUE = "LOCK";
 	public static final long OPEN_ACCOUNT_IDEMPOTENCY_EXPIRATION_SECONDS = 60L * 5L;
-	public static final String OPEN_ACCOUNT_PREFIX = "OPEN_ACCOUNT:";
+	public static final String SEPARATOR = ":";
 
 	private final ValueRedisRepository valueRedisRepository;
 
-	public void validateOpenAccountIdempotency(Long memberId, String idempotencyKey) {
+	public void validateIdempotencyFirstRequest(Long memberId, String idempotencyKey, String prefix) {
 		if (idempotencyKey == null || idempotencyKey.isBlank()) {
 			return;
 		}
 
-		final String openAccountKey = generateOpenAccountKey(memberId, idempotencyKey);
-		final boolean isFirstRequest = valueRedisRepository.setIfAbsent(
-			openAccountKey,
-			"LOCK",
+		boolean isFirstRequest = valueRedisRepository.setIfAbsent(
+			generateIdempotencyKey(memberId, idempotencyKey, prefix),
+			IDEMPOTENCY_MARKER_VALUE,
 			OPEN_ACCOUNT_IDEMPOTENCY_EXPIRATION_SECONDS
 		);
-
 		if (!isFirstRequest) {
 			throw new ConflictException(ErrorMessage.DUPLICATE_IDEMPOTENCY_REQUEST);
 		}
 	}
 
-	private String generateOpenAccountKey(Long memberId, String idempotencyKey) {
-		return OPEN_ACCOUNT_PREFIX + memberId + ":" + idempotencyKey;
+	private String generateIdempotencyKey(Long memberId, String idempotencyKey, String prefix) {
+		return prefix + memberId + SEPARATOR + idempotencyKey;
 	}
 }
