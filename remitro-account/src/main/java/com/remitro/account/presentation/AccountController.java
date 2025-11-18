@@ -14,10 +14,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.account.application.dto.request.OpenAccountRequest;
+import com.remitro.account.application.dto.request.deposit.DepositCommand;
+import com.remitro.account.application.dto.request.deposit.DepositRequest;
 import com.remitro.account.application.dto.response.AccountBalanceResponse;
 import com.remitro.account.application.dto.response.AccountDetailResponse;
 import com.remitro.account.application.dto.response.AccountsSummaryResponse;
+import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
+import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.service.AccountService;
 import com.remitro.common.infra.auth.annotation.Auth;
 import com.remitro.common.infra.auth.model.AuthMember;
@@ -101,5 +105,32 @@ public class AccountController {
 		@PathVariable Long accountId) {
 
 		return ResponseEntity.ok().body(accountService.findAccountBalance(authMember.id(), accountId));
+	}
+
+	@PostMapping("/{accountId}/deposit")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "입금 요청", description = "사용자 인증 후 입금을 진행합니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "🎉 입금 요청 성공"),
+		@ApiResponse(responseCode = "400", description = "❌ 잘못된 요청 또는 유효성 검사 실패"),
+		@ApiResponse(responseCode = "403", description = "❗️ 계좌 접근 권한 없음"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 계좌"),
+		@ApiResponse(responseCode = "409", description = "⚠️ 멱등성 충돌 또는 중복 요청"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<DepositResponse> deposit(
+		@Auth AuthMember authMember,
+		@RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
+		@PathVariable Long accountId,
+		@Valid @RequestBody DepositRequest depositRequest) {
+
+		DepositCommand depositCommand = AccountMapper.toDepositCommand(
+			authMember.id(),
+			idempotencyKey,
+			accountId,
+			depositRequest
+		);
+
+		return ResponseEntity.ok().body(accountService.deposit(depositCommand));
 	}
 }
