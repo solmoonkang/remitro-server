@@ -79,4 +79,8 @@ public class Account extends BaseTimeEntity {
 
 		return new Account(memberId, accountNumber, accountName, hashedPassword, accountType);
 	}
+
+	public void increaseBalance(Long amount) {
+		this.balance += amount;
+	}
 }
