@@ -36,8 +36,8 @@ public class AccountValidator {
 		}
 	}
 
-	public void validateAccountStatusNormal(AccountStatus accountStatus) {
-		if (accountStatus != AccountStatus.NORMAL) {
+	public void validateAccountStatusNormal(Account account) {
+		if (account.getAccountStatus() != AccountStatus.NORMAL) {
 			throw new BadRequestException(ErrorMessage.INACTIVE_ACCOUNT_STATUS);
 		}
 	}
