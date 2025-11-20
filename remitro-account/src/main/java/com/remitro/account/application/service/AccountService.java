@@ -32,16 +32,16 @@ public class AccountService {
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
 	private final IdempotencyService idempotencyService;
-	private final AccountOutboxService accountOutboxService;
 	private final DistributedLockManager distributedLockManager;
+	private final AccountBalanceTransactionService accountBalanceTransactionService;
 
 	@Transactional
 	public OpenAccountCreationResponse openAccount(
 		Long memberId,
 		String idempotencyKey,
-		OpenAccountRequest openAccountRequest) {
-
-		idempotencyService.validateIdempotencyFirstRequest(memberId, idempotencyKey, OPEN_ACCOUNT_PREFIX);
+		OpenAccountRequest openAccountRequest
+	) {
+		idempotencyService.validateOpenAccountIdempotency(memberId, idempotencyKey, OPEN_ACCOUNT_PREFIX);
 
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
 		accountValidator.validateMemberIsActive(member);
@@ -68,32 +68,17 @@ public class AccountService {
 		return AccountMapper.toAccountBalanceResponse(account);
 	}
 
-	// TODO: 현재까지 입금 서비스가 제대로 동작하는지를 한 번 더 검증해야 하며, 추가로 Kafka를 통해 Transaction 모듈까지의 흐름을 연결시켜야 한다.
-
 	public DepositResponse deposit(DepositCommand depositCommand) {
-		idempotencyService.validateIdempotencyFirstRequest(
+		idempotencyService.validateBalanceChangeIdempotency(
 			depositCommand.memberId(),
+			depositCommand.accountId(),
 			depositCommand.idempotencyKey(),
 			DEPOSIT_PREFIX
 		);
 
 		return distributedLockManager.executeWithAccountLock(
 			depositCommand.accountId(),
-			() -> runDepositTransaction(depositCommand)
+			() -> accountBalanceTransactionService.runDepositTransaction(depositCommand)
 		);
-	}
-
-	@Transactional
-	protected DepositResponse runDepositTransaction(DepositCommand depositCommand) {
-		final Account account = accountReadService.loadAccountWithLock(depositCommand.accountId());
-
-		accountValidator.validateAccountOwner(account.getMemberId(), depositCommand.memberId());
-		accountValidator.validateAccountStatusNormal(account.getAccountStatus());
-		accountValidator.validateAmountPositive(depositCommand.amount());
-
-		accountWriteService.increaseBalance(account, depositCommand.amount());
-		accountOutboxService.appendDepositEvent(account, depositCommand.amount());
-
-		return AccountMapper.toDepositResponse(account, depositCommand);
 	}
 }
