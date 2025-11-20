@@ -52,11 +52,33 @@ public class LedgerEntry extends BaseTimeEntity {
 	@Column(name = "occurred_at", nullable = false)
 	private LocalDateTime occurredAt;
 
-	public LedgerEntry(Transaction transaction, LedgerDirection ledgerDirection, Long amount, Long balanceAfter) {
+	private LedgerEntry(
+		Transaction transaction,
+		LedgerDirection ledgerDirection,
+		Long amount,
+		Long balanceAfter,
+		LocalDateTime occurredAt
+	) {
 		this.transaction = transaction;
 		this.ledgerDirection = ledgerDirection;
 		this.amount = amount;
 		this.balanceAfter = balanceAfter;
-		this.occurredAt = LocalDateTime.now();
+		this.occurredAt = occurredAt;
+	}
+
+	public static LedgerEntry create(
+		Transaction transaction,
+		LedgerDirection ledgerDirection,
+		Long amount,
+		Long balanceAfter,
+		LocalDateTime occurredAt
+	) {
+		return new LedgerEntry(
+			transaction,
+			ledgerDirection,
+			amount,
+			balanceAfter,
+			occurredAt
+		);
 	}
 }
