@@ -29,8 +29,6 @@ ext {
 }
 
 dependencies {
-    implementation project(':remitro-member')
-    implementation project(':remitro-account')
     implementation project(':remitro-common')
 
     // Swagger OpenAPI
