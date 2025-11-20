@@ -14,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +22,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "ACCOUNT_OUTBOX_MESSAGES")
+@Table(name = "ACCOUNT_OUTBOX_MESSAGES", indexes = {
+	@Index(name = "idx_outbox_status_created_at", columnList = "event_status, created_at"),
+	@Index(name = "idx_outbox_event_id", columnList = "event_id", unique = true)
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OutboxMessage extends BaseTimeEntity {
 
@@ -56,8 +60,8 @@ public class OutboxMessage extends BaseTimeEntity {
 		Long aggregateId,
 		AggregateType aggregateType,
 		EventType eventType,
-		String eventData) {
-
+		String eventData
+	) {
 		this.eventId = eventId;
 		this.aggregateId = aggregateId;
 		this.aggregateType = aggregateType;
@@ -70,8 +74,8 @@ public class OutboxMessage extends BaseTimeEntity {
 		Long aggregateId,
 		AggregateType aggregateType,
 		EventType eventType,
-		String eventData) {
-
+		String eventData
+	) {
 		return new OutboxMessage(UUID.randomUUID().toString(), aggregateId, aggregateType, eventType, eventData);
 	}
 
