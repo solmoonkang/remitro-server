@@ -51,14 +51,34 @@ public class Transaction {
 	@Column(name = "occurred_at", nullable = false)
 	private LocalDateTime occurredAt;
 
-	private Transaction(String eventId, TransactionType transactionType, Long amount, String description) {
+	private Transaction(
+		String eventId,
+		TransactionType transactionType,
+		Long amount,
+		String description,
+		LocalDateTime occurredAt
+	) {
 		this.eventId = eventId;
 		this.transactionType = transactionType;
 		this.transactionStatus = TransactionStatus.COMPLETED;
 		this.amount = amount;
 		this.description = description;
-		this.occurredAt = LocalDateTime.now();
+		this.occurredAt = occurredAt;
 	}
 
-
+	public static Transaction create(
+		String eventId,
+		TransactionType transactionType,
+		Long amount,
+		String description,
+		LocalDateTime occurredAt
+	) {
+		return new Transaction(
+			eventId,
+			transactionType,
+			amount,
+			description,
+			occurredAt
+		);
+	}
 }
