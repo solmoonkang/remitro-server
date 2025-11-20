@@ -15,12 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MemberEventSubscriber {
+public class MemberEventConsumer {
 
 	private final MemberProjectionRepository memberProjectionRepository;
 
 	@KafkaListener(
-		topics = "${topics.member-status-changed}",
+		topics = "${topics.member-events}",
 		groupId = "account-service"
 	)
 	@Transactional
@@ -43,7 +43,11 @@ public class MemberEventSubscriber {
 					() -> memberProjectionRepository.save(member)
 				);
 		} catch (Exception e) {
-			log.error("[✅ LOGGER] 사용자 상태 변경 이벤트를 처리하지 못했습니다", e);
+			log.error("[✅ LOGGER] 사용자 상태 변경 이벤트를 처리하지 못했습니다. "
+					+ "EVENT = {}",
+				eventMessage,
+				e
+			);
 			throw e;
 		}
 	}
