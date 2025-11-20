@@ -19,14 +19,20 @@ public class AccountOutboxService {
 
 	private final OutboxMessageRepository outboxMessageRepository;
 
-	public void appendDepositEvent(Account account, Long amount) {
-		final AccountDepositEvent accountDepositEvent = AccountEventMapper.toAccountDepositEvent(account, amount);
+	public void appendDepositEvent(Account account, Long amount, String description) {
+		final AccountDepositEvent accountDepositEvent = AccountEventMapper.toAccountDepositEvent(
+			account,
+			amount,
+			description
+		);
+
 		final OutboxMessage accountOutbox = OutboxMessage.create(
 			account.getId(),
 			AggregateType.ACCOUNT,
-			EventType.DEPOSIT_EVENT,
+			EventType.DEPOSIT,
 			JsonUtil.toJSON(accountDepositEvent)
 		);
+
 		outboxMessageRepository.save(accountOutbox);
 	}
 }
