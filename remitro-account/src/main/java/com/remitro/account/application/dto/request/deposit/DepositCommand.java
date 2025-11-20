@@ -7,6 +7,8 @@ public record DepositCommand(
 
 	Long amount,
 
-	String idempotencyKey
+	String idempotencyKey,
+
+	String description
 ) {
 }
