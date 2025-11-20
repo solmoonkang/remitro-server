@@ -9,6 +9,10 @@ public record AccountDepositEvent(
 
 	Long amount,
 
+	Long balanceAfter,
+
+	String description,
+
 	LocalDateTime occurredAt
-) {
+) implements AccountTransactionEvent {
 }
