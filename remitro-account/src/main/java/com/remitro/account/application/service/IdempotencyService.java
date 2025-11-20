@@ -13,27 +13,51 @@ import lombok.RequiredArgsConstructor;
 public class IdempotencyService {
 
 	public static final String IDEMPOTENCY_MARKER_VALUE = "LOCK";
-	public static final long OPEN_ACCOUNT_IDEMPOTENCY_EXPIRATION_SECONDS = 60L * 5L;
+	public static final long DEFAULT_IDEMPOTENCY_EXPIRATION_SECONDS = 60L * 5L;
 	public static final String SEPARATOR = ":";
 
 	private final ValueRedisRepository valueRedisRepository;
 
-	public void validateIdempotencyFirstRequest(Long memberId, String idempotencyKey, String prefix) {
+	public void validateOpenAccountIdempotency(Long memberId, String idempotencyKey, String prefix) {
 		if (idempotencyKey == null || idempotencyKey.isBlank()) {
 			return;
 		}
 
+		final String openAccountIdempotencyKey = generateOpenAccountKey(memberId, idempotencyKey, prefix);
+		validateFirstIdempotentRequest(openAccountIdempotencyKey);
+	}
+
+	public void validateBalanceChangeIdempotency(Long memberId, Long accountId, String idempotencyKey, String prefix) {
+		if (idempotencyKey == null || idempotencyKey.isBlank()) {
+			return;
+		}
+
+		final String balanceIdempotencyKey = generateBalanceChangeKey(memberId, accountId, idempotencyKey, prefix);
+		validateFirstIdempotentRequest(balanceIdempotencyKey);
+	}
+
+	private void validateFirstIdempotentRequest(String redisKey) {
 		boolean isFirstRequest = valueRedisRepository.setIfAbsent(
-			generateIdempotencyKey(memberId, idempotencyKey, prefix),
+			redisKey,
 			IDEMPOTENCY_MARKER_VALUE,
-			OPEN_ACCOUNT_IDEMPOTENCY_EXPIRATION_SECONDS
+			DEFAULT_IDEMPOTENCY_EXPIRATION_SECONDS
 		);
+
 		if (!isFirstRequest) {
 			throw new ConflictException(ErrorMessage.DUPLICATE_IDEMPOTENCY_REQUEST);
 		}
 	}
 
-	private String generateIdempotencyKey(Long memberId, String idempotencyKey, String prefix) {
-		return prefix + memberId + SEPARATOR + idempotencyKey;
+	private String generateOpenAccountKey(Long memberId, String idempotencyKey, String prefix) {
+		return prefix
+			+ memberId + SEPARATOR
+			+ idempotencyKey;
+	}
+
+	private String generateBalanceChangeKey(Long memberId, Long accountId, String idempotencyKey, String prefix) {
+		return prefix
+			+ memberId + SEPARATOR
+			+ accountId + SEPARATOR
+			+ idempotencyKey;
 	}
 }
