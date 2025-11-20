@@ -59,8 +59,8 @@ public class Account extends BaseTimeEntity {
 		String accountNumber,
 		String accountName,
 		String hashedPassword,
-		AccountType accountType) {
-
+		AccountType accountType
+	) {
 		this.memberId = memberId;
 		this.accountNumber = accountNumber;
 		this.accountName = accountName;
@@ -75,8 +75,8 @@ public class Account extends BaseTimeEntity {
 		String accountNumber,
 		String accountName,
 		String hashedPassword,
-		AccountType accountType) {
-
+		AccountType accountType
+	) {
 		return new Account(memberId, accountNumber, accountName, hashedPassword, accountType);
 	}
 
