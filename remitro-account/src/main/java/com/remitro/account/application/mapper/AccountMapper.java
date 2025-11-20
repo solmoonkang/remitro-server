@@ -69,13 +69,14 @@ public class AccountMapper {
 		Long memberId,
 		String idempotencyKey,
 		Long accountId,
-		DepositRequest depositRequest) {
-
+		DepositRequest depositRequest
+	) {
 		return new DepositCommand(
 			memberId,
 			accountId,
 			depositRequest.amount(),
-			idempotencyKey
+			idempotencyKey,
+			depositRequest.description()
 		);
 	}
 
