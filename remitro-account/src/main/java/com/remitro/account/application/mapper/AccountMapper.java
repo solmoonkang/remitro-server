@@ -59,9 +59,9 @@ public class AccountMapper {
 		);
 	}
 
-	public static AccountBalanceResponse toAccountBalanceResponse(Account account) {
+	public static AccountBalanceResponse toAccountBalanceResponse(Long balance) {
 		return new AccountBalanceResponse(
-			account.getBalance()
+			balance
 		);
 	}
 
