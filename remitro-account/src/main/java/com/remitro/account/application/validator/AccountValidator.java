@@ -1,6 +1,7 @@
 package com.remitro.account.application.validator;
 
 import static com.remitro.account.domain.constant.AccountConstant.*;
+import static com.remitro.account.domain.model.enums.AccountStatus.*;
 
 import java.util.Objects;
 
@@ -36,9 +37,25 @@ public class AccountValidator {
 		}
 	}
 
-	public void validateAccountStatusNormal(Account account) {
-		if (account.getAccountStatus() != AccountStatus.NORMAL) {
-			throw new BadRequestException(ErrorMessage.INACTIVE_ACCOUNT_STATUS);
+	public void validateAccountStatusForDeposit(Account account) {
+		if (account.getAccountStatus() == TERMINATED || account.getAccountStatus() == PENDING_TERMINATION) {
+			throw new BadRequestException(ErrorMessage.ACCOUNT_TERMINATED);
+		}
+
+		if (account.getAccountStatus() == SUSPENDED) {
+			throw new BadRequestException(ErrorMessage.ACCOUNT_SUSPENDED);
+		}
+	}
+
+	public void validateAccountStatusForWithdraw(Account account) {
+		if (account.getAccountStatus() != NORMAL) {
+			throw new BadRequestException(ErrorMessage.ACCOUNT_NOT_ACTIVE);
+		}
+	}
+
+	public void validateAccountStatusForTransfer(Account account) {
+		if (account.getAccountStatus() != NORMAL) {
+			throw new BadRequestException(ErrorMessage.ACCOUNT_NOT_ACTIVE);
 		}
 	}
 
