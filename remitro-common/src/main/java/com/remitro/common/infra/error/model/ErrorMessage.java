@@ -43,7 +43,10 @@ public enum ErrorMessage {
 
 	// 500: INTERNAL SERVER ERROR
 	ACCOUNT_NUMBER_GENERATION_FAILED("계좌 번호 생성에 실패했습니다."),
-	UNKNOWN_SERVER_ERROR("서버에서 알 수 없는 에러가 발생했습니다.");
+	UNKNOWN_SERVER_ERROR("서버에서 알 수 없는 에러가 발생했습니다."),
+
+	// 503: SERVICE UNAVAILABLE
+	UNABLE_TO_ACQUIRE_LOCK("락 획득에 실패했습니다.");
 
 	private final String message;
 
