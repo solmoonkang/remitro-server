@@ -1,5 +1,7 @@
 package com.remitro.account.infrastructure.messaging;
 
+import static com.remitro.common.infra.util.KafkaConstant.*;
+
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -65,12 +67,12 @@ public class AccountOutboxProducer {
 		);
 
 		producerRecord.headers().add(
-			"eventId",
+			EVENT_HEADER_ID,
 			message.getEventId().getBytes(StandardCharsets.UTF_8)
 		);
 
 		producerRecord.headers().add(
-			"eventType",
+			EVENT_HEADER_TYPE,
 			message.getEventType().name().getBytes(StandardCharsets.UTF_8)
 		);
 
