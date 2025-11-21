@@ -15,6 +15,7 @@ import com.remitro.common.infra.error.exception.BadRequestException;
 import com.remitro.common.infra.error.exception.ConflictException;
 import com.remitro.common.infra.error.exception.ForbiddenException;
 import com.remitro.common.infra.error.exception.InternalServerException;
+import com.remitro.common.infra.error.exception.LockAcquireException;
 import com.remitro.common.infra.error.exception.NotFoundException;
 import com.remitro.common.infra.error.exception.UnauthorizedException;
 import com.remitro.common.infra.error.model.ErrorResponse;
@@ -62,6 +63,12 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleInternalServerException(InternalServerException e) {
 		log.error("[✅ LOGGER] SERVER ERROR: 서버 에러, {}", e.getMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(e.getMessage(), null));
+	}
+
+	@ExceptionHandler(LockAcquireException.class)
+	protected ResponseEntity<ErrorResponse> handleLockAcquireException(LockAcquireException e) {
+		log.error("[✅ LOGGER] LOCK ACQURE ERROR: 락 획득 에러, {}", e.getMessage());
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(e.getMessage(), null));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
