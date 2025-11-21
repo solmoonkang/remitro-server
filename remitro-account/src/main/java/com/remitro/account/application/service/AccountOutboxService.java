@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import com.remitro.account.application.mapper.AccountEventMapper;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.OutboxMessage;
+import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.account.domain.repository.OutboxMessageRepository;
 import com.remitro.common.contract.account.AccountDepositEvent;
+import com.remitro.common.contract.account.AccountStatusChangedEvent;
 import com.remitro.common.domain.enums.AggregateType;
 import com.remitro.common.domain.enums.EventType;
 import com.remitro.common.infra.util.JsonUtil;
@@ -18,6 +20,22 @@ import lombok.RequiredArgsConstructor;
 public class AccountOutboxService {
 
 	private final OutboxMessageRepository outboxMessageRepository;
+
+	public void appendStatusChangedEvent(Account account, AccountStatus previousStatus) {
+		final AccountStatusChangedEvent accountStatusChangedEvent = AccountEventMapper.toAccountStatusChangedEvent(
+			account,
+			previousStatus
+		);
+
+		final OutboxMessage accountOutbox = OutboxMessage.create(
+			account.getId(),
+			AggregateType.ACCOUNT,
+			EventType.ACCOUNT_STATUS_CHANGED,
+			JsonUtil.toJSON(accountStatusChangedEvent)
+		);
+
+		outboxMessageRepository.save(accountOutbox);
+	}
 
 	public void appendDepositEvent(Account account, Long amount, String description) {
 		final AccountDepositEvent accountDepositEvent = AccountEventMapper.toAccountDepositEvent(
