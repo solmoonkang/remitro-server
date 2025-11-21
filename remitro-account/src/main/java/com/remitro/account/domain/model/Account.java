@@ -1,5 +1,7 @@
 package com.remitro.account.domain.model;
 
+import java.time.LocalDateTime;
+
 import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.account.domain.model.enums.AccountType;
 import com.remitro.common.domain.BaseTimeEntity;
@@ -54,6 +56,9 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_status", nullable = false)
 	private AccountStatus accountStatus;
 
+	@Column(name = "last_transaction_at", nullable = false)
+	private LocalDateTime lastTransactionAt;
+
 	private Account(
 		Long memberId,
 		String accountNumber,
@@ -82,5 +87,21 @@ public class Account extends BaseTimeEntity {
 
 	public void increaseBalance(Long amount) {
 		this.balance += amount;
+	}
+
+	public void freeze() {
+		this.accountStatus = AccountStatus.FROZEN;
+	}
+
+	public void suspend() {
+		this.accountStatus = AccountStatus.SUSPENDED;
+	}
+
+	public void dormant() {
+		this.accountStatus = AccountStatus.DORMANT;
+	}
+
+	public void terminate() {
+		this.accountStatus = AccountStatus.TERMINATED;
 	}
 }
