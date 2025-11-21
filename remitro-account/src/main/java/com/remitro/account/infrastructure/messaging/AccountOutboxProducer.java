@@ -25,7 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AccountOutboxProducer {
 
-	public static final int PUBLISH_BATCH_SIZE = 100;
+	public static final int OUTBOX_BATCH_SIZE = 100;
+	public static final int MAX_KAFKA_PUBLISH_ATTEMPTS = 5;
+	public static final long RETRY_BACKOFF_MILLS = 2000;
 
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final OutboxMessageRepository outboxMessageRepository;
@@ -33,37 +35,77 @@ public class AccountOutboxProducer {
 	@Value("${topics.account-events}")
 	private String accountEventTopic;
 
+	@Value("${topics.account-events-dlq}")
+	private String accountEventDlqTopic;
+
 	@Scheduled(fixedDelayString = "${outbox.account.publish-interval-ms:1000}")
 	@Transactional
 	public void publishPending() {
 		final List<OutboxMessage> pendingMessages = outboxMessageRepository.findByEventStatusOrderByCreatedAtAsc(
 			EventStatus.PENDING,
-			PageRequest.of(0, PUBLISH_BATCH_SIZE)
+			PageRequest.of(0, OUTBOX_BATCH_SIZE)
 		);
 
 		if (pendingMessages.isEmpty()) {
-			log.info("[✅ LOGGER] 발행할 PENDING 이벤트가 없습니다.");
+			log.debug("[✅ LOGGER] 발행할 메시지가 없습니다.");
 			return;
 		}
 
+		log.info("[✅ LOGGER] PENDING 메시지 {}건 발행 시도",
+			pendingMessages.size()
+		);
+
 		for (OutboxMessage message : pendingMessages) {
-			sendAndMarkPublished(message);
+			publishSingleOutboxMessage(message);
+		}
+	}
+
+	private void publishSingleOutboxMessage(OutboxMessage message) {
+		final ProducerRecord<String, String> producerRecord = buildProducerRecord(message);
+
+		int attempts = 0;
+
+		while (attempts < MAX_KAFKA_PUBLISH_ATTEMPTS) {
+			attempts++;
+
+			try {
+				kafkaTemplate.send(producerRecord).get();
+				markOutboxMessageAsPublished(message);
+
+				log.info("[✅ LOGGER] KAFKA 메시지 발행 성공, "
+						+ "(EVENT TYPE = {}, EVENT ID = {}, AGGREGATE ID = {})",
+					message.getEventType(),
+					message.getEventId(),
+					message.getAggregateId()
+				);
+				return;
+
+			} catch (Exception e) {
+				log.warn("[✅ LOGGER] KAFKA 메시지 발행 실패, "
+						+ "(발행 재시도 횟수 {}/{}): {}",
+					attempts,
+					MAX_KAFKA_PUBLISH_ATTEMPTS,
+					e.getMessage()
+				);
+
+				sleep(RETRY_BACKOFF_MILLS * attempts);
+			}
 		}
 
-		log.info("[✅ LOGGER] PENDING 이벤트 발행 처리를 완료했습니다. "
-				+ "COUNT = {}",
-			pendingMessages.size()
+		sendMessageToDlq(message);
+		markOutboxMessageAsFailed(message);
+
+		log.error("[✅ LOGGER] KAFKA 메시지 발행 실패, "
+				+ "DLQ로 이동 (EVENT ID = {})",
+			message.getEventData()
 		);
 	}
 
-	private void sendAndMarkPublished(OutboxMessage message) {
-		final String accountEventKey = String.valueOf(message.getAggregateId());
-		final String accountEventPayload = message.getEventData();
-
-		final ProducerRecord<String, String> producerRecord = new ProducerRecord<>(
+	private ProducerRecord<String, String> buildProducerRecord(OutboxMessage message) {
+		ProducerRecord<String, String> producerRecord = new ProducerRecord<>(
 			accountEventTopic,
-			accountEventKey,
-			accountEventPayload
+			String.valueOf(message.getAggregateId()),
+			message.getEventData()
 		);
 
 		producerRecord.headers().add(
@@ -76,26 +118,28 @@ public class AccountOutboxProducer {
 			message.getEventType().name().getBytes(StandardCharsets.UTF_8)
 		);
 
+		return producerRecord;
+	}
+
+	private void sendMessageToDlq(OutboxMessage message) {
+		kafkaTemplate.send(accountEventDlqTopic, String.valueOf(message.getAggregateId()), message.getEventData());
+	}
+
+	private void markOutboxMessageAsPublished(OutboxMessage message) {
+		message.markPublishSucceeded();
+		outboxMessageRepository.save(message);
+	}
+
+	private void markOutboxMessageAsFailed(OutboxMessage message) {
+		message.markPublishAttemptFailed();
+		outboxMessageRepository.save(message);
+	}
+
+	private void sleep(long millis) {
 		try {
-			kafkaTemplate.send(producerRecord).get();
-
-			message.markPublished();
-			outboxMessageRepository.save(message);
-
-			log.info("[✅ LOGGER] KAFKA 메시지 발행 성공, "
-					+ "(EVENT TYPE = {}, EVENT ID = {}, AGGREGATE ID = {})",
-				message.getEventType(),
-				message.getEventId(),
-				message.getAggregateId()
-			);
-		} catch (Exception e) {
-			log.error("[✅ LOGGER] KAFKA 메시지 발행 실패, "
-					+ "(EVENT TYPE = {}, EVENT ID = {}, AGGREGATE ID = {}): {}",
-				message.getEventType(),
-				message.getEventId(),
-				message.getAggregateId(),
-				e.getMessage()
-			);
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 }
