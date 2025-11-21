@@ -1,5 +1,7 @@
 package com.remitro.account.infrastructure.redis;
 
+import static com.remitro.common.infra.util.RedisConstant.*;
+
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,9 +13,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ValueRedisRepository {
 
-	public static final String IDEMPOTENCY_PREFIX = "IDEMPOTENCY_PREFIX:";
-
 	private final RedisTemplate<String, String> stringRedisTemplate;
+
+	public void setValue(String key, String value, long expirationTime) {
+		stringRedisTemplate.opsForValue()
+			.set(key, value, expirationTime, TimeUnit.SECONDS);
+	}
+
+	public String getValue(String key) {
+		return stringRedisTemplate.opsForValue()
+			.get(key);
+	}
+
+	public void deleteValue(String key) {
+		stringRedisTemplate.delete(key);
+	}
 
 	public boolean setIfAbsent(String openAccountKey, String value, long expirationTime) {
 		Boolean isNewKey = stringRedisTemplate.opsForValue()
