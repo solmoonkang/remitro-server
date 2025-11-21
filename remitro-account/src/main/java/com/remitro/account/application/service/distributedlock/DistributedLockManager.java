@@ -6,7 +6,7 @@ import org.redisson.api.RLock;
 import org.springframework.stereotype.Service;
 
 import com.remitro.account.infrastructure.redis.LockRedisRepository;
-import com.remitro.common.infra.error.exception.InternalServerException;
+import com.remitro.common.infra.error.exception.LockAcquireException;
 import com.remitro.common.infra.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class DistributedLockManager {
 
 		try {
 			if (!lockRedisRepository.tryLock(lock, DEFAULT_WAIT_SECONDS, DEFAULT_LEASE_SECONDS)) {
-				throw new InternalServerException(ErrorMessage.UNKNOWN_SERVER_ERROR);
+				throw new LockAcquireException(ErrorMessage.UNABLE_TO_ACQUIRE_LOCK);
 			}
 			return action.get();
 		} finally {
