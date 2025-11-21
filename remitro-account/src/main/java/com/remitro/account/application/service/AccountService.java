@@ -1,5 +1,7 @@
 package com.remitro.account.application.service;
 
+import static com.remitro.common.infra.util.RedisConstant.*;
+
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,15 +27,12 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountService {
 
-	public static final String OPEN_ACCOUNT_PREFIX = "OPEN_ACCOUNT:";
-	public static final String DEPOSIT_PREFIX = "DEPOSIT:";
-
 	private final AccountValidator accountValidator;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
 	private final IdempotencyService idempotencyService;
 	private final DistributedLockManager distributedLockManager;
-	private final AccountBalanceTransactionService accountBalanceTransactionService;
+	private final AccountBalanceService accountBalanceService;
 
 	@Transactional
 	public OpenAccountCreationResponse openAccount(
@@ -64,8 +63,7 @@ public class AccountService {
 	}
 
 	public AccountBalanceResponse findAccountBalance(Long memberId, Long accountId) {
-		final Account account = accountReadService.findAccountByIdAndMemberId(memberId, accountId);
-		return AccountMapper.toAccountBalanceResponse(account);
+		return accountBalanceService.findAccountBalance(memberId, accountId);
 	}
 
 	public DepositResponse deposit(DepositCommand depositCommand) {
@@ -78,7 +76,7 @@ public class AccountService {
 
 		return distributedLockManager.executeWithAccountLock(
 			depositCommand.accountId(),
-			() -> accountBalanceTransactionService.runDepositTransaction(depositCommand)
+			() -> accountBalanceService.runDepositTransaction(depositCommand)
 		);
 	}
 }
