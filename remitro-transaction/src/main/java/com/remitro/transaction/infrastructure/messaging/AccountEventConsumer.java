@@ -1,5 +1,7 @@
 package com.remitro.transaction.infrastructure.messaging;
 
+import static com.remitro.common.infra.util.KafkaConstant.*;
+
 import java.nio.charset.StandardCharsets;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -25,14 +27,14 @@ public class AccountEventConsumer {
 	private final TransactionService transactionService;
 
 	@KafkaListener(
-		topics = "${topics.account-events}",
-		groupId = "transaction-service"
+		topics = ACCOUNT_EVENTS_TOPIC_NAME,
+		groupId = TRANSACTION_CONSUMER_GROUP_ID
 	)
 	public void handleAccountEvent(ConsumerRecord<String, String> consumerRecord) {
 		final String accountEventPayload = consumerRecord.value();
 
-		Header eventIdHeader = consumerRecord.headers().lastHeader("eventId");
-		Header eventTypeHeader = consumerRecord.headers().lastHeader("eventType");
+		Header eventIdHeader = consumerRecord.headers().lastHeader(EVENT_HEADER_ID);
+		Header eventTypeHeader = consumerRecord.headers().lastHeader(EVENT_HEADER_TYPE);
 
 		if (eventIdHeader == null || eventTypeHeader == null) {
 			log.error("[✅ LOGGER] 필수 헤더가 누락된 메시지를 수신했습니다. "
