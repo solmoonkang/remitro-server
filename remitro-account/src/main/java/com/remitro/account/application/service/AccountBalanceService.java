@@ -42,7 +42,7 @@ public class AccountBalanceService {
 		final Account account = accountReadService.loadAccountWithLock(depositCommand.accountId());
 
 		accountValidator.validateAccountOwner(account.getMemberId(), depositCommand.memberId());
-		accountValidator.validateAccountStatusNormal(account);
+		accountValidator.validateAccountStatusForDeposit(account);
 		accountValidator.validateAmountPositive(depositCommand.amount());
 
 		accountWriteService.increaseBalance(account, depositCommand.amount());
