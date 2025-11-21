@@ -1,5 +1,8 @@
 package com.remitro.account.application.service;
 
+import static com.remitro.common.infra.util.GlobalConstant.*;
+import static com.remitro.common.infra.util.RedisConstant.*;
+
 import org.springframework.stereotype.Service;
 
 import com.remitro.account.infrastructure.redis.ValueRedisRepository;
@@ -12,10 +15,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IdempotencyService {
 
-	public static final String IDEMPOTENCY_MARKER_VALUE = "LOCK";
-	public static final long DEFAULT_IDEMPOTENCY_EXPIRATION_SECONDS = 60L * 5L;
-	public static final String SEPARATOR = ":";
-
 	private final ValueRedisRepository valueRedisRepository;
 
 	public void validateOpenAccountIdempotency(Long memberId, String idempotencyKey, String prefix) {
@@ -24,7 +23,7 @@ public class IdempotencyService {
 		}
 
 		final String openAccountIdempotencyKey = generateOpenAccountKey(memberId, idempotencyKey, prefix);
-		validateFirstIdempotentRequest(openAccountIdempotencyKey);
+		validateFirstIdempotentRequest(openAccountIdempotencyKey, OPEN_ACCOUNT_IDEMPOTENCY_TTL);
 	}
 
 	public void validateBalanceChangeIdempotency(Long memberId, Long accountId, String idempotencyKey, String prefix) {
@@ -33,14 +32,23 @@ public class IdempotencyService {
 		}
 
 		final String balanceIdempotencyKey = generateBalanceChangeKey(memberId, accountId, idempotencyKey, prefix);
-		validateFirstIdempotentRequest(balanceIdempotencyKey);
+		validateFirstIdempotentRequest(balanceIdempotencyKey, BALANCE_CHANGE_IDEMPOTENCY_TTL);
 	}
 
-	private void validateFirstIdempotentRequest(String redisKey) {
+	public void validateTransferIdempotency(Long memberId, Long accountId, String idempotencyKey, String prefix) {
+		if (idempotencyKey == null || idempotencyKey.isBlank()) {
+			return;
+		}
+
+		final String transferIdempotencyKey = generateTransferKey(memberId, accountId, idempotencyKey, prefix);
+		validateFirstIdempotentRequest(transferIdempotencyKey, TRANSFER_IDEMPOTENCY_TTL);
+	}
+
+	private void validateFirstIdempotentRequest(String redisKey, long expirationSeconds) {
 		boolean isFirstRequest = valueRedisRepository.setIfAbsent(
 			redisKey,
 			IDEMPOTENCY_MARKER_VALUE,
-			DEFAULT_IDEMPOTENCY_EXPIRATION_SECONDS
+			expirationSeconds
 		);
 
 		if (!isFirstRequest) {
@@ -55,6 +63,13 @@ public class IdempotencyService {
 	}
 
 	private String generateBalanceChangeKey(Long memberId, Long accountId, String idempotencyKey, String prefix) {
+		return prefix
+			+ memberId + SEPARATOR
+			+ accountId + SEPARATOR
+			+ idempotencyKey;
+	}
+
+	private String generateTransferKey(Long memberId, Long accountId, String idempotencyKey, String prefix) {
 		return prefix
 			+ memberId + SEPARATOR
 			+ accountId + SEPARATOR
