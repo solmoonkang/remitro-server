@@ -7,12 +7,16 @@ import java.nio.charset.StandardCharsets;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Header;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
 import com.remitro.common.contract.account.AccountDepositEvent;
 import com.remitro.common.contract.account.AccountTransferEvent;
 import com.remitro.common.contract.account.AccountWithdrawEvent;
 import com.remitro.common.domain.enums.EventType;
+import com.remitro.common.infra.error.exception.BadRequestException;
+import com.remitro.common.infra.error.model.ErrorMessage;
 import com.remitro.common.infra.util.JsonUtil;
 import com.remitro.transaction.application.service.TransactionService;
 
@@ -30,63 +34,71 @@ public class AccountEventConsumer {
 		topics = ACCOUNT_EVENTS_TOPIC_NAME,
 		groupId = TRANSACTION_CONSUMER_GROUP_ID
 	)
+	@RetryableTopic(
+		attempts = "5",
+		dltTopicSuffix = "-dlq",
+		backoff = @Backoff(
+			delay = 1000,
+			maxDelay = 16000,
+			multiplier = 2
+		)
+	)
 	public void handleAccountEvent(ConsumerRecord<String, String> consumerRecord) {
 		final String accountEventPayload = consumerRecord.value();
+		final String eventId = extractEventId(consumerRecord);
+		final EventType eventType = extractEventType(consumerRecord);
 
-		Header eventIdHeader = consumerRecord.headers().lastHeader(EVENT_HEADER_ID);
-		Header eventTypeHeader = consumerRecord.headers().lastHeader(EVENT_HEADER_TYPE);
+		log.info("[✅ LOGGER] CONSUMER 이벤트 수신, (EVENT ID = {}, EVENT TYPE = {})",
+			eventId,
+			eventType
+		);
 
-		if (eventIdHeader == null || eventTypeHeader == null) {
-			log.error("[✅ LOGGER] 필수 헤더가 누락된 메시지를 수신했습니다. "
-					+ "EVENT ID HEADER = {}, EVENT TYPE HEADER = {}, PAYLOAD = {}",
-				eventIdHeader,
-				eventTypeHeader,
-				accountEventPayload
+		switch (eventType) {
+			case DEPOSIT -> handleDeposit(eventId, accountEventPayload);
+			case WITHDRAWAL -> handleWithdraw(eventId, accountEventPayload);
+			case TRANSFER -> handleTransfer(eventId, accountEventPayload);
+			default -> log.warn("[✅ LOGGER] 지원하지 않는 이벤트 타입, (EVENT TYPE = {})",
+				eventType
 			);
-			return;
 		}
+	}
 
-		final String eventId = new String(eventIdHeader.value(), StandardCharsets.UTF_8);
-		final EventType eventType = EventType.valueOf(new String(eventTypeHeader.value(), StandardCharsets.UTF_8));
+	// TODO: 규제 대응(RBA), 금융사기탐지(FDS), AML 대응이 가능하기 위해 프로덕션에 저장한다.
+	@KafkaListener(topics = ACCOUNT_EVENTS_TOPIC_NAME)
+	public void handleAccountStatusChangedEvent() {
 
-		try {
-			switch (eventType) {
-				case DEPOSIT -> handleDeposit(eventId, accountEventPayload);
-				case WITHDRAWAL -> handleWithdraw(eventId, accountEventPayload);
-				case TRANSFER -> handleTransfer(eventId, accountEventPayload);
-				default -> log.warn("[✅ LOGGER] 처리 대상이 아닌 EVENT TYPE ={} 입니다. ", eventType.name());
-			}
-		} catch (Exception e) {
-			log.error("[✅ LOGGER] 사용자 상태 변경 이벤트를 처리하지 못했습니다. "
-					+ "EVENT ID = {}, PAYLOAD = {}",
-				eventId,
-				accountEventPayload
-			);
-			throw e;
-		}
+	}
+
+	private String extractEventId(ConsumerRecord<String, String> consumerRecord) {
+		final Header eventIdHeader = consumerRecord.headers().lastHeader(EVENT_HEADER_ID);
+		validateEventHeaders(eventIdHeader);
+		return new String(eventIdHeader.value(), StandardCharsets.UTF_8);
+	}
+
+	private EventType extractEventType(ConsumerRecord<String, String> consumerRecord) {
+		final Header eventTypeHeader = consumerRecord.headers().lastHeader(EVENT_HEADER_TYPE);
+		validateEventHeaders(eventTypeHeader);
+		return EventType.valueOf(new String(eventTypeHeader.value(), StandardCharsets.UTF_8));
 	}
 
 	private void handleDeposit(String eventId, String accountEventPayload) {
-		final AccountDepositEvent accountDepositEvent = JsonUtil.fromJSON(
-			accountEventPayload,
-			AccountDepositEvent.class
-		);
-		transactionService.recordDepositTransaction(eventId, accountDepositEvent);
+		final AccountDepositEvent depositEvent = JsonUtil.fromJSON(accountEventPayload, AccountDepositEvent.class);
+		transactionService.recordDepositTransaction(eventId, depositEvent);
 	}
 
 	private void handleWithdraw(String eventId, String accountEventPayload) {
-		final AccountWithdrawEvent accountWithdrawEvent = JsonUtil.fromJSON(
-			accountEventPayload,
-			AccountWithdrawEvent.class
-		);
-		transactionService.recordWithdrawTransaction(eventId, accountWithdrawEvent);
+		final AccountWithdrawEvent withdrawEvent = JsonUtil.fromJSON(accountEventPayload, AccountWithdrawEvent.class);
+		transactionService.recordWithdrawTransaction(eventId, withdrawEvent);
 	}
 
 	private void handleTransfer(String eventId, String accountEventPayload) {
-		final AccountTransferEvent accountTransferEvent = JsonUtil.fromJSON(
-			accountEventPayload,
-			AccountTransferEvent.class
-		);
-		transactionService.recordTransferTransaction(eventId, accountTransferEvent);
+		final AccountTransferEvent transferEvent = JsonUtil.fromJSON(accountEventPayload, AccountTransferEvent.class);
+		transactionService.recordTransferTransaction(eventId, transferEvent);
+	}
+
+	private void validateEventHeaders(Header eventHeader) {
+		if (eventHeader == null) {
+			throw new BadRequestException(ErrorMessage.INVALID_EVENT_HEADER);
+		}
 	}
 }
