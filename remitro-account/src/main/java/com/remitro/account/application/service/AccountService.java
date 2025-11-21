@@ -19,6 +19,7 @@ import com.remitro.account.application.service.distributedlock.DistributedLockMa
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
+import com.remitro.account.domain.model.enums.AccountStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +34,7 @@ public class AccountService {
 	private final IdempotencyService idempotencyService;
 	private final DistributedLockManager distributedLockManager;
 	private final AccountBalanceService accountBalanceService;
+	private final AccountOutboxService accountOutboxService;
 
 	@Transactional
 	public OpenAccountCreationResponse openAccount(
@@ -64,6 +66,23 @@ public class AccountService {
 
 	public AccountBalanceResponse findAccountBalance(Long memberId, Long accountId) {
 		return accountBalanceService.findAccountBalance(memberId, accountId);
+	}
+
+	@Transactional
+	public void changeAccountStatus(Long accountId, AccountStatus newStatus) {
+		final Account account = accountReadService.findAccountById(accountId);
+		final AccountStatus previousStatus = account.getAccountStatus();
+		applyAccountStatusChange(account, newStatus);
+		accountOutboxService.appendStatusChangedEvent(account, previousStatus);
+	}
+
+	private void applyAccountStatusChange(Account account, AccountStatus newStatus) {
+		switch (newStatus) {
+			case FROZEN -> account.freeze();
+			case SUSPENDED -> account.suspend();
+			case DORMANT -> account.dormant();
+			case TERMINATED -> account.terminate();
+		}
 	}
 
 	public DepositResponse deposit(DepositCommand depositCommand) {
