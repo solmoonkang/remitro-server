@@ -79,7 +79,11 @@ public class OutboxMessage extends BaseTimeEntity {
 		return new OutboxMessage(UUID.randomUUID().toString(), aggregateId, aggregateType, eventType, eventData);
 	}
 
-	public void markPublished() {
+	public void markPublishSucceeded() {
 		this.eventStatus = EventStatus.PUBLISHED;
+	}
+
+	public void markPublishAttemptFailed() {
+		this.eventStatus = EventStatus.FAILED;
 	}
 }
