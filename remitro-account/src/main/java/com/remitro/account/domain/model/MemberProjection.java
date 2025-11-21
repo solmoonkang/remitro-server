@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +18,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "MEMBER_PROJECTION")
+@Table(name = "MEMBER_PROJECTION", indexes = {
+	@Index(name = "idx_member_id", columnList = "member_id")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberProjection {
 
