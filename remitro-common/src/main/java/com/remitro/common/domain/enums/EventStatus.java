@@ -8,6 +8,7 @@ package com.remitro.common.domain.enums;
 public enum EventStatus {
 
 	PENDING,
-	PUBLISHED
+	PUBLISHED,
+	FAILED
 }
 
