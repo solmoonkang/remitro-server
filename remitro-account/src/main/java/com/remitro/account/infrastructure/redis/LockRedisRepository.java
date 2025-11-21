@@ -6,6 +6,9 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Repository;
 
+import com.remitro.common.infra.error.exception.LockAcquireException;
+import com.remitro.common.infra.error.model.ErrorMessage;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -22,7 +25,8 @@ public class LockRedisRepository {
 		try {
 			return lock.tryLock(waitSeconds, leaseSeconds, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			Thread.currentThread().interrupt();
+			throw new LockAcquireException(ErrorMessage.LOCK_INTERRUPTED);
 		}
 	}
 
