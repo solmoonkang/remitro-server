@@ -1,5 +1,7 @@
 package com.remitro.account.infrastructure.messaging;
 
+import static com.remitro.common.infra.util.KafkaConstant.*;
+
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +22,8 @@ public class MemberEventConsumer {
 	private final MemberProjectionRepository memberProjectionRepository;
 
 	@KafkaListener(
-		topics = "${topics.member-events}",
-		groupId = "account-service"
+		topics = MEMBER_EVENTS_TOPIC_NAME,
+		groupId = ACCOUNT_CONSUMER_GROUP_ID
 	)
 	@Transactional
 	public void handleMemberStatusChangedEvent(String eventMessage) {
