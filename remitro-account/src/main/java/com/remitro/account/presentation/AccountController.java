@@ -5,11 +5,13 @@ import java.net.URI;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +25,7 @@ import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.service.AccountService;
+import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.common.infra.auth.annotation.Auth;
 import com.remitro.common.infra.auth.model.AuthMember;
 
@@ -52,8 +55,8 @@ public class AccountController {
 	public ResponseEntity<OpenAccountCreationResponse> openAccount(
 		@Auth AuthMember authMember,
 		@RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
-		@Valid @RequestBody OpenAccountRequest openAccountRequest) {
-
+		@Valid @RequestBody OpenAccountRequest openAccountRequest
+	) {
 		OpenAccountCreationResponse openAccountCreationResponse = accountService.openAccount(
 			authMember.id(),
 			idempotencyKey,
@@ -75,8 +78,8 @@ public class AccountController {
 	})
 	public ResponseEntity<AccountDetailResponse> getAccountDetail(
 		@Auth AuthMember authMember,
-		@PathVariable Long accountId) {
-
+		@PathVariable Long accountId
+	) {
 		return ResponseEntity.ok().body(accountService.findAccountDetail(authMember.id(), accountId));
 	}
 
@@ -102,9 +105,25 @@ public class AccountController {
 	})
 	public ResponseEntity<AccountBalanceResponse> getAccountBalance(
 		@Auth AuthMember authMember,
-		@PathVariable Long accountId) {
-
+		@PathVariable Long accountId
+	) {
 		return ResponseEntity.ok().body(accountService.findAccountBalance(authMember.id(), accountId));
+	}
+
+	@PatchMapping("/{accountId}/status")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(summary = "계좌 상태 변경", description = "이전 계좌 상태를 새로운 계좌 상태로 업데이트했습니다.")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "🎉 계좌 상태 변경 성공"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 계좌"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ResponseEntity<?> changeAccountStatus(
+		@PathVariable Long accountId,
+		@RequestParam AccountStatus accountStatus
+	) {
+		accountService.changeAccountStatus(accountId, accountStatus);
+		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 상태 변경을 성공적으로 완료했습니다.");
 	}
 
 	@PostMapping("/{accountId}/deposit")
@@ -122,8 +141,8 @@ public class AccountController {
 		@Auth AuthMember authMember,
 		@RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
 		@PathVariable Long accountId,
-		@Valid @RequestBody DepositRequest depositRequest) {
-
+		@Valid @RequestBody DepositRequest depositRequest
+	) {
 		DepositCommand depositCommand = AccountMapper.toDepositCommand(
 			authMember.id(),
 			idempotencyKey,
