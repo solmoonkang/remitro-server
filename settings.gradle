@@ -1,8 +1,8 @@
 rootProject.name = 'remitro-server'
 
-include ':remitro-common'
-include ':remitro-eureka-server'
 include ':remitro-api-gateway'
+include ':remitro-eureka-server'
+include ':remitro-common'
 include ':remitro-member'
 include ':remitro-account'
 include ':remitro-transaction'
