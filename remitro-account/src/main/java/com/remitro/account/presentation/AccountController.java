@@ -26,8 +26,7 @@ import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.service.AccountService;
 import com.remitro.account.domain.model.enums.AccountStatus;
-import com.remitro.common.infra.auth.annotation.Auth;
-import com.remitro.common.infra.auth.model.AuthMember;
+import com.remitro.account.infrastructure.auth.LoginMemberId;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -53,12 +52,12 @@ public class AccountController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public ResponseEntity<OpenAccountCreationResponse> openAccount(
-		@Auth AuthMember authMember,
+		@LoginMemberId Long memberId,
 		@RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
 		@Valid @RequestBody OpenAccountRequest openAccountRequest
 	) {
 		OpenAccountCreationResponse openAccountCreationResponse = accountService.openAccount(
-			authMember.id(),
+			memberId,
 			idempotencyKey,
 			openAccountRequest
 		);
@@ -77,10 +76,10 @@ public class AccountController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public ResponseEntity<AccountDetailResponse> getAccountDetail(
-		@Auth AuthMember authMember,
+		@LoginMemberId Long memberId,
 		@PathVariable Long accountId
 	) {
-		return ResponseEntity.ok().body(accountService.findAccountDetail(authMember.id(), accountId));
+		return ResponseEntity.ok().body(accountService.findAccountDetail(memberId, accountId));
 	}
 
 	@GetMapping
@@ -91,8 +90,8 @@ public class AccountController {
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<AccountsSummaryResponse> getMemberAccounts(@Auth AuthMember authMember) {
-		return ResponseEntity.ok().body(accountService.findMemberAccounts(authMember.id()));
+	public ResponseEntity<AccountsSummaryResponse> getMemberAccounts(@LoginMemberId Long memberId) {
+		return ResponseEntity.ok().body(accountService.findMemberAccounts(memberId));
 	}
 
 	@GetMapping("/{accountId}/balance")
@@ -104,10 +103,10 @@ public class AccountController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public ResponseEntity<AccountBalanceResponse> getAccountBalance(
-		@Auth AuthMember authMember,
+		@LoginMemberId Long memberId,
 		@PathVariable Long accountId
 	) {
-		return ResponseEntity.ok().body(accountService.findAccountBalance(authMember.id(), accountId));
+		return ResponseEntity.ok().body(accountService.findAccountBalance(memberId, accountId));
 	}
 
 	@PatchMapping("/{accountId}/status")
@@ -138,13 +137,13 @@ public class AccountController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public ResponseEntity<DepositResponse> deposit(
-		@Auth AuthMember authMember,
+		@LoginMemberId Long memberId,
 		@RequestHeader(name = "Idempotency-Key", required = false) String idempotencyKey,
 		@PathVariable Long accountId,
 		@Valid @RequestBody DepositRequest depositRequest
 	) {
 		DepositCommand depositCommand = AccountMapper.toDepositCommand(
-			authMember.id(),
+			memberId,
 			idempotencyKey,
 			accountId,
 			depositRequest
