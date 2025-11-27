@@ -2,12 +2,15 @@ package com.remitro.transaction.application.service;
 
 import org.springframework.stereotype.Service;
 
+import com.remitro.common.contract.account.AccountStatusChangedEvent;
 import com.remitro.common.contract.account.AccountTransactionEvent;
+import com.remitro.transaction.domain.model.AccountStatusHistory;
 import com.remitro.transaction.domain.model.LedgerEntry;
 import com.remitro.transaction.domain.model.Transaction;
 import com.remitro.transaction.domain.model.enums.LedgerDirection;
 import com.remitro.transaction.domain.model.enums.TransactionType;
 import com.remitro.transaction.domain.repository.LedgerEntryRepository;
+import com.remitro.transaction.domain.repository.StatusHistoryRepository;
 import com.remitro.transaction.domain.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ public class TransactionWriteService {
 
 	private final TransactionRepository transactionRepository;
 	private final LedgerEntryRepository ledgerEntryRepository;
+	private final StatusHistoryRepository statusHistoryRepository;
 
 	public Transaction saveTransaction(
 		String eventId,
@@ -25,6 +29,7 @@ public class TransactionWriteService {
 		AccountTransactionEvent accountTransactionEvent
 	) {
 		final Transaction transaction = Transaction.create(
+			accountTransactionEvent.accountId(),
 			eventId,
 			transactionType,
 			accountTransactionEvent.amount(),
@@ -48,5 +53,17 @@ public class TransactionWriteService {
 			accountTransactionEvent.occurredAt()
 		);
 		ledgerEntryRepository.save(ledgerEntry);
+	}
+
+	public void saveAccountStatusHistory(String eventId, AccountStatusChangedEvent accountStatusChangedEvent) {
+		final AccountStatusHistory accountStatusHistory = AccountStatusHistory.create(
+			accountStatusChangedEvent.accountId(),
+			accountStatusChangedEvent.memberId(),
+			eventId,
+			accountStatusChangedEvent.previousStatus(),
+			accountStatusChangedEvent.newStatus(),
+			accountStatusChangedEvent.changedAt()
+		);
+		statusHistoryRepository.save(accountStatusHistory);
 	}
 }
