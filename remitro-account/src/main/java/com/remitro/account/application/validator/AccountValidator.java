@@ -10,12 +10,11 @@ import org.springframework.stereotype.Component;
 
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
-import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.common.contract.member.ActivityStatus;
-import com.remitro.common.infra.error.exception.BadRequestException;
-import com.remitro.common.infra.error.exception.ConflictException;
-import com.remitro.common.infra.error.exception.ForbiddenException;
-import com.remitro.common.infra.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.error.exception.BadRequestException;
+import com.remitro.common.infrastructure.error.exception.ConflictException;
+import com.remitro.common.infrastructure.error.exception.ForbiddenException;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
