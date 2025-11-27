@@ -1,12 +1,12 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.5'
+    id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.remitro'
 version = '0.0.1-SNAPSHOT'
-description = 'member-service'
+description = 'remitro-member'
 
 java {
     toolchain {
@@ -25,7 +25,7 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2025.0.0")
+    set('springCloudVersion', "2023.0.3")
 }
 
 dependencies {
@@ -33,29 +33,34 @@ dependencies {
 
     // Swagger OpenAPI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10'
-    implementation 'org.apache.commons:commons-lang3:3.18.0'
+
+    // Eureka Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // Spring Web / JPA / Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // Kafka
     implementation "org.springframework.kafka:spring-kafka"
 
-    // Spring Data JPA
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
     // Bean Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // Spring Web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // Eureka Client
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // Utility
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+
     // H2 Database
     runtimeOnly 'com.h2database:h2'
+
+    // Logback
+    implementation 'ch.qos.logback:logback-core:1.5.20'
+    implementation 'ch.qos.logback:logback-classic:1.5.20'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
