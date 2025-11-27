@@ -1,6 +1,6 @@
 package com.remitro.account.infrastructure.redis;
 
-import static com.remitro.common.infra.util.RedisConstant.*;
+import static com.remitro.common.infrastructure.util.constant.RedisConstant.*;
 
 import java.util.concurrent.TimeUnit;
 
