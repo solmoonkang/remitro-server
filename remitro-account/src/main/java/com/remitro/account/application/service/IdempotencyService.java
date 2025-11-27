@@ -1,13 +1,13 @@
 package com.remitro.account.application.service;
 
-import static com.remitro.common.infra.util.GlobalConstant.*;
-import static com.remitro.common.infra.util.RedisConstant.*;
+import static com.remitro.common.infrastructure.util.constant.GlobalConstant.*;
+import static com.remitro.common.infrastructure.util.constant.RedisConstant.*;
 
 import org.springframework.stereotype.Service;
 
 import com.remitro.account.infrastructure.redis.ValueRedisRepository;
-import com.remitro.common.infra.error.exception.ConflictException;
-import com.remitro.common.infra.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.error.exception.ConflictException;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
