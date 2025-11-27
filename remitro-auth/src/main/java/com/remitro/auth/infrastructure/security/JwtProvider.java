@@ -1,6 +1,6 @@
 package com.remitro.auth.infrastructure.security;
 
-import static com.remitro.common.infrastructure.util.constant.ClaimsConstant.*;
+import static com.remitro.common.infrastructure.util.constant.JwtClaimsConstant.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -37,9 +37,9 @@ public class JwtProvider {
 			.issuer(tokenConfig.getIssuer())
 			.issuedAt(new Date())
 			.expiration(new Date(System.currentTimeMillis() + tokenConfig.getAccessTokenExpiration()))
-			.claim(MEMBER_ID, id)
-			.claim(MEMBER_EMAIL, email)
-			.claim(MEMBER_NICKNAME, nickname)
+			.claim(CLAIM_MEMBER_ID, id)
+			.claim(CLAIM_MEMBER_EMAIL, email)
+			.claim(CLAIM_MEMBER_NICKNAME, nickname)
 			.signWith(secretKey)
 			.compact();
 	}
@@ -49,8 +49,8 @@ public class JwtProvider {
 			.issuer(tokenConfig.getIssuer())
 			.issuedAt(new Date())
 			.expiration(new Date(System.currentTimeMillis() + tokenConfig.getRefreshTokenExpiration()))
-			.claim(MEMBER_ID, id)
-			.claim(MEMBER_EMAIL, email)
+			.claim(CLAIM_MEMBER_ID, id)
+			.claim(CLAIM_MEMBER_EMAIL, email)
 			.signWith(secretKey)
 			.compact();
 	}
