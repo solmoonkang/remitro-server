@@ -11,7 +11,7 @@ import com.remitro.common.contract.account.AccountDepositEvent;
 import com.remitro.common.contract.account.AccountStatusChangedEvent;
 import com.remitro.common.domain.enums.AggregateType;
 import com.remitro.common.domain.enums.EventType;
-import com.remitro.common.infra.util.JsonUtil;
+import com.remitro.common.infrastructure.util.JsonMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ public class AccountOutboxService {
 			account.getId(),
 			AggregateType.ACCOUNT,
 			EventType.ACCOUNT_STATUS_CHANGED,
-			JsonUtil.toJSON(accountStatusChangedEvent)
+			JsonMapper.toJSON(accountStatusChangedEvent)
 		);
 
 		outboxMessageRepository.save(accountOutbox);
@@ -48,7 +48,7 @@ public class AccountOutboxService {
 			account.getId(),
 			AggregateType.ACCOUNT,
 			EventType.DEPOSIT,
-			JsonUtil.toJSON(accountDepositEvent)
+			JsonMapper.toJSON(accountDepositEvent)
 		);
 
 		outboxMessageRepository.save(accountOutbox);
