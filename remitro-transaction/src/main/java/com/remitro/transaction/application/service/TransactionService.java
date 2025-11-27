@@ -4,8 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.common.contract.account.AccountDepositEvent;
-import com.remitro.common.contract.account.AccountTransferEvent;
-import com.remitro.common.contract.account.AccountWithdrawEvent;
+import com.remitro.common.contract.account.AccountStatusChangedEvent;
 import com.remitro.transaction.domain.model.Transaction;
 import com.remitro.transaction.domain.model.enums.LedgerDirection;
 import com.remitro.transaction.domain.model.enums.TransactionType;
@@ -23,8 +22,17 @@ public class TransactionService {
 	private final TransactionWriteService transactionWriteService;
 
 	@Transactional
+	public void recordStatusChangedTransaction(String eventId, AccountStatusChangedEvent accountStatusChangedEvent) {
+		if (transactionReadService.existsStatusChangeEvent(eventId)) {
+			return;
+		}
+
+		transactionWriteService.saveAccountStatusHistory(eventId, accountStatusChangedEvent);
+	}
+
+	@Transactional
 	public void recordDepositTransaction(String eventId, AccountDepositEvent accountDepositEvent) {
-		if (transactionReadService.existsByEventId(eventId)) {
+		if (transactionReadService.existsTransactionEvent(eventId)) {
 			return;
 		}
 
@@ -39,13 +47,5 @@ public class TransactionService {
 			accountDepositEvent.balanceAfter(),
 			accountDepositEvent
 		);
-	}
-
-	public void recordWithdrawTransaction(String eventId, AccountWithdrawEvent accountWithdrawEvent) {
-
-	}
-
-	public void recordTransferTransaction(String eventId, AccountTransferEvent accountTransferEvent) {
-
 	}
 }
