@@ -1,4 +1,4 @@
-package com.remitro.common.infra.util;
+package com.remitro.common.infrastructure.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

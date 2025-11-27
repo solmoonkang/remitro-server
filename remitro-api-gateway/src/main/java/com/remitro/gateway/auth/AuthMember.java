@@ -1,8 +1,10 @@
-package com.remitro.common.infra.auth.model;
+package com.remitro.gateway.auth;
 
 public record AuthMember(
-	Long id,
+	Long memberId,
+
 	String email,
+
 	String nickname
 ) {
 }

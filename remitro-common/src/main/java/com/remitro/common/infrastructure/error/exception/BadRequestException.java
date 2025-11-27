@@ -1,6 +1,6 @@
-package com.remitro.common.infra.error.exception;
+package com.remitro.common.infrastructure.error.exception;
 
-import com.remitro.common.infra.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
 
 import lombok.Getter;
 

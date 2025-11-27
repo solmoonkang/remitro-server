@@ -1,8 +1,7 @@
-package com.remitro.common.infra.error.model;
+package com.remitro.common.infrastructure.error.model;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 public record ErrorResponse(
 	String message,

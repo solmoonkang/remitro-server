@@ -1,24 +1,19 @@
-package com.remitro.common.infra.error.handler;
+package com.remitro.common.infrastructure.error.handler;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.remitro.common.infra.error.exception.BadRequestException;
-import com.remitro.common.infra.error.exception.ConflictException;
-import com.remitro.common.infra.error.exception.ForbiddenException;
-import com.remitro.common.infra.error.exception.InternalServerException;
-import com.remitro.common.infra.error.exception.LockAcquireException;
-import com.remitro.common.infra.error.exception.NotFoundException;
-import com.remitro.common.infra.error.exception.UnauthorizedException;
-import com.remitro.common.infra.error.model.ErrorResponse;
+import com.remitro.common.infrastructure.error.exception.BadRequestException;
+import com.remitro.common.infrastructure.error.exception.ConflictException;
+import com.remitro.common.infrastructure.error.exception.ForbiddenException;
+import com.remitro.common.infrastructure.error.exception.InternalServerException;
+import com.remitro.common.infrastructure.error.exception.LockAcquireException;
+import com.remitro.common.infrastructure.error.exception.NotFoundException;
+import com.remitro.common.infrastructure.error.exception.UnauthorizedException;
+import com.remitro.common.infrastructure.error.model.ErrorResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

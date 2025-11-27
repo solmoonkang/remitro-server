@@ -1,4 +1,4 @@
-package com.remitro.common.infra.config;
+package com.remitro.auth.infrastructure.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
