@@ -6,6 +6,7 @@ package com.remitro.common.domain.enums;
  */
 public enum EventType {
 
+	MEMBER_CREATED,
 	ACCOUNT_OPENED,
 	DEPOSIT,
 	WITHDRAWAL,
