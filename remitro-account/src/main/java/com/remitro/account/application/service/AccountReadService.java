@@ -10,8 +10,8 @@ import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.model.enums.AccountStatus;
 import com.remitro.account.domain.repository.AccountRepository;
 import com.remitro.account.domain.repository.MemberProjectionRepository;
-import com.remitro.common.infra.error.exception.NotFoundException;
-import com.remitro.common.infra.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.error.exception.NotFoundException;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
