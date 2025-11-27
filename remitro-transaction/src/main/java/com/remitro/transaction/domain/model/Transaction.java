@@ -31,6 +31,9 @@ public class Transaction {
 	@Column(name = "transaction_id", nullable = false)
 	private Long id;
 
+	@Column(name = "account_id", nullable = false)
+	private Long accountId;
+
 	@Column(name = "event_id", unique = true, nullable = false, length = 36)
 	private String eventId;
 
@@ -52,12 +55,14 @@ public class Transaction {
 	private LocalDateTime occurredAt;
 
 	private Transaction(
+		Long accountId,
 		String eventId,
 		TransactionType transactionType,
 		Long amount,
 		String description,
 		LocalDateTime occurredAt
 	) {
+		this.accountId = accountId;
 		this.eventId = eventId;
 		this.transactionType = transactionType;
 		this.transactionStatus = TransactionStatus.COMPLETED;
@@ -67,6 +72,7 @@ public class Transaction {
 	}
 
 	public static Transaction create(
+		Long accountId,
 		String eventId,
 		TransactionType transactionType,
 		Long amount,
@@ -74,6 +80,7 @@ public class Transaction {
 		LocalDateTime occurredAt
 	) {
 		return new Transaction(
+			accountId,
 			eventId,
 			transactionType,
 			amount,
