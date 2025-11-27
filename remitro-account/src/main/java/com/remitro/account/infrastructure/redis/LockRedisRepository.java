@@ -7,8 +7,8 @@ import org.redisson.api.RedissonClient;
 import org.redisson.client.RedisException;
 import org.springframework.stereotype.Repository;
 
-import com.remitro.common.infra.error.exception.LockAcquireException;
-import com.remitro.common.infra.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.error.exception.LockAcquireException;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
