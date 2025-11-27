@@ -2,8 +2,8 @@ package com.remitro.member.application.service;
 
 import org.springframework.stereotype.Service;
 
-import com.remitro.common.infra.error.exception.NotFoundException;
-import com.remitro.common.infra.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.error.exception.NotFoundException;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
 import com.remitro.member.domain.model.Member;
 import com.remitro.member.domain.repository.MemberRepository;
 
