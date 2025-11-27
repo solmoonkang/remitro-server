@@ -1,6 +1,6 @@
 package com.remitro.account.application.service.distributedlock;
 
-import static com.remitro.common.infra.util.RedisConstant.*;
+import static com.remitro.common.infrastructure.util.constant.RedisConstant.*;
 
 import java.util.function.Supplier;
 
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.remitro.account.application.service.AccountReadService;
 import com.remitro.account.infrastructure.redis.LockRedisRepository;
-import com.remitro.common.infra.error.exception.LockAcquireException;
-import com.remitro.common.infra.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.error.exception.LockAcquireException;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
