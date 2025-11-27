@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RedisConstant {
 
-	// IDEMPOTENCY REPOSITORY PREFIX
+	// REFRESH TOKEN
+	public static final long REFRESH_TOKEN_TTL = 14L * 24 * 60 * 60 * 1000;
+
+	// IDEMPOTENCY
 	public static final String IDEMPOTENCY_PREFIX = "IDEMPOTENCY:PREFIX:";
 	public static final String IDEMPOTENCY_MARKER_VALUE = "LOCK";
 
@@ -17,12 +20,12 @@ public class RedisConstant {
 	public static final long BALANCE_CHANGE_IDEMPOTENCY_TTL = 60L;
 	public static final long TRANSFER_IDEMPOTENCY_TTL = 60L * 3;
 
-	// BALANCE CACHE PREFIX
+	// BALANCE CACHE
 	public static final String BALANCE_CACHE_PREFIX = "ACCOUNT:BALANCE:";
 
 	public static final long BALANCE_CACHE_TTL = 30L;
 
-	// DISTRIBUTED LOCK PREFIX
+	// DISTRIBUTED LOCK
 	public static final String ACCOUNT_LOCK_PREFIX = "LOCK:ACCOUNT:";
 
 	public static final long LOCK_ACQUIRE_TIMEOUT_SECONDS = 3L;
