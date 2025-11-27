@@ -18,9 +18,9 @@ import com.remitro.account.domain.repository.OutboxMessageRepository;
 import com.remitro.common.contract.account.AccountOpenedEvent;
 import com.remitro.common.domain.enums.AggregateType;
 import com.remitro.common.domain.enums.EventType;
-import com.remitro.common.infra.error.exception.InternalServerException;
-import com.remitro.common.infra.error.model.ErrorMessage;
-import com.remitro.common.infra.util.JsonUtil;
+import com.remitro.common.infrastructure.error.exception.InternalServerException;
+import com.remitro.common.infrastructure.error.model.ErrorMessage;
+import com.remitro.common.infrastructure.util.JsonMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,7 +52,7 @@ public class AccountWriteService {
 			account.getMemberId(),
 			account.getAccountType().getCode()
 		);
-		final String eventMessage = JsonUtil.toJSON(accountOpendEvent);
+		final String eventMessage = JsonMapper.toJSON(accountOpendEvent);
 
 		final OutboxMessage outboxMessage = OutboxMessage.create(
 			account.getId(),
