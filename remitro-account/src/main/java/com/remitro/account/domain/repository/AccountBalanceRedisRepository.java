@@ -1,6 +1,6 @@
 package com.remitro.account.domain.repository;
 
-import static com.remitro.common.infra.util.RedisConstant.*;
+import static com.remitro.common.infrastructure.util.constant.RedisConstant.*;
 
 import java.util.Optional;
 
