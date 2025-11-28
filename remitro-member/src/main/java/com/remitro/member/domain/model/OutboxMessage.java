@@ -2,10 +2,10 @@ package com.remitro.member.domain.model;
 
 import java.util.UUID;
 
-import com.remitro.common.domain.BaseTimeEntity;
-import com.remitro.common.domain.enums.AggregateType;
-import com.remitro.common.domain.enums.EventStatus;
-import com.remitro.common.domain.enums.EventType;
+import com.remitro.member.domain.enums.AggregateType;
+import com.remitro.member.domain.event.EventStatus;
+import com.remitro.member.domain.event.EventType;
+import com.remitro.member.infrastructure.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
