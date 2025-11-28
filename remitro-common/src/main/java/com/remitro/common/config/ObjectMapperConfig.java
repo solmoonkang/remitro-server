@@ -1,4 +1,4 @@
-package com.remitro.common.infrastructure.config;
+package com.remitro.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.remitro.common.infrastructure.util.constant;
+package com.remitro.common.util.constant;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

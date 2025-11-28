@@ -1,4 +1,4 @@
-package com.remitro.common.infrastructure.error.handler;
+package com.remitro.common.error.handler;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -6,14 +6,14 @@ import java.util.stream.Collectors;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.validation.FieldError;
 
-import com.remitro.common.infrastructure.error.exception.BadRequestException;
-import com.remitro.common.infrastructure.error.exception.ConflictException;
-import com.remitro.common.infrastructure.error.exception.ForbiddenException;
-import com.remitro.common.infrastructure.error.exception.InternalServerException;
-import com.remitro.common.infrastructure.error.exception.LockAcquireException;
-import com.remitro.common.infrastructure.error.exception.NotFoundException;
-import com.remitro.common.infrastructure.error.exception.UnauthorizedException;
-import com.remitro.common.infrastructure.error.model.ErrorResponse;
+import com.remitro.common.error.exception.InternalServerException;
+import com.remitro.common.error.exception.BadRequestException;
+import com.remitro.common.error.exception.ConflictException;
+import com.remitro.common.error.exception.ForbiddenException;
+import com.remitro.common.error.exception.LockAcquireException;
+import com.remitro.common.error.exception.NotFoundException;
+import com.remitro.common.error.exception.UnauthorizedException;
+import com.remitro.common.error.model.ErrorResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.remitro.common.infrastructure.error.model;
+package com.remitro.common.error.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,6 +19,7 @@ public enum ErrorMessage {
 	ACCOUNT_NOT_ACTIVE("정상 계좌가 아니므로 모든 입출금이 제한되었습니다."),
 	ACCOUNT_TERMINATED("계좌 해지 완료 상태로 입출금은 불가능하며 조회만 가능합니다."),
 	ACCOUNT_SUSPENDED("계좌 이용 정지 상태로 입출금이 모두 차단되었습니다."),
+	INVALID_KYC_STATUS_REASON("KYC 거절/보류 사유는 필수입니다."),
 
 	// 401: UNAUTHORIZED
 	TOKEN_EXPIRED("이미 만료된 토큰입니다."),
@@ -29,6 +30,7 @@ public enum ErrorMessage {
 
 	// 404: NOT FOUND
 	MEMBER_NOT_FOUND("요청하신 회원은 존재하지 않습니다."),
+	KYC_VERIFICATION_NOT_FOUND("요청하신 KYC 정보는 존재하지 않습니다."),
 	ACCOUNT_NOT_FOUND("요청하신 계좌는 존재하지 않습니다."),
 	TRANSACTION_NOT_FOUND("요청하신 거래는 존재하지 않습니다."),
 

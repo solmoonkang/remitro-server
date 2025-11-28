@@ -1,4 +1,4 @@
-package com.remitro.common.infrastructure.error.model;
+package com.remitro.common.error.model;
 
 import java.util.Map;
 
