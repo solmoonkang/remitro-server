@@ -2,7 +2,7 @@ package com.remitro.member.domain.model;
 
 import java.time.LocalDateTime;
 
-import com.remitro.member.domain.model.enums.KycVerificationStatus;
+import com.remitro.member.domain.enums.KycVerificationStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "MEMBER_KYC_VERIFICATIONS")
+@Table(name = "KYC_VERIFICATIONS")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberKycVerification {
+public class KycVerification {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,9 +43,24 @@ public class MemberKycVerification {
 	@Column(name = "reason")
 	private String reason;
 
-	private MemberKycVerification(Long memberId) {
+	private KycVerification(Long memberId) {
 		this.memberId = memberId;
 		this.kycVerificationStatus = KycVerificationStatus.PENDING;
 		this.requestedAt = LocalDateTime.now();
+	}
+
+	public static KycVerification create(Long memberId) {
+		return new KycVerification(memberId);
+	}
+
+	public void completeSuccess() {
+		this.kycVerificationStatus = KycVerificationStatus.VERIFIED;
+		this.completedAt = LocalDateTime.now();
+	}
+
+	public void completeReject(String reason) {
+		this.kycVerificationStatus = KycVerificationStatus.VERIFIED;
+		this.reason = reason;
+		this.completedAt = LocalDateTime.now();
 	}
 }
