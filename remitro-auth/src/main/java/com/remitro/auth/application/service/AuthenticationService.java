@@ -1,7 +1,7 @@
 package com.remitro.auth.application.service;
 
-import static com.remitro.common.infrastructure.util.constant.JwtClaimsConstant.*;
-import static com.remitro.common.infrastructure.util.constant.RedisConstant.*;
+import static com.remitro.common.util.constant.JwtClaimsConstant.*;
+import static com.remitro.common.util.constant.RedisConstant.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,9 +14,9 @@ import com.remitro.auth.domain.model.RefreshToken;
 import com.remitro.auth.domain.repository.TokenRepository;
 import com.remitro.auth.infrastructure.client.MemberFeignClient;
 import com.remitro.auth.infrastructure.security.JwtProvider;
-import com.remitro.common.contract.member.MemberCredentialsResponse;
-import com.remitro.common.infrastructure.error.exception.UnauthorizedException;
-import com.remitro.common.infrastructure.error.model.ErrorMessage;
+import com.remitro.common.contract.MemberAuthInfo;
+import com.remitro.common.error.exception.UnauthorizedException;
+import com.remitro.common.error.model.ErrorMessage;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -32,17 +32,17 @@ public class AuthenticationService {
 
 	@Transactional
 	public TokenResponse loginMember(LoginRequest loginRequest) {
-		final MemberCredentialsResponse memberCredentialsResponse = memberFeignClient.findAuthInfo(
+		final MemberAuthInfo memberAuthInfo = memberFeignClient.findAuthInfo(
 			loginRequest.email()
 		);
 
-		if (!passwordEncoder.matches(loginRequest.password(), memberCredentialsResponse.hashedPassword())) {
+		if (!passwordEncoder.matches(loginRequest.password(), memberAuthInfo.hashedPassword())) {
 			throw new UnauthorizedException(ErrorMessage.INVALID_PASSWORD);
 		}
 
-		final String accessToken = generateAccessToken(memberCredentialsResponse);
-		final String refreshToken = generateRefreshToken(memberCredentialsResponse);
-		tokenRepository.saveToken(createRefreshToken(memberCredentialsResponse.memberId(), refreshToken));
+		final String accessToken = generateAccessToken(memberAuthInfo);
+		final String refreshToken = generateRefreshToken(memberAuthInfo);
+		tokenRepository.saveToken(createRefreshToken(memberAuthInfo.memberId(), refreshToken));
 
 		return new TokenResponse(accessToken, refreshToken);
 	}
@@ -50,32 +50,32 @@ public class AuthenticationService {
 	@Transactional
 	public TokenResponse reissueTokens(String refreshToken) {
 		final Claims claims = jwtProvider.parseClaims(refreshToken);
-		final MemberCredentialsResponse memberCredentialsResponse = memberFeignClient.findAuthInfo(
+		final MemberAuthInfo memberAuthInfo = memberFeignClient.findAuthInfo(
 			claims.get(CLAIM_MEMBER_EMAIL, String.class)
 		);
 
-		tokenRepository.findTokenByMemberId(memberCredentialsResponse.memberId())
+		tokenRepository.findTokenByMemberId(memberAuthInfo.memberId())
 			.orElseThrow(() -> new UnauthorizedException(ErrorMessage.INVALID_TOKEN));
 
-		final String newAccessToken = generateAccessToken(memberCredentialsResponse);
-		final String newRefreshToken = generateRefreshToken(memberCredentialsResponse);
-		tokenRepository.saveToken(createRefreshToken(memberCredentialsResponse.memberId(), newRefreshToken));
+		final String newAccessToken = generateAccessToken(memberAuthInfo);
+		final String newRefreshToken = generateRefreshToken(memberAuthInfo);
+		tokenRepository.saveToken(createRefreshToken(memberAuthInfo.memberId(), newRefreshToken));
 
 		return TokenMapper.toTokenResponse(newAccessToken, newRefreshToken);
 	}
 
-	private String generateAccessToken(MemberCredentialsResponse memberCredentialsResponse) {
+	private String generateAccessToken(MemberAuthInfo memberAuthInfo) {
 		return jwtProvider.generateAccessToken(
-			memberCredentialsResponse.memberId(),
-			memberCredentialsResponse.email(),
-			memberCredentialsResponse.nickname()
+			memberAuthInfo.memberId(),
+			memberAuthInfo.email(),
+			memberAuthInfo.nickname()
 		);
 	}
 
-	private String generateRefreshToken(MemberCredentialsResponse memberCredentialsResponse) {
+	private String generateRefreshToken(MemberAuthInfo memberAuthInfo) {
 		return jwtProvider.generateRefreshToken(
-			memberCredentialsResponse.memberId(),
-			memberCredentialsResponse.email()
+			memberAuthInfo.memberId(),
+			memberAuthInfo.email()
 		);
 	}
 
