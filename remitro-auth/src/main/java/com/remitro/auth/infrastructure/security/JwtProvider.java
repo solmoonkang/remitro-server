@@ -1,6 +1,6 @@
 package com.remitro.auth.infrastructure.security;
 
-import static com.remitro.common.infrastructure.util.constant.JwtClaimsConstant.*;
+import static com.remitro.common.util.constant.JwtClaimsConstant.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
