@@ -1,9 +1,10 @@
-package com.remitro.member.application.service;
+package com.remitro.member.application.service.internal;
 
 import org.springframework.stereotype.Service;
 
-import com.remitro.common.contract.member.MemberAuthMapper;
-import com.remitro.common.contract.member.MemberCredentialsResponse;
+import com.remitro.common.contract.MemberAuthInfo;
+import com.remitro.member.application.mapper.MemberAuthMapper;
+import com.remitro.member.application.service.member.MemberReadService;
 import com.remitro.member.domain.model.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,7 @@ public class InternalMemberService {
 
 	private final MemberReadService memberReadService;
 
-	public MemberCredentialsResponse findAuthInfo(String email) {
+	public MemberAuthInfo findAuthInfo(String email) {
 		final Member member = memberReadService.findMemberByEmail(email);
 		return MemberAuthMapper.toMemberCredentialsResponse(
 			member.getId(),
