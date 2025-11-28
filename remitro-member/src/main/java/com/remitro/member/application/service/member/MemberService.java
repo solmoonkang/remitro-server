@@ -1,10 +1,10 @@
-package com.remitro.member.application.service;
+package com.remitro.member.application.service.member;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.infra.auth.model.AuthMember;
 import com.remitro.member.application.dto.request.SignUpRequest;
+import com.remitro.member.application.dto.request.UpdateActivityStatusRequest;
 import com.remitro.member.application.dto.response.MemberInfoResponse;
 import com.remitro.member.application.mapper.MemberMapper;
 import com.remitro.member.application.validator.MemberValidator;
@@ -30,8 +30,14 @@ public class MemberService {
 		memberWriteService.saveMember(signUpRequest);
 	}
 
-	public MemberInfoResponse findMemberInfo(AuthMember authMember) {
-		final Member member = memberReadService.findMemberById(authMember.id());
+	public MemberInfoResponse findMemberInfo(Long memberId) {
+		final Member member = memberReadService.findMemberById(memberId);
 		return MemberMapper.toMemberInfoResponse(member);
+	}
+
+	@Transactional
+	public void updateActivityStatus(Long memberId, UpdateActivityStatusRequest updateActivityStatusRequest) {
+		final Member member = memberReadService.findMemberById(memberId);
+		memberWriteService.updateActivityStatus(member, updateActivityStatusRequest.activityStatus());
 	}
 }
