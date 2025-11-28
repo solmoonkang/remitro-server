@@ -1,4 +1,4 @@
-package com.remitro.account.infrastructure.config;
+package com.remitro.common.config;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.remitro.account.infrastructure.auth.LoginMemberIdArgumentResolver;
+import com.remitro.common.auth.LoginMemberIdArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,3 +21,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		handlerMethodArgumentResolvers.add(loginMemberIdArgumentResolver);
 	}
 }
+
