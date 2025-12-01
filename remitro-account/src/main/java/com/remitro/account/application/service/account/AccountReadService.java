@@ -1,4 +1,4 @@
-package com.remitro.account.application.service;
+package com.remitro.account.application.service.account;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
-import com.remitro.account.domain.model.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountStatus;
 import com.remitro.account.domain.repository.AccountRepository;
 import com.remitro.account.domain.repository.MemberProjectionRepository;
-import com.remitro.common.infrastructure.error.exception.NotFoundException;
-import com.remitro.common.infrastructure.error.model.ErrorMessage;
+import com.remitro.common.error.exception.NotFoundException;
+import com.remitro.common.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
