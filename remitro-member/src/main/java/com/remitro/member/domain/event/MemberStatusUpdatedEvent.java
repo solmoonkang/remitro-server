@@ -10,7 +10,9 @@ public record MemberStatusUpdatedEvent(
 
 	ActivityStatus activityStatus,
 
-	KycStatus kycStatus
+	KycStatus kycStatus,
+
+	boolean isMemberActive
 ) {
 }
 
