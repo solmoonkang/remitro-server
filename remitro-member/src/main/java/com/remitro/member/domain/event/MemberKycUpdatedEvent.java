@@ -9,6 +9,8 @@ public record MemberKycUpdatedEvent(
 
 	KycStatus kycStatus,
 
-	LocalDateTime verifiedAt
+	LocalDateTime verifiedAt,
+
+	boolean isMemberActive
 ) {
 }
