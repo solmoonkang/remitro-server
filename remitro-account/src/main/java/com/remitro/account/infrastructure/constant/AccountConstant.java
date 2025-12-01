@@ -1,4 +1,4 @@
-package com.remitro.account.domain.constant;
+package com.remitro.account.infrastructure.constant;
 
 import java.time.format.DateTimeFormatter;
 
