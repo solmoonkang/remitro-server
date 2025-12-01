@@ -3,7 +3,7 @@ package com.remitro.account.application.mapper;
 import java.time.LocalDateTime;
 
 import com.remitro.account.domain.model.Account;
-import com.remitro.account.domain.model.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountStatus;
 import com.remitro.common.contract.account.AccountDepositEvent;
 import com.remitro.common.contract.account.AccountStatusChangedEvent;
 
