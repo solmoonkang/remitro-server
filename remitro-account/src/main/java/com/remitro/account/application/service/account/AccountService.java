@@ -15,14 +15,15 @@ import com.remitro.account.application.dto.response.AccountsSummaryResponse;
 import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
-import com.remitro.account.application.service.outbox.AccountOutboxService;
-import com.remitro.account.application.service.idempotency.IdempotencyService;
 import com.remitro.account.application.service.balance.AccountBalanceService;
 import com.remitro.account.application.service.balance.DistributedLockManager;
-import com.remitro.account.application.validator.AccountValidator;
+import com.remitro.account.application.service.idempotency.IdempotencyService;
+import com.remitro.account.application.service.outbox.AccountOutboxService;
+import com.remitro.account.application.validator.AccountEligibilityValidator;
+import com.remitro.account.application.validator.AccountStatusTransactionValidator;
+import com.remitro.account.domain.enums.AccountStatus;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
-import com.remitro.account.domain.enums.AccountStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,13 +32,14 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountService {
 
-	private final AccountValidator accountValidator;
+	private final AccountEligibilityValidator accountEligibilityValidator;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
 	private final IdempotencyService idempotencyService;
 	private final DistributedLockManager distributedLockManager;
 	private final AccountBalanceService accountBalanceService;
 	private final AccountOutboxService accountOutboxService;
+	private final AccountStatusTransactionValidator accountStatusTransactionValidator;
 
 	@Transactional
 	public OpenAccountCreationResponse openAccount(
@@ -48,7 +50,7 @@ public class AccountService {
 		idempotencyService.validateOpenAccountIdempotency(memberId, idempotencyKey, OPEN_ACCOUNT_PREFIX);
 
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
-		accountValidator.validateMemberIsActive(member);
+		accountEligibilityValidator.validateMemberIsActive(member);
 
 		final Account account = accountWriteService.saveAccount(member, openAccountRequest);
 		accountWriteService.appendAccountOpenedEventOutbox(account);
@@ -72,20 +74,12 @@ public class AccountService {
 	}
 
 	@Transactional
-	public void changeAccountStatus(Long accountId, AccountStatus newStatus) {
+	public void changeAccountStatus(Long accountId, AccountStatus targetStatus) {
 		final Account account = accountReadService.findAccountById(accountId);
-		final AccountStatus previousStatus = account.getAccountStatus();
-		applyAccountStatusChange(account, newStatus);
-		accountOutboxService.appendAccountStatusUpdatedEvent(account, previousStatus);
-	}
-
-	private void applyAccountStatusChange(Account account, AccountStatus newStatus) {
-		switch (newStatus) {
-			case FROZEN -> account.changeToFrozen();
-			case SUSPENDED -> account.changeToSuspended();
-			case DORMANT -> account.changeToDormant();
-			case TERMINATED -> account.changeToTerminated();
-		}
+		final AccountStatus currentStatus = account.getAccountStatus();
+		accountStatusTransactionValidator.validateStatusTransition(currentStatus, targetStatus);
+		account.applyAccountStatus(targetStatus);
+		accountOutboxService.appendAccountStatusUpdatedEvent(account, currentStatus);
 	}
 
 	public DepositResponse deposit(DepositCommand depositCommand) {
