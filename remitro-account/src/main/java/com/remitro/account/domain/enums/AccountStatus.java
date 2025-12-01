@@ -1,4 +1,4 @@
-package com.remitro.account.domain.model.enums;
+package com.remitro.account.domain.enums;
 
 public enum AccountStatus {
 
