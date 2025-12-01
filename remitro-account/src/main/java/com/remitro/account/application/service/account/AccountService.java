@@ -1,6 +1,6 @@
-package com.remitro.account.application.service;
+package com.remitro.account.application.service.account;
 
-import static com.remitro.common.infrastructure.util.constant.RedisConstant.*;
+import static com.remitro.common.util.constant.RedisConstant.*;
 
 import java.util.List;
 
@@ -15,11 +15,14 @@ import com.remitro.account.application.dto.response.AccountsSummaryResponse;
 import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
-import com.remitro.account.application.service.distributedlock.DistributedLockManager;
+import com.remitro.account.application.service.outbox.AccountOutboxService;
+import com.remitro.account.application.service.idempotency.IdempotencyService;
+import com.remitro.account.application.service.balance.AccountBalanceService;
+import com.remitro.account.application.service.balance.DistributedLockManager;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
-import com.remitro.account.domain.model.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,15 +76,15 @@ public class AccountService {
 		final Account account = accountReadService.findAccountById(accountId);
 		final AccountStatus previousStatus = account.getAccountStatus();
 		applyAccountStatusChange(account, newStatus);
-		accountOutboxService.appendStatusChangedEvent(account, previousStatus);
+		accountOutboxService.appendAccountStatusUpdatedEvent(account, previousStatus);
 	}
 
 	private void applyAccountStatusChange(Account account, AccountStatus newStatus) {
 		switch (newStatus) {
-			case FROZEN -> account.freeze();
-			case SUSPENDED -> account.suspend();
-			case DORMANT -> account.dormant();
-			case TERMINATED -> account.terminate();
+			case FROZEN -> account.changeToFrozen();
+			case SUSPENDED -> account.changeToSuspended();
+			case DORMANT -> account.changeToDormant();
+			case TERMINATED -> account.changeToTerminated();
 		}
 	}
 
