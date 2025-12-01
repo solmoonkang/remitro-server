@@ -1,5 +1,7 @@
 package com.remitro.member.application.mapper;
 
+import com.remitro.member.domain.enums.ActivityStatus;
+import com.remitro.member.domain.enums.KycStatus;
 import com.remitro.member.domain.event.MemberCreatedEvent;
 import com.remitro.member.domain.event.MemberKycUpdatedEvent;
 import com.remitro.member.domain.event.MemberStatusUpdatedEvent;
@@ -15,7 +17,10 @@ public class MemberEventMapper {
 		return new MemberCreatedEvent(
 			member.getId(),
 			member.getEmail(),
-			member.getNickname()
+			member.getNickname(),
+			member.getActivityStatus().name(),
+			member.getKycStatus().name(),
+			member.isActiveForAccountOpen()
 		);
 	}
 
@@ -24,7 +29,8 @@ public class MemberEventMapper {
 			member.getId(),
 			member.getNickname(),
 			member.getActivityStatus(),
-			member.getKycStatus()
+			member.getKycStatus(),
+			member.isActiveForAccountOpen()
 		);
 	}
 
@@ -32,7 +38,8 @@ public class MemberEventMapper {
 		return new MemberKycUpdatedEvent(
 			member.getId(),
 			member.getKycStatus(),
-			member.getKycVerifiedAt()
+			member.getKycVerifiedAt(),
+			member.isActiveForAccountOpen()
 		);
 	}
 }
