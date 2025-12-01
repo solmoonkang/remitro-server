@@ -1,10 +1,10 @@
 package com.remitro.account.domain.model;
 
-import java.time.LocalDateTime;
-
-import com.remitro.account.domain.model.enums.AccountStatus;
-import com.remitro.account.domain.model.enums.AccountType;
-import com.remitro.common.domain.BaseTimeEntity;
+import com.remitro.account.domain.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountType;
+import com.remitro.account.infrastructure.BaseTimeEntity;
+import com.remitro.common.error.exception.InternalServerException;
+import com.remitro.common.error.model.ErrorMessage;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,9 +56,6 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "account_status", nullable = false)
 	private AccountStatus accountStatus;
 
-	@Column(name = "last_transaction_at", nullable = false)
-	private LocalDateTime lastTransactionAt;
-
 	private Account(
 		Long memberId,
 		String accountNumber,
@@ -86,22 +83,32 @@ public class Account extends BaseTimeEntity {
 	}
 
 	public void increaseBalance(Long amount) {
-		this.balance += amount;
+		long newBalance = this.balance + amount;
+
+		if (newBalance < 0) {
+			throw new InternalServerException(ErrorMessage.ACCOUNT_BALANCE_CORRUPTED);
+		}
+
+		this.balance = newBalance;
 	}
 
-	public void freeze() {
+	public void changeAccountStatus(AccountStatus targetStatus) {
+		this.accountStatus = targetStatus;
+	}
+
+	public void changeToFrozen() {
 		this.accountStatus = AccountStatus.FROZEN;
 	}
 
-	public void suspend() {
+	public void changeToSuspended() {
 		this.accountStatus = AccountStatus.SUSPENDED;
 	}
 
-	public void dormant() {
+	public void changeToDormant() {
 		this.accountStatus = AccountStatus.DORMANT;
 	}
 
-	public void terminate() {
+	public void changeToTerminated() {
 		this.accountStatus = AccountStatus.TERMINATED;
 	}
 }
