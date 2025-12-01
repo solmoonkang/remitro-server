@@ -2,13 +2,8 @@ package com.remitro.account.domain.model;
 
 import java.time.LocalDateTime;
 
-import com.remitro.common.contract.member.ActivityStatus;
-import com.remitro.common.contract.member.KycStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
@@ -31,31 +26,47 @@ public class MemberProjection {
 	@Column(name = "nickname", nullable = false, length = 50)
 	private String nickname;
 
-	@Enumerated(EnumType.STRING)
 	@Column(name = "activity_status", nullable = false)
-	private ActivityStatus activityStatus;
+	private String activityStatus;
 
-	@Enumerated(EnumType.STRING)
 	@Column(name = "kyc_status", nullable = false)
-	private KycStatus kycStatus;
+	private String kycStatus;
 
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
-	private MemberProjection(Long memberId, String nickname, ActivityStatus activityStatus, LocalDateTime updatedAt) {
+	@Column(name = "is_account_open_allowed", nullable = false)
+	private boolean isAccountOpenAllowed;
+
+	private MemberProjection(
+		Long memberId,
+		String nickname,
+		String activityStatus,
+		String kycStatus,
+		boolean isAccountOpenAllowed
+	) {
 		this.memberId = memberId;
 		this.nickname = nickname;
 		this.activityStatus = activityStatus;
-		this.updatedAt = updatedAt;
-		this.kycStatus = KycStatus.UNVERIFIED;
+		this.kycStatus = kycStatus;
+		this.updatedAt = LocalDateTime.now();
+		this.isAccountOpenAllowed = isAccountOpenAllowed;
 	}
 
-	public static MemberProjection create(Long memberId, String nickname, ActivityStatus activityStatus) {
-		return new MemberProjection(memberId, nickname, activityStatus, LocalDateTime.now());
+	public static MemberProjection create(
+		Long memberId,
+		String nickname,
+		String activityStatus,
+		String kycStatus,
+		boolean isAccountOpenAllowed
+	) {
+		return new MemberProjection(memberId, nickname, activityStatus, kycStatus, isAccountOpenAllowed);
 	}
 
-	public void update(ActivityStatus activityStatus) {
+	public void updateActivityAndKycStatus(String activityStatus, String kycStatus, boolean isAccountOpenAllowed) {
 		this.activityStatus = activityStatus;
+		this.kycStatus = kycStatus;
+		this.isAccountOpenAllowed = isAccountOpenAllowed;
 		this.updatedAt = LocalDateTime.now();
 	}
 }
