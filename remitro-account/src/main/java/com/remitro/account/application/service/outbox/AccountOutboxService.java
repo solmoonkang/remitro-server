@@ -1,17 +1,17 @@
-package com.remitro.account.application.service;
+package com.remitro.account.application.service.outbox;
 
 import org.springframework.stereotype.Service;
 
 import com.remitro.account.application.mapper.AccountEventMapper;
+import com.remitro.account.domain.enums.AggregateType;
+import com.remitro.account.domain.event.EventType;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.OutboxMessage;
-import com.remitro.account.domain.model.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountStatus;
 import com.remitro.account.domain.repository.OutboxMessageRepository;
 import com.remitro.common.contract.account.AccountDepositEvent;
 import com.remitro.common.contract.account.AccountStatusChangedEvent;
-import com.remitro.common.domain.enums.AggregateType;
-import com.remitro.common.domain.enums.EventType;
-import com.remitro.common.infrastructure.util.JsonMapper;
+import com.remitro.common.util.JsonMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,7 @@ public class AccountOutboxService {
 
 	private final OutboxMessageRepository outboxMessageRepository;
 
-	public void appendStatusChangedEvent(Account account, AccountStatus previousStatus) {
+	public void appendAccountStatusUpdatedEvent(Account account, AccountStatus previousStatus) {
 		final AccountStatusChangedEvent accountStatusChangedEvent = AccountEventMapper.toAccountStatusChangedEvent(
 			account,
 			previousStatus
@@ -30,7 +30,7 @@ public class AccountOutboxService {
 		final OutboxMessage accountOutbox = OutboxMessage.create(
 			account.getId(),
 			AggregateType.ACCOUNT,
-			EventType.ACCOUNT_STATUS_CHANGED,
+			EventType.ACCOUNT_STATUS_UPDATED,
 			JsonMapper.toJSON(accountStatusChangedEvent)
 		);
 
@@ -47,7 +47,7 @@ public class AccountOutboxService {
 		final OutboxMessage accountOutbox = OutboxMessage.create(
 			account.getId(),
 			AggregateType.ACCOUNT,
-			EventType.DEPOSIT,
+			EventType.ACCOUNT_BALANCE_UPDATED,
 			JsonMapper.toJSON(accountDepositEvent)
 		);
 
