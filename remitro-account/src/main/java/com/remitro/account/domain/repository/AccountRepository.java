@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.remitro.account.domain.model.Account;
-import com.remitro.account.domain.model.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountStatus;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
