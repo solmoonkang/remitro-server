@@ -1,6 +1,6 @@
 package com.remitro.account.application.dto.request;
 
-import com.remitro.account.domain.model.enums.AccountType;
+import com.remitro.account.domain.enums.AccountType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
