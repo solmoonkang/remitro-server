@@ -1,7 +1,7 @@
 package com.remitro.account.application.validator;
 
-import static com.remitro.account.domain.constant.AccountConstant.*;
-import static com.remitro.account.domain.model.enums.AccountStatus.*;
+import static com.remitro.account.infrastructure.constant.AccountConstant.*;
+import static com.remitro.account.domain.enums.AccountStatus.*;
 
 import java.util.Objects;
 
@@ -10,11 +10,10 @@ import org.springframework.stereotype.Component;
 
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.model.MemberProjection;
-import com.remitro.common.contract.member.ActivityStatus;
-import com.remitro.common.infrastructure.error.exception.BadRequestException;
-import com.remitro.common.infrastructure.error.exception.ConflictException;
-import com.remitro.common.infrastructure.error.exception.ForbiddenException;
-import com.remitro.common.infrastructure.error.model.ErrorMessage;
+import com.remitro.common.error.exception.BadRequestException;
+import com.remitro.common.error.exception.ConflictException;
+import com.remitro.common.error.exception.ForbiddenException;
+import com.remitro.common.error.model.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,8 +24,8 @@ public class AccountValidator {
 	private final PasswordEncoder passwordEncoder;
 
 	public void validateMemberIsActive(MemberProjection memberProjection) {
-		if (memberProjection.getActivityStatus() != ActivityStatus.ACTIVE) {
-			throw new ConflictException(ErrorMessage.MEMBER_INACTIVE);
+		if (!memberProjection.isAccountOpenAllowed()) {
+			throw new ConflictException(ErrorMessage.MEMBER_NOT_ELIGIBLE);
 		}
 	}
 
