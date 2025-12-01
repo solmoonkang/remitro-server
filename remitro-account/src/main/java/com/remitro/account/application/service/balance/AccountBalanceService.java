@@ -1,4 +1,4 @@
-package com.remitro.account.application.service;
+package com.remitro.account.application.service.balance;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +7,9 @@ import com.remitro.account.application.dto.request.deposit.DepositCommand;
 import com.remitro.account.application.dto.response.AccountBalanceResponse;
 import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.mapper.AccountMapper;
+import com.remitro.account.application.service.outbox.AccountOutboxService;
+import com.remitro.account.application.service.account.AccountReadService;
+import com.remitro.account.application.service.account.AccountWriteService;
 import com.remitro.account.application.validator.AccountValidator;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.repository.AccountBalanceRedisRepository;
