@@ -77,6 +77,7 @@ public enum ErrorMessage {
 	// ACCOUNT
 	ACCOUNT_NUMBER_COLLISION("계좌 번호 충돌로 생성에 실패했습니다."),
 	ACCOUNT_TYPE_LIMIT_EXCEEDED("해당 종류의 계좌 개설 가능 개수를 초과했습니다."),
+	ACCOUNT_LIMIT_EXCEEDED("개설 가능한 전체 계좌 수를 초과했습니다."),
 	DORMANT_ACCOUNT_CANNOT_CHANGE_STATUS("휴면 계좌는 상태를 변경할 수 없습니다."),
 	ACCOUNT_BALANCE_CORRUPTED("계좌 잔액 무결성 오류가 발생했습니다."),
 	ACCOUNT_STATUS_ALREADY_SAME("이미 동일한 계좌 상태입니다."),
