@@ -24,9 +24,9 @@ import com.remitro.account.application.dto.response.AccountsSummaryResponse;
 import com.remitro.account.application.dto.response.DepositResponse;
 import com.remitro.account.application.dto.response.OpenAccountCreationResponse;
 import com.remitro.account.application.mapper.AccountMapper;
-import com.remitro.account.application.service.AccountService;
-import com.remitro.account.domain.model.enums.AccountStatus;
-import com.remitro.account.infrastructure.auth.LoginMemberId;
+import com.remitro.account.application.service.account.AccountService;
+import com.remitro.account.domain.enums.AccountStatus;
+import com.remitro.common.auth.LoginMemberId;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
