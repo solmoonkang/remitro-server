@@ -1,7 +1,7 @@
 package com.remitro.account.application.dto.response;
 
-import com.remitro.account.domain.model.enums.AccountStatus;
-import com.remitro.account.domain.model.enums.AccountType;
+import com.remitro.account.domain.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
