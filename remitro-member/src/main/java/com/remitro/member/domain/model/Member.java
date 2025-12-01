@@ -76,4 +76,9 @@ public class Member extends BaseTimeEntity {
 		this.kycStatus = kycStatus;
 		this.kycVerifiedAt = LocalDateTime.now();
 	}
+
+	public boolean isActiveForAccountOpen() {
+		return this.activityStatus == ActivityStatus.ACTIVE
+			&& this.kycStatus == KycStatus.VERIFIED;
+	}
 }
