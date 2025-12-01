@@ -92,23 +92,7 @@ public class Account extends BaseTimeEntity {
 		this.balance = newBalance;
 	}
 
-	public void changeAccountStatus(AccountStatus targetStatus) {
+	public void applyAccountStatus(AccountStatus targetStatus) {
 		this.accountStatus = targetStatus;
-	}
-
-	public void changeToFrozen() {
-		this.accountStatus = AccountStatus.FROZEN;
-	}
-
-	public void changeToSuspended() {
-		this.accountStatus = AccountStatus.SUSPENDED;
-	}
-
-	public void changeToDormant() {
-		this.accountStatus = AccountStatus.DORMANT;
-	}
-
-	public void changeToTerminated() {
-		this.accountStatus = AccountStatus.TERMINATED;
 	}
 }
