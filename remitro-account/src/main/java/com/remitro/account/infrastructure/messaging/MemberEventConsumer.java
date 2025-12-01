@@ -1,15 +1,18 @@
 package com.remitro.account.infrastructure.messaging;
 
-import static com.remitro.common.infra.util.KafkaConstant.*;
+import static com.remitro.account.infrastructure.constant.MemberEventType.*;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.remitro.account.domain.event.MemberCreatedEvent;
+import com.remitro.account.domain.event.MemberKycUpdatedEvent;
+import com.remitro.account.domain.event.MemberStatusUpdatedEvent;
 import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.repository.MemberProjectionRepository;
-import com.remitro.common.contract.member.MemberStatusChangedEvent;
-import com.remitro.common.infra.util.JsonUtil;
+import com.remitro.common.contract.event.EventEnvelope;
+import com.remitro.common.util.JsonMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,35 +25,67 @@ public class MemberEventConsumer {
 	private final MemberProjectionRepository memberProjectionRepository;
 
 	@KafkaListener(
-		topics = MEMBER_EVENTS_TOPIC_NAME,
-		groupId = ACCOUNT_CONSUMER_GROUP_ID
+		topics = "${topics.member-events}",
+		groupId = "${spring.kafka.consumer.group-id}"
 	)
 	@Transactional
-	public void handleMemberStatusChangedEvent(String eventMessage) {
-		try {
-			final MemberStatusChangedEvent memberStatusChangedEvent = JsonUtil.fromJSON(
-				eventMessage,
-				MemberStatusChangedEvent.class
-			);
+	public void handleConsumeEvent(EventEnvelope eventEnvelope) {
+		log.info("[✅ LOGGER] MEMBER 이벤트를 수신했습니다: EVENT_ID={}, EVENT_TYPE={}",
+			eventEnvelope.eventId(),
+			eventEnvelope.eventType()
+		);
 
-			final MemberProjection member = MemberProjection.create(
-				memberStatusChangedEvent.memberId(),
-				memberStatusChangedEvent.nickname(),
-				memberStatusChangedEvent.activityStatus()
+		switch (eventEnvelope.eventType()) {
+			case MEMBER_CREATED_EVENT -> handleMemberCreatedEvent(eventEnvelope.eventPayload());
+			case MEMBER_STATUS_UPDATED_EVENT -> handleMemberStatusUpdatedEvent(eventEnvelope.eventPayload());
+			case MEMBER_KYC_UPDATED_EVENT -> handleMemberKycUpdatedEvent(eventEnvelope.eventPayload());
+			default -> log.warn("[✅ LOGGER] 알 수 없는 MEMBER 이벤트 타입을 수신했습니다: EVENT_TYPE={}",
+				eventEnvelope.eventType()
 			);
-
-			memberProjectionRepository.findById(memberStatusChangedEvent.memberId())
-				.ifPresentOrElse(
-					memberProjection -> memberProjection.update(memberStatusChangedEvent.activityStatus()),
-					() -> memberProjectionRepository.save(member)
-				);
-		} catch (Exception e) {
-			log.error("[✅ LOGGER] 사용자 상태 변경 이벤트를 처리하지 못했습니다. "
-					+ "EVENT = {}",
-				eventMessage,
-				e
-			);
-			throw e;
 		}
+	}
+
+	private void handleMemberCreatedEvent(String eventPayload) {
+		final MemberCreatedEvent memberCreatedEvent = JsonMapper.fromJSON(
+			eventPayload,
+			MemberCreatedEvent.class
+		);
+
+		final MemberProjection member = MemberProjection.create(
+			memberCreatedEvent.memberId(),
+			memberCreatedEvent.nickname(),
+			memberCreatedEvent.activityStatus(),
+			memberCreatedEvent.kycStatus(),
+			memberCreatedEvent.isAccountOpenAllowed()
+		);
+		memberProjectionRepository.save(member);
+	}
+
+	private void handleMemberStatusUpdatedEvent(String eventPayload) {
+		final MemberStatusUpdatedEvent memberStatusUpdatedEvent = JsonMapper.fromJSON(
+			eventPayload,
+			MemberStatusUpdatedEvent.class
+		);
+
+		memberProjectionRepository.findById(memberStatusUpdatedEvent.memberId())
+			.ifPresent(member -> member.updateActivityAndKycStatus(
+				memberStatusUpdatedEvent.activityStatus(),
+				memberStatusUpdatedEvent.kycStatus(),
+				memberStatusUpdatedEvent.isAccountOpenAllowed()
+			));
+	}
+
+	private void handleMemberKycUpdatedEvent(String eventPayload) {
+		final MemberKycUpdatedEvent memberKycUpdatedEvent = JsonMapper.fromJSON(
+			eventPayload,
+			MemberKycUpdatedEvent.class
+		);
+
+		memberProjectionRepository.findById(memberKycUpdatedEvent.memberId())
+			.ifPresent(member -> member.updateActivityAndKycStatus(
+				member.getActivityStatus(),
+				memberKycUpdatedEvent.kycStatus(),
+				memberKycUpdatedEvent.isAccountOpenAllowed()
+			));
 	}
 }
