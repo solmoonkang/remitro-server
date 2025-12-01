@@ -1,10 +1,7 @@
-package com.remitro.account.domain.model.enums;
+package com.remitro.account.domain.enums;
 
 import lombok.Getter;
 
-/**
- * 계좌의 종류(당좌/예금/적금) + 해당 타입에 대응하는 코드 값
- */
 @Getter
 public enum AccountType {
 
