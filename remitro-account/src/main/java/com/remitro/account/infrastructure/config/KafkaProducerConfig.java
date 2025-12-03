@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,9 +22,16 @@ public class KafkaProducerConfig {
 	@Bean
 	public ProducerFactory<String, String> producerFactory() {
 		Map<String, Object> producerFactoryMap = new HashMap<>();
+
 		producerFactoryMap.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		producerFactoryMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		producerFactoryMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
+
+		producerFactoryMap.put(ProducerConfig.ACKS_CONFIG, "all");
+		producerFactoryMap.put(ProducerConfig.RETRIES_CONFIG, 3);
+		producerFactoryMap.put(ProducerConfig.LINGER_MS_CONFIG, 10);
+		producerFactoryMap.put(ProducerConfig.BATCH_SIZE_CONFIG, 32_768);
+		producerFactoryMap.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "lz4");
 
 		return new DefaultKafkaProducerFactory<>(producerFactoryMap);
 	}
