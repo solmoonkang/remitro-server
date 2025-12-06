@@ -2,8 +2,8 @@ package com.remitro.transaction.domain.model;
 
 import java.time.LocalDateTime;
 
-import com.remitro.common.domain.BaseTimeEntity;
-import com.remitro.transaction.domain.model.enums.LedgerDirection;
+import com.remitro.transaction.domain.enums.LedgerDirection;
+import com.remitro.transaction.infrastructure.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
