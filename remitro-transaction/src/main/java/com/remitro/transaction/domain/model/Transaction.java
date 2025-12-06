@@ -2,8 +2,8 @@ package com.remitro.transaction.domain.model;
 
 import java.time.LocalDateTime;
 
-import com.remitro.transaction.domain.model.enums.TransactionStatus;
-import com.remitro.transaction.domain.model.enums.TransactionType;
+import com.remitro.transaction.domain.enums.TransactionStatus;
+import com.remitro.transaction.domain.enums.TransactionType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
