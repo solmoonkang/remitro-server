@@ -1,4 +1,4 @@
-package com.remitro.transaction.domain.model.enums;
+package com.remitro.transaction.domain.enums;
 
 /**
  * 원장 라인이 계좌 잔액에 미치는 영향
