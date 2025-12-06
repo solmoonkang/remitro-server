@@ -1,4 +1,4 @@
-package com.remitro.transaction.domain.model.enums;
+package com.remitro.transaction.domain.enums;
 
 /**
  * AML 룰 엔진에서 "어떤 규칙에 걸렸는지"를 나타내는 코드 값
