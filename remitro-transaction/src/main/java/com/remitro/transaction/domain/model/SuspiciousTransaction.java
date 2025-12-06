@@ -2,9 +2,9 @@ package com.remitro.transaction.domain.model;
 
 import java.time.LocalDateTime;
 
-import com.remitro.common.domain.BaseTimeEntity;
-import com.remitro.transaction.domain.model.enums.AmlRuleCode;
-import com.remitro.transaction.domain.model.enums.SuspiciousStatus;
+import com.remitro.transaction.domain.enums.AmlRuleCode;
+import com.remitro.transaction.domain.enums.SuspiciousStatus;
+import com.remitro.transaction.infrastructure.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,7 +53,7 @@ public class SuspiciousTransaction extends BaseTimeEntity {
 	@Column(name = "detected_at", nullable = false)
 	private LocalDateTime detectedAt;
 
-	public SuspiciousTransaction(Long transactionId, Long memberId, AmlRuleCode amlRuleCode, String reason) {
+	private SuspiciousTransaction(Long transactionId, Long memberId, AmlRuleCode amlRuleCode, String reason) {
 		this.transactionId = transactionId;
 		this.memberId = memberId;
 		this.amlRuleCode = amlRuleCode;
