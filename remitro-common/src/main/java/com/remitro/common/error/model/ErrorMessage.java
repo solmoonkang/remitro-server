@@ -79,7 +79,6 @@ public enum ErrorMessage {
 	ACCOUNT_TYPE_LIMIT_EXCEEDED("해당 종류의 계좌 개설 가능 개수를 초과했습니다."),
 	ACCOUNT_LIMIT_EXCEEDED("개설 가능한 전체 계좌 수를 초과했습니다."),
 	DORMANT_ACCOUNT_CANNOT_CHANGE_STATUS("휴면 계좌는 상태를 변경할 수 없습니다."),
-	ACCOUNT_BALANCE_CORRUPTED("계좌 잔액 무결성 오류가 발생했습니다."),
 	ACCOUNT_STATUS_ALREADY_SAME("이미 동일한 계좌 상태입니다."),
 	ACCOUNT_SUSPENDED_CANNOT_RESTORE("이용 정지 계좌는 정상 상태로 복구할 수 없습니다."),
 	DORMANT_ACCOUNT_CANNOT_RESTORE("휴면 계좌는 정상 상태로 전환할 수 없습니다."),
@@ -100,6 +99,7 @@ public enum ErrorMessage {
 	ACCOUNT_NUMBER_GENERATION_FAILED("계좌 번호 생성 중 오류가 발생했습니다."),
 	BALANCE_OVERFLOW("잔액이 허용 가능한 범위를 초과했습니다."),
 	UNKNOWN_SERVER_ERROR("서버 내부 오류가 발생했습니다."),
+	ACCOUNT_BALANCE_CORRUPTED("계좌 잔액 무결성 오류가 발생했습니다: %s"),
 
 	/* ==========================
 	 * 503 SERVICE UNAVAILABLE
