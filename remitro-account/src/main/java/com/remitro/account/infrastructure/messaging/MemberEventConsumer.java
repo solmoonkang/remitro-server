@@ -29,7 +29,7 @@ public class MemberEventConsumer {
 		groupId = "${spring.kafka.consumer.group-id}"
 	)
 	@Transactional
-	public void handleConsumeEvent(EventEnvelope eventEnvelope) {
+	public void handleMemberEvent(EventEnvelope eventEnvelope) {
 		log.info("[✅ LOGGER] MEMBER 이벤트를 수신했습니다: EVENT_ID={}, EVENT_TYPE={}",
 			eventEnvelope.eventId(),
 			eventEnvelope.eventType()
