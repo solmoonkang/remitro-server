@@ -19,9 +19,10 @@ public class KafkaEventProducer {
 	public void send(String eventTopic, EventEnvelope eventEnvelope) {
 		try {
 			final String eventMessage = JsonMapper.toJSON(eventEnvelope);
-			kafkaTemplate.send(eventTopic, eventEnvelope.eventId(), eventMessage);
+			kafkaTemplate.send(eventTopic, String.valueOf(eventEnvelope.aggregateId()), eventMessage);
 
-			log.info("[✅ LOGGER] KAFKA 메시지 발행에 성공했습니다: EVENT_ID={}, EVENT_TYPE={}",
+			log.info("[✅ LOGGER] KAFKA 메시지 발행에 성공했습니다: KEY={}, EVENT_ID={}, EVENT_TYPE={}",
+				eventEnvelope.aggregateId(),
 				eventEnvelope.eventId(),
 				eventEnvelope.eventType()
 			);
