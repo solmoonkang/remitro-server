@@ -1,6 +1,8 @@
-package com.remitro.common.contract.account;
+package com.remitro.transaction.domain.event;
 
 import java.time.LocalDateTime;
+
+import com.remitro.transaction.domain.enums.TransactionType;
 
 public record AccountDepositEvent(
 	Long accountId,
@@ -14,5 +16,11 @@ public record AccountDepositEvent(
 	String description,
 
 	LocalDateTime occurredAt
+
 ) implements AccountTransactionEvent {
+
+	@Override
+	public TransactionType transactionType() {
+		return TransactionType.DEPOSIT;
+	}
 }
