@@ -1,8 +1,8 @@
-package com.remitro.common.contract.account;
+package com.remitro.transaction.domain.event;
 
 import java.time.LocalDateTime;
 
-public record AccountStatusChangedEvent(
+public record AccountStatusUpdatedEvent(
 	Long accountId,
 
 	Long memberId,
