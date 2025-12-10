@@ -83,7 +83,7 @@ public class AccountService {
 	}
 
 	public DepositResponse deposit(DepositCommand depositCommand) {
-		idempotencyService.validateBalanceChangeIdempotency(
+		idempotencyService.validateBalanceUpdatedIdempotency(
 			depositCommand.memberId(),
 			depositCommand.accountId(),
 			depositCommand.idempotencyKey(),
