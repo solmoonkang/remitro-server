@@ -26,7 +26,7 @@ public class IdempotencyService {
 		validateFirstIdempotentRequest(openAccountIdempotencyKey, OPEN_ACCOUNT_IDEMPOTENCY_TTL);
 	}
 
-	public void validateBalanceChangeIdempotency(Long memberId, Long accountId, String idempotencyKey, String prefix) {
+	public void validateBalanceUpdatedIdempotency(Long memberId, Long accountId, String idempotencyKey, String prefix) {
 		if (idempotencyKey == null || idempotencyKey.isBlank()) {
 			return;
 		}
