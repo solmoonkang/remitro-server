@@ -16,7 +16,7 @@ public class AccountEligibilityValidator {
 	public static final int LIMIT_PER_TYPE = 3;
 	public static final int MAX_ACCOUNT_PER_MEMBER = 10;
 
-	public void validateMemberIsActive(MemberProjection memberProjection) {
+	public void validateMemberEligibleForAccount(MemberProjection memberProjection) {
 		if (!memberProjection.isAccountOpenAllowed()) {
 			throw new ConflictException(ErrorMessage.MEMBER_NOT_ELIGIBLE);
 		}
