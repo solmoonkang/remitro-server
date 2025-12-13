@@ -11,6 +11,10 @@ public record AccountStatusUpdatedEvent(
 
 	String newStatus,
 
-	LocalDateTime changedAt
+	String actorType,
+
+	String reasonCode,
+
+	LocalDateTime occurredAt
 ) {
 }
