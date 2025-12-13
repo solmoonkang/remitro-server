@@ -10,7 +10,7 @@ import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.service.outbox.AccountOutboxService;
 import com.remitro.account.application.service.account.AccountReadService;
 import com.remitro.account.application.service.account.AccountWriteService;
-import com.remitro.account.application.validator.AccountStatusTransactionPolicy;
+import com.remitro.account.application.validator.AccountOperationPolicy;
 import com.remitro.account.application.validator.AccountTransactionValidator;
 import com.remitro.account.domain.model.Account;
 import com.remitro.account.domain.repository.AccountBalanceRedisRepository;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AccountBalanceService {
 
-	private final AccountStatusTransactionPolicy accountStatusTransactionPolicy;
+	private final AccountOperationPolicy accountOperationPolicy;
 	private final AccountTransactionValidator accountTransactionValidator;
 	private final AccountReadService accountReadService;
 	private final AccountWriteService accountWriteService;
@@ -46,8 +46,8 @@ public class AccountBalanceService {
 	public DepositResponse runDepositTransaction(DepositCommand depositCommand) {
 		final Account account = accountReadService.loadAccountWithLock(depositCommand.accountId());
 
-		accountTransactionValidator.validateAccountOwner(account.getMemberId(), depositCommand.memberId());
-		accountStatusTransactionPolicy.validateDepositAllowed(account);
+		accountTransactionValidator.validateAccountOwnership(account.getMemberId(), depositCommand.memberId());
+		accountOperationPolicy.validateDepositAllowed(account);
 		accountTransactionValidator.validatePositiveAmount(depositCommand.amount());
 
 		accountWriteService.increaseBalance(account, depositCommand.amount());
