@@ -4,11 +4,10 @@ import static com.remitro.account.infrastructure.constant.MemberEventType.*;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.account.domain.event.MemberCreatedEvent;
-import com.remitro.account.domain.event.MemberKycUpdatedEvent;
-import com.remitro.account.domain.event.MemberStatusUpdatedEvent;
+import com.remitro.account.domain.event.member.MemberCreatedEvent;
+import com.remitro.account.domain.event.member.MemberKycUpdatedEvent;
+import com.remitro.account.domain.event.member.MemberStatusUpdatedEvent;
 import com.remitro.account.domain.model.MemberProjection;
 import com.remitro.account.domain.repository.MemberProjectionRepository;
 import com.remitro.common.contract.event.EventEnvelope;
@@ -28,7 +27,6 @@ public class MemberEventConsumer {
 		topics = "${topics.member-events}",
 		groupId = "${spring.kafka.consumer.group-id}"
 	)
-	@Transactional
 	public void handleMemberEvent(EventEnvelope eventEnvelope) {
 		log.info("[✅ LOGGER] MEMBER 이벤트를 수신했습니다: EVENT_ID={}, EVENT_TYPE={}",
 			eventEnvelope.eventId(),
