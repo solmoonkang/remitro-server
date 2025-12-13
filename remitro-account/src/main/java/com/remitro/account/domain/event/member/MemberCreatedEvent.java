@@ -1,7 +1,9 @@
-package com.remitro.account.domain.event;
+package com.remitro.account.domain.event.member;
 
-public record MemberStatusUpdatedEvent(
+public record MemberCreatedEvent(
 	Long memberId,
+
+	String email,
 
 	String nickname,
 
