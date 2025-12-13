@@ -117,11 +117,11 @@ public class AccountController {
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 계좌"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<?> changeAccountStatus(
+	public ResponseEntity<?> updateAccountStatusByMember(
 		@PathVariable Long accountId,
 		@RequestParam AccountStatus accountStatus
 	) {
-		accountService.changeAccountStatus(accountId, accountStatus);
+		accountService.updateAccountStatusByMember(accountId, accountStatus);
 		return ResponseEntity.ok().body("[✅ SUCCESS] 계좌 상태 변경을 성공적으로 완료했습니다.");
 	}
 
