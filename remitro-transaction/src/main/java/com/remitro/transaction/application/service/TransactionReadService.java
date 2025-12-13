@@ -4,7 +4,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.remitro.transaction.domain.repository.LedgerEntryRepository;
-import com.remitro.transaction.domain.repository.StatusHistoryRepository;
 import com.remitro.transaction.domain.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,14 +14,9 @@ public class TransactionReadService {
 
 	private final TransactionRepository transactionRepository;
 	private final LedgerEntryRepository ledgerEntryRepository;
-	private final StatusHistoryRepository statusHistoryRepository;
 
 	public boolean existsTransactionEvent(String eventId) {
 		return transactionRepository.existsByEventId(eventId);
-	}
-
-	public boolean existsStatusUpdatedEvent(String eventId) {
-		return statusHistoryRepository.existsByEventId(eventId);
 	}
 
 	public Long findLatestBalance(Long accountId) {
