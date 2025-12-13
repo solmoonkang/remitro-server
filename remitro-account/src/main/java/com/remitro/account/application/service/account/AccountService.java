@@ -22,7 +22,11 @@ import com.remitro.account.application.service.outbox.AccountOutboxService;
 import com.remitro.account.application.validator.AccountEligibilityValidator;
 import com.remitro.account.application.validator.AccountStatusTransactionValidator;
 import com.remitro.account.domain.enums.AccountStatus;
+import com.remitro.account.domain.enums.AccountStatusUpdateReason;
+import com.remitro.account.domain.enums.ActorType;
+import com.remitro.account.domain.enums.IdempotencyOperationType;
 import com.remitro.account.domain.model.Account;
+import com.remitro.account.domain.model.Idempotency;
 import com.remitro.account.domain.model.MemberProjection;
 
 import lombok.RequiredArgsConstructor;
@@ -47,13 +51,25 @@ public class AccountService {
 		String idempotencyKey,
 		OpenAccountRequest openAccountRequest
 	) {
-		idempotencyService.validateOpenAccountIdempotency(memberId, idempotencyKey, OPEN_ACCOUNT_PREFIX);
+		final Idempotency idempotency = idempotencyService.acquireIdempotencyOrGet(
+			idempotencyKey,
+			memberId,
+			IdempotencyOperationType.OPEN_ACCOUNT
+		);
+
+		if (idempotency.isCompleted()) {
+			final Account existingAccount = accountReadService.findAccountById(idempotency.getResourceId());
+			return AccountMapper.toOpenAccountCreationResponse(existingAccount);
+		}
 
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
 		accountEligibilityValidator.validateMemberIsActive(member);
 
 		final Account account = accountWriteService.saveAccount(member, openAccountRequest);
-		accountWriteService.appendAccountOpenedEventOutbox(account);
+
+		accountOutboxService.appendAccountOpenedEventOutbox(account);
+
+		idempotency.completeWithResource(account.getId());
 
 		return AccountMapper.toOpenAccountCreationResponse(account);
 	}
@@ -74,12 +90,38 @@ public class AccountService {
 	}
 
 	@Transactional
-	public void changeAccountStatus(Long accountId, AccountStatus targetStatus) {
+	public void updateAccountStatusByMember(Long accountId, AccountStatus newStatus) {
+		updateAccountStatusInternal(accountId, newStatus, ActorType.MEMBER, AccountStatusUpdateReason.USER_REQUEST);
+	}
+
+	@Transactional
+	public void enforceAccountStatusUpdate(
+		Long accountId,
+		AccountStatus newStatus,
+		AccountStatusUpdateReason accountStatusUpdateReason
+	) {
+		updateAccountStatusInternal(accountId, newStatus, ActorType.SYSTEM, accountStatusUpdateReason);
+	}
+
+	private void updateAccountStatusInternal(
+		Long accountId,
+		AccountStatus newStatus,
+		ActorType actorType,
+		AccountStatusUpdateReason accountStatusUpdateReason
+	) {
 		final Account account = accountReadService.findAccountById(accountId);
-		final AccountStatus currentStatus = account.getAccountStatus();
-		accountStatusTransactionValidator.validateStatusTransition(currentStatus, targetStatus);
-		account.applyAccountStatus(targetStatus);
-		accountOutboxService.appendAccountStatusUpdatedEvent(account, currentStatus);
+		final AccountStatus previousStatus = account.getAccountStatus();
+
+		accountStatusTransactionValidator.validateStatusTransition(previousStatus, newStatus);
+
+		account.applyAccountStatus(newStatus);
+
+		accountOutboxService.appendAccountStatusUpdatedEventOutbox(
+			account,
+			previousStatus,
+			actorType,
+			accountStatusUpdateReason
+		);
 	}
 
 	public DepositResponse deposit(DepositCommand depositCommand) {
