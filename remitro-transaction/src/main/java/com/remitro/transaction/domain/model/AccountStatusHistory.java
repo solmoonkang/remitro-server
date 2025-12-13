@@ -36,14 +36,20 @@ public class AccountStatusHistory {
 	@Column(name = "event_id", unique = true, nullable = false)
 	private String eventId;
 
-	@Column(name = "previous_status", nullable = false, length = 30)
+	@Column(name = "previous_status", length = 30)
 	private String previousStatus;
 
 	@Column(name = "new_status", nullable = false, length = 30)
 	private String newStatus;
 
-	@Column(name = "changed_at", nullable = false)
-	private LocalDateTime changedAt;
+	@Column(name = "actor_type", nullable = false, length = 20)
+	private String actorType;
+
+	@Column(name = "reason_code", nullable = false, length = 50)
+	private String reasonCode;
+
+	@Column(name = "occurred_at", nullable = false)
+	private LocalDateTime occurredAt;
 
 	@Column(name = "received_at", nullable = false)
 	private LocalDateTime receivedAt;
@@ -54,7 +60,9 @@ public class AccountStatusHistory {
 		String eventId,
 		String previousStatus,
 		String newStatus,
-		LocalDateTime changedAt,
+		String actorType,
+		String reasonCode,
+		LocalDateTime occurredAt,
 		LocalDateTime receivedAt
 	) {
 		this.accountId = accountId;
@@ -62,7 +70,9 @@ public class AccountStatusHistory {
 		this.eventId = eventId;
 		this.previousStatus = previousStatus;
 		this.newStatus = newStatus;
-		this.changedAt = changedAt;
+		this.actorType = actorType;
+		this.reasonCode = reasonCode;
+		this.occurredAt = occurredAt;
 		this.receivedAt = receivedAt;
 	}
 
@@ -72,7 +82,9 @@ public class AccountStatusHistory {
 		String eventId,
 		String previousStatus,
 		String newStatus,
-		LocalDateTime changedAt
+		String actorType,
+		String reasonCode,
+		LocalDateTime occurredAt
 	) {
 		return new AccountStatusHistory(
 			accountId,
@@ -80,7 +92,9 @@ public class AccountStatusHistory {
 			eventId,
 			previousStatus,
 			newStatus,
-			changedAt,
+			actorType,
+			reasonCode,
+			occurredAt,
 			LocalDateTime.now()
 		);
 	}
