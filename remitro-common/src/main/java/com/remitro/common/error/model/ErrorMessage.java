@@ -93,6 +93,11 @@ public enum ErrorMessage {
 
 	MEMBER_NOT_ELIGIBLE("해당 회원은 현재 요청을 처리할 수 있는 상태가 아닙니다."),
 
+	// TRANSACTION
+	ACCOUNT_STATUS_HISTORY_PREVIOUS_REQUIRED("계좌 상태 변경 이력에는 이전 상태가 반드시 존재해야 합니다."),
+	ACCOUNT_STATUS_HISTORY_DUPLICATED("이전 상태와 동일한 상태로의 변경 이력은 허용되지 않습니다."),
+	ACCOUNT_STATUS_HISTORY_PREVIOUS_MUST_BE_NULL("계좌 개설 이력에는 이전 상태가 존재할 수 없습니다."),
+
 	/* ==========================
 	 * 500 INTERNAL SERVER ERROR
 	 * ========================== */
