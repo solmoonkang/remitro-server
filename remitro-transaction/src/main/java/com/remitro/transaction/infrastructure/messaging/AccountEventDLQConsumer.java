@@ -16,7 +16,7 @@ public class AccountEventDLQConsumer {
 	@KafkaListener(
 		topics = "${topics.account-events}" + "-dlq",
 		groupId = "${spring.kafka.consumer.group-id}" + "-dlq",
-		concurrency = "#"
+		concurrency = "3"
 	)
 	public void handleAccountDLQEvent(EventEnvelope eventEnvelope) {
 		log.error("[✅ LOGGER] ACCOUNT DLQ 이벤트를 수신했습니다: EVENT_ID={}, EVENT_TYPE={}",
