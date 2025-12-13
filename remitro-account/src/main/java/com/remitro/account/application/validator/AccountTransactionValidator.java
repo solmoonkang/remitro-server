@@ -24,7 +24,7 @@ public class AccountTransactionValidator {
 		}
 	}
 
-	public void validateAccountOwner(Long accountOwnerId, Long loginMemberId) {
+	public void validateAccountOwnership(Long accountOwnerId, Long loginMemberId) {
 		if (!Objects.equals(accountOwnerId, loginMemberId)) {
 			throw new ForbiddenException(ErrorMessage.ACCOUNT_ACCESS_FORBIDDEN);
 		}
