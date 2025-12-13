@@ -28,7 +28,6 @@ public class AccountEventProducer {
 	private String accountEventTopic;
 
 	@Scheduled(fixedDelayString = "${outbox.account.publish-interval-ms:1000}")
-	@Transactional
 	public void publishPending() {
 		final List<OutboxMessage> pendingMessages = outboxMessageRepository.findByEventStatusOrderByCreatedAtAsc(
 			EventStatus.PENDING
@@ -50,19 +49,14 @@ public class AccountEventProducer {
 
 		try {
 			kafkaEventProducer.send(accountEventTopic, eventEnvelope);
-
 			outboxMessage.markPublishSucceeded();
-			outboxMessageRepository.save(outboxMessage);
 
 		} catch (Exception e) {
 			log.error("[✅ ERROR] OUTBOX_MESSAGE에서 이벤트 발행을 실패했습니다: EVENT_ID={}",
 				outboxMessage.getEventId(), e
 			);
-
-			accountEventDLQProducer.sendMessageToDLQ(eventEnvelope);
-
 			outboxMessage.markPublishAttemptFailed();
-			outboxMessageRepository.save(outboxMessage);
+			accountEventDLQProducer.sendMessageToDLQ(eventEnvelope);
 		}
 	}
 }
