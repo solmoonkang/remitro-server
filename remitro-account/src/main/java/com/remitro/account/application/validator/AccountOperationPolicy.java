@@ -8,16 +8,16 @@ import com.remitro.common.error.exception.BadRequestException;
 import com.remitro.common.error.model.ErrorMessage;
 
 @Component
-public class AccountStatusTransactionPolicy {
+public class AccountOperationPolicy {
 
 	public void validateDepositAllowed(Account account) {
-		if (account.getAccountStatus() == AccountStatus.TERMINATED ||
-			account.getAccountStatus() == AccountStatus.PENDING_TERMINATION
-		) {
+		AccountStatus accountStatus = account.getAccountStatus();
+
+		if (accountStatus == AccountStatus.TERMINATED || accountStatus == AccountStatus.PENDING_TERMINATION) {
 			throw new BadRequestException(ErrorMessage.ACCOUNT_ALREADY_TERMINATED);
 		}
 
-		if (account.getAccountStatus() == AccountStatus.SUSPENDED) {
+		if (accountStatus == AccountStatus.SUSPENDED) {
 			throw new BadRequestException(ErrorMessage.ACCOUNT_SUSPENDED_CANNOT_RESTORE);
 		}
 	}
