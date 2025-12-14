@@ -1,13 +1,13 @@
-package com.remitro.transaction.application.service;
+package com.remitro.transaction.application.service.transaction;
 
 import org.springframework.stereotype.Service;
 
 import com.remitro.transaction.domain.enums.LedgerDirection;
 import com.remitro.transaction.domain.enums.TransactionType;
 import com.remitro.transaction.domain.event.AccountTransactionEvent;
-import com.remitro.transaction.domain.model.LedgerEntry;
-import com.remitro.transaction.domain.model.Transaction;
-import com.remitro.transaction.domain.repository.LedgerEntryRepository;
+import com.remitro.transaction.domain.transaction.model.LedgerEntry;
+import com.remitro.transaction.domain.transaction.model.Transaction;
+import com.remitro.transaction.domain.transaction.repository.LedgerEntryRepository;
 
 import lombok.RequiredArgsConstructor;
 

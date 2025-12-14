@@ -1,10 +1,10 @@
-package com.remitro.transaction.application.service;
+package com.remitro.transaction.application.service.transaction;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.remitro.transaction.domain.repository.LedgerEntryRepository;
-import com.remitro.transaction.domain.repository.TransactionRepository;
+import com.remitro.transaction.domain.transaction.repository.LedgerEntryRepository;
+import com.remitro.transaction.domain.transaction.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
 

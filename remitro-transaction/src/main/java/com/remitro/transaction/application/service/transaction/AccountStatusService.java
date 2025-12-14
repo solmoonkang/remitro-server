@@ -1,12 +1,12 @@
-package com.remitro.transaction.application.service;
+package com.remitro.transaction.application.service.transaction;
 
 import org.springframework.stereotype.Service;
 
 import com.remitro.transaction.application.validator.AccountStatusHistoryValidator;
 import com.remitro.transaction.domain.event.AccountOpenedEvent;
 import com.remitro.transaction.domain.event.AccountStatusUpdatedEvent;
-import com.remitro.transaction.domain.model.AccountStatusHistory;
-import com.remitro.transaction.domain.repository.StatusHistoryRepository;
+import com.remitro.transaction.domain.transaction.model.AccountStatusHistory;
+import com.remitro.transaction.domain.transaction.repository.StatusHistoryRepository;
 
 import lombok.RequiredArgsConstructor;
 

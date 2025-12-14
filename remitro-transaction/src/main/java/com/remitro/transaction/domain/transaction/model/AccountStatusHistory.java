@@ -1,4 +1,4 @@
-package com.remitro.transaction.domain.model;
+package com.remitro.transaction.domain.transaction.model;
 
 import java.time.LocalDateTime;
 

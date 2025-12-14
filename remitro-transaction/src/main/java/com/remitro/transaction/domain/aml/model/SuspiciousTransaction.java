@@ -1,7 +1,8 @@
-package com.remitro.transaction.domain.model;
+package com.remitro.transaction.domain.aml.model;
 
 import java.time.LocalDateTime;
 
+import com.remitro.common.error.exception.ConflictException;
 import com.remitro.transaction.domain.enums.AmlRuleCode;
 import com.remitro.transaction.domain.enums.SuspiciousStatus;
 import com.remitro.transaction.infrastructure.BaseTimeEntity;
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "SUSPICIOUS_TRANSACTIONS", indexes = {
 	@Index(name = "idx_suspicious_member_id", columnList = "member_id"),
+	@Index(name = "idx_suspicious_account_id", columnList = "account_id"),
 	@Index(name = "idx_suspicious_status", columnList = "suspicious_status")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,6 +37,9 @@ public class SuspiciousTransaction extends BaseTimeEntity {
 
 	@Column(name = "transaction_id", nullable = false)
 	private Long transactionId;
+
+	@Column(name = "account_id", nullable = false)
+	private Long accountId;
 
 	@Column(name = "member_id", nullable = false)
 	private Long memberId;
@@ -53,12 +58,51 @@ public class SuspiciousTransaction extends BaseTimeEntity {
 	@Column(name = "detected_at", nullable = false)
 	private LocalDateTime detectedAt;
 
-	private SuspiciousTransaction(Long transactionId, Long memberId, AmlRuleCode amlRuleCode, String reason) {
+	@Column(name = "handled_at")
+	private LocalDateTime handledAt;
+
+	private SuspiciousTransaction(
+		Long transactionId,
+		Long accountId,
+		Long memberId,
+		AmlRuleCode amlRuleCode,
+		String reason
+	) {
 		this.transactionId = transactionId;
+		this.accountId = accountId;
 		this.memberId = memberId;
 		this.amlRuleCode = amlRuleCode;
 		this.suspiciousStatus = SuspiciousStatus.OPEN;
 		this.reason = reason;
 		this.detectedAt = LocalDateTime.now();
+		this.handledAt = null;
+	}
+
+	public static SuspiciousTransaction open(
+		Long transactionId,
+		Long accountId,
+		Long memberId,
+		AmlRuleCode amlRuleCode,
+		String reason
+	) {
+		return new SuspiciousTransaction(transactionId, accountId, memberId, amlRuleCode, reason);
+	}
+
+	public void markReviewed() {
+		if (this.suspiciousStatus != SuspiciousStatus.OPEN) {
+			throw new ConflictException("OPEN 상태만 REVIEWED로 변경할 수 있습니다.");
+		}
+
+		this.suspiciousStatus = SuspiciousStatus.REVIEWED;
+		this.handledAt = LocalDateTime.now();
+	}
+
+	public void markClosed() {
+		if (this.suspiciousStatus == SuspiciousStatus.CLOSED) {
+			return;
+		}
+
+		this.suspiciousStatus = SuspiciousStatus.CLOSED;
+		this.handledAt = LocalDateTime.now();
 	}
 }

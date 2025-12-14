@@ -1,4 +1,4 @@
-package com.remitro.transaction.domain.repository;
+package com.remitro.transaction.domain.transaction.repository;
 
 import java.util.List;
 import java.util.Set;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.remitro.transaction.domain.model.LedgerEntry;
+import com.remitro.transaction.domain.transaction.model.LedgerEntry;
 
 public interface LedgerEntryRepository extends JpaRepository<LedgerEntry, Long> {
 
