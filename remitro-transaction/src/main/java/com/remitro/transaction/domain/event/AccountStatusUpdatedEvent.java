@@ -15,6 +15,8 @@ public record AccountStatusUpdatedEvent(
 
 	String reasonCode,
 
-	LocalDateTime occurredAt
+	LocalDateTime occurredAt,
+
+	int schemaVersion
 ) {
 }
