@@ -3,7 +3,7 @@ package com.remitro.transaction.infrastructure.messaging.handler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.transaction.application.service.TransactionService;
+import com.remitro.transaction.application.service.transaction.TransactionService;
 import com.remitro.transaction.domain.event.AccountDepositEvent;
 
 import lombok.RequiredArgsConstructor;
