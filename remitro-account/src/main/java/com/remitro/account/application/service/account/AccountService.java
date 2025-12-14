@@ -63,7 +63,7 @@ public class AccountService {
 		}
 
 		final MemberProjection member = accountReadService.findMemberProjectionById(memberId);
-		accountEligibilityValidator.validateMemberIsActive(member);
+		accountEligibilityValidator.validateMemberEligibleForAccount(member);
 
 		final Account account = accountWriteService.saveAccount(member, openAccountRequest);
 
