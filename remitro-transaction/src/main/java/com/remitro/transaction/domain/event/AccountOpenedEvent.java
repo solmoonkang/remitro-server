@@ -13,6 +13,8 @@ public record AccountOpenedEvent(
 
 	String reasonCode,
 
-	LocalDateTime occurredAt
+	LocalDateTime occurredAt,
+
+	int schemaVersion
 ) {
 }
