@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.remitro.common.error.exception.ConflictException;
 import com.remitro.common.error.model.ErrorMessage;
-import com.remitro.transaction.domain.model.AccountStatusHistory;
+import com.remitro.transaction.domain.transaction.model.AccountStatusHistory;
 
 @Component
 public class AccountStatusHistoryValidator {
