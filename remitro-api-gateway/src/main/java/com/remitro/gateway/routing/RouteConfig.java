@@ -1,6 +1,6 @@
-package com.remitro.gateway.config;
+package com.remitro.gateway.routing;
 
-import static com.remitro.gateway.constant.RouteConstant.*;
+import static com.remitro.gateway.routing.RouteConstant.*;
 
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
