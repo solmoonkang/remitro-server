@@ -96,6 +96,10 @@ public enum ErrorMessage {
 	ACCOUNT_STATUS_HISTORY_DUPLICATED("이전 상태와 동일한 상태로의 변경 이력은 허용되지 않습니다."),
 	ACCOUNT_STATUS_HISTORY_PREVIOUS_MUST_BE_NULL("계좌 개설 이력에는 이전 상태가 존재할 수 없습니다."),
 
+	// SUSPICIOUS
+	SUSPICIOUS_TRANSACTION_ONLY_OPEN_CAN_BE_REVIEWED("의심 거래는 OPEN 상태에서만 REVIEWED로 변경할 수 있습니다."),
+	SUSPICIOUS_TRANSACTION_ALREADY_CLOSED("이미 CLOSED 상태인 의심 거래입니다."),
+
 	MEMBER_NOT_ELIGIBLE("해당 회원은 현재 요청을 처리할 수 있는 상태가 아닙니다."),
 	UNSUPPORTED_EVENT_SCHEMA("지원하지 않는 이벤트 스키마 값입니다."),
 
