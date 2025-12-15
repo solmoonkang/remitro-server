@@ -1,4 +1,4 @@
-package com.remitro.gateway.constant;
+package com.remitro.gateway.routing;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
