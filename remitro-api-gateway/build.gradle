@@ -23,6 +23,8 @@ ext {
 }
 
 dependencies {
+	implementation project(':remitro-common')
+
 	// Spring Cloud Gateway
 	implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
 
