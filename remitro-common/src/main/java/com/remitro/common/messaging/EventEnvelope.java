@@ -1,4 +1,4 @@
-package com.remitro.common.contract.event;
+package com.remitro.common.messaging;
 
 import java.time.LocalDateTime;
 
