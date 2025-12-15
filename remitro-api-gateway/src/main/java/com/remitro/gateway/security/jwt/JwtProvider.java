@@ -1,6 +1,6 @@
-package com.remitro.gateway.auth;
+package com.remitro.gateway.security.jwt;
 
-import static com.remitro.gateway.constant.AuthorizationConstant.*;
+import static com.remitro.common.security.AuthenticationConstant.*;
 
 import java.nio.charset.StandardCharsets;
 
@@ -12,10 +12,10 @@ import org.springframework.util.StringUtils;
 
 import com.remitro.gateway.config.TokenConfig;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +26,7 @@ public class JwtProvider {
 
 	private final TokenConfig tokenConfig;
 
+	@Getter
 	private SecretKey secretKey;
 
 	@PostConstruct
@@ -55,13 +56,5 @@ public class JwtProvider {
 		}
 
 		return null;
-	}
-
-	public Claims extractClaims(String token) {
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
 	}
 }
