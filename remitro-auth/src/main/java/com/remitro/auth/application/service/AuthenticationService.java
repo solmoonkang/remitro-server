@@ -1,7 +1,7 @@
 package com.remitro.auth.application.service;
 
-import static com.remitro.common.util.constant.JwtClaimsConstant.*;
-import static com.remitro.common.util.constant.RedisConstant.*;
+import static com.remitro.auth.infrastructure.constant.RedisConstant.*;
+import static com.remitro.common.security.AuthenticationConstant.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import com.remitro.auth.domain.model.RefreshToken;
 import com.remitro.auth.domain.repository.TokenRepository;
 import com.remitro.auth.infrastructure.client.MemberFeignClient;
 import com.remitro.auth.infrastructure.security.JwtProvider;
-import com.remitro.common.contract.MemberAuthInfo;
+import com.remitro.common.auth.MemberAuthInfo;
 import com.remitro.common.error.exception.UnauthorizedException;
 import com.remitro.common.error.model.ErrorMessage;
 
@@ -31,35 +31,43 @@ public class AuthenticationService {
 	private final TokenRepository tokenRepository;
 
 	@Transactional
-	public TokenResponse loginMember(LoginRequest loginRequest) {
-		final MemberAuthInfo memberAuthInfo = memberFeignClient.findAuthInfo(
-			loginRequest.email()
-		);
+	public TokenResponse loginMember(String deviceId, LoginRequest loginRequest) {
+		final MemberAuthInfo memberAuthInfo = memberFeignClient.findAuthInfo(loginRequest.email());
 
 		if (!passwordEncoder.matches(loginRequest.password(), memberAuthInfo.hashedPassword())) {
 			throw new UnauthorizedException(ErrorMessage.INVALID_PASSWORD);
 		}
 
+		tokenRepository.revokeByMemberAndDevice(memberAuthInfo.memberId(), deviceId);
+
 		final String accessToken = generateAccessToken(memberAuthInfo);
 		final String refreshToken = generateRefreshToken(memberAuthInfo);
-		tokenRepository.saveToken(createRefreshToken(memberAuthInfo.memberId(), refreshToken));
+		tokenRepository.save(
+			createRefreshToken(memberAuthInfo.memberId(), refreshToken, deviceId)
+		);
 
 		return new TokenResponse(accessToken, refreshToken);
 	}
 
 	@Transactional
-	public TokenResponse reissueTokens(String refreshToken) {
+	public TokenResponse reissueTokens(String authorizationHeader) {
+		final String refreshToken = jwtProvider.extractToken(authorizationHeader);
 		final Claims claims = jwtProvider.parseClaims(refreshToken);
+
+		final RefreshToken savedToken = tokenRepository.findByToken(refreshToken)
+			.orElseThrow(() -> new UnauthorizedException(ErrorMessage.INVALID_TOKEN));
+
+		tokenRepository.revoke(refreshToken);
+
 		final MemberAuthInfo memberAuthInfo = memberFeignClient.findAuthInfo(
 			claims.get(CLAIM_MEMBER_EMAIL, String.class)
 		);
 
-		tokenRepository.findTokenByMemberId(memberAuthInfo.memberId())
-			.orElseThrow(() -> new UnauthorizedException(ErrorMessage.INVALID_TOKEN));
-
 		final String newAccessToken = generateAccessToken(memberAuthInfo);
 		final String newRefreshToken = generateRefreshToken(memberAuthInfo);
-		tokenRepository.saveToken(createRefreshToken(memberAuthInfo.memberId(), newRefreshToken));
+		tokenRepository.save(
+			createRefreshToken(memberAuthInfo.memberId(), newRefreshToken, savedToken.deviceId())
+		);
 
 		return TokenMapper.toTokenResponse(newAccessToken, newRefreshToken);
 	}
@@ -68,7 +76,8 @@ public class AuthenticationService {
 		return jwtProvider.generateAccessToken(
 			memberAuthInfo.memberId(),
 			memberAuthInfo.email(),
-			memberAuthInfo.nickname()
+			memberAuthInfo.nickname(),
+			memberAuthInfo.role()
 		);
 	}
 
@@ -79,7 +88,7 @@ public class AuthenticationService {
 		);
 	}
 
-	private RefreshToken createRefreshToken(Long memberId, String refreshToken) {
-		return new RefreshToken(memberId, refreshToken, REFRESH_TOKEN_TTL);
+	private RefreshToken createRefreshToken(Long memberId, String refreshToken, String deviceId) {
+		return new RefreshToken(memberId, refreshToken, deviceId, false, REFRESH_TOKEN_TTL);
 	}
 }
