@@ -1,11 +1,14 @@
 package com.remitro.auth.domain.repository;
 
+import static com.remitro.auth.infrastructure.constant.RedisConstant.*;
+
 import java.time.Duration;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.remitro.auth.domain.model.RefreshToken;
+import com.remitro.auth.infrastructure.constant.JsonMapper;
 import com.remitro.auth.infrastructure.redis.ValueRedisRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -14,33 +17,43 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TokenRepository {
 
-	public static final String REFRESH_TOKEN_PREFIX = "REFRESH:TOKEN:";
-
 	private final ValueRedisRepository valueRedisRepository;
 
-	public void saveToken(RefreshToken refreshToken) {
+	public void save(RefreshToken refreshToken) {
 		valueRedisRepository.set(
-			generateRefreshTokenKey(refreshToken.memberId()),
-			refreshToken.token(),
+			generateRefreshTokenKey(refreshToken.token()),
+			JsonMapper.toJSON(refreshToken),
 			Duration.ofMillis(refreshToken.expirationTime())
 		);
 	}
 
-	public Optional<RefreshToken> findTokenByMemberId(Long memberId) {
-		String token = valueRedisRepository.get(generateRefreshTokenKey(memberId));
+	public Optional<RefreshToken> findByToken(String refreshToken) {
+		String token = valueRedisRepository.get(generateRefreshTokenKey(refreshToken));
+		return Optional.of(JsonMapper.fromJSON(token, RefreshToken.class));
+	}
 
-		if (token == null) {
-			return Optional.empty();
+	public void revoke(String refreshToken) {
+		valueRedisRepository.delete(generateRefreshTokenKey(refreshToken));
+	}
+
+	public void revokeByMemberAndDevice(Long memberId, String deviceId) {
+		valueRedisRepository.scanKeys(REFRESH_TOKEN_PREFIX + "*").forEach(
+			refreshTokenKey -> revokeIfMatchesMemberAndDevice(memberId, deviceId, refreshTokenKey)
+		);
+	}
+
+	private void revokeIfMatchesMemberAndDevice(Long memberId, String deviceId, String refreshTokenKey) {
+		RefreshToken refreshToken = JsonMapper.fromJSON(
+			valueRedisRepository.get(refreshTokenKey),
+			RefreshToken.class
+		);
+
+		if (refreshToken.memberId().equals(memberId) && refreshToken.deviceId().equals(deviceId)) {
+			valueRedisRepository.delete(refreshTokenKey);
 		}
-
-		return Optional.of(new RefreshToken(memberId, token, 0L));
 	}
 
-	public void deleteToken(Long memberId) {
-		valueRedisRepository.delete(generateRefreshTokenKey(memberId));
-	}
-
-	private String generateRefreshTokenKey(Long memberId) {
-		return REFRESH_TOKEN_PREFIX + memberId;
+	private String generateRefreshTokenKey(String refreshToken) {
+		return REFRESH_TOKEN_PREFIX + refreshToken;
 	}
 }
