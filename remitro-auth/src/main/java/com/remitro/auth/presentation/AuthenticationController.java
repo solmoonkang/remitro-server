@@ -36,8 +36,11 @@ public class AuthenticationController {
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<TokenResponse> loginMember(@Valid @RequestBody LoginRequest loginRequest) {
-		return ResponseEntity.ok().body(authenticationService.loginMember(loginRequest));
+	public ResponseEntity<TokenResponse> loginMember(
+		@RequestHeader("X-Device-Id") String deviceId,
+		@Valid @RequestBody LoginRequest loginRequest
+	) {
+		return ResponseEntity.ok().body(authenticationService.loginMember(deviceId, loginRequest));
 	}
 
 	@PostMapping("/reissue")
@@ -50,7 +53,7 @@ public class AuthenticationController {
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<TokenResponse> reissueTokens(@RequestHeader("Authorization") String refreshToken) {
-		return ResponseEntity.ok().body(authenticationService.reissueTokens(refreshToken));
+	public ResponseEntity<TokenResponse> reissueTokens(@RequestHeader("Authorization") String authorization) {
+		return ResponseEntity.ok().body(authenticationService.reissueTokens(authorization));
 	}
 }
