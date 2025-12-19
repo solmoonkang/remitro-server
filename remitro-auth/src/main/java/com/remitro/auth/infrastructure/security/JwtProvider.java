@@ -1,6 +1,6 @@
 package com.remitro.auth.infrastructure.security;
 
-import static com.remitro.common.util.constant.JwtClaimsConstant.*;
+import static com.remitro.common.security.AuthenticationConstant.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -8,8 +8,12 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.remitro.auth.infrastructure.config.TokenConfig;
+import com.remitro.common.error.exception.UnauthorizedException;
+import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.security.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -32,7 +36,7 @@ public class JwtProvider {
 		this.secretKey = Keys.hmacShaKeyFor(tokenConfig.getSecret().getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String generateAccessToken(Long id, String email, String nickname) {
+	public String generateAccessToken(Long id, String email, String nickname, Role role) {
 		return Jwts.builder()
 			.issuer(tokenConfig.getIssuer())
 			.issuedAt(new Date())
@@ -40,6 +44,7 @@ public class JwtProvider {
 			.claim(CLAIM_MEMBER_ID, id)
 			.claim(CLAIM_MEMBER_EMAIL, email)
 			.claim(CLAIM_MEMBER_NICKNAME, nickname)
+			.claim(CLAIM_MEMBER_ROLE, role.name())
 			.signWith(secretKey)
 			.compact();
 	}
@@ -53,6 +58,18 @@ public class JwtProvider {
 			.claim(CLAIM_MEMBER_EMAIL, email)
 			.signWith(secretKey)
 			.compact();
+	}
+
+	public String extractToken(String authorizationHeader) {
+		if (!StringUtils.hasText(authorizationHeader)) {
+			throw new UnauthorizedException(ErrorMessage.INVALID_TOKEN);
+		}
+
+		if (!authorizationHeader.startsWith(BEARER_PREFIX)) {
+			throw new UnauthorizedException(ErrorMessage.INVALID_TOKEN);
+		}
+
+		return authorizationHeader.substring(7);
 	}
 
 	public Claims parseClaims(String token) {
