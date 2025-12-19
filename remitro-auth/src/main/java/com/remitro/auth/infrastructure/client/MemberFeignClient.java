@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.remitro.common.contract.MemberAuthInfo;
+import com.remitro.common.auth.MemberAuthInfo;
 
 @FeignClient(name = "remitro-member", path = "/internal/members")
 public interface MemberFeignClient {
