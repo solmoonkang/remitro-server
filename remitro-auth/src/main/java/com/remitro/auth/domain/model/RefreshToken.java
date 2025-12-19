@@ -8,6 +8,10 @@ public record RefreshToken(
 
 	String token,
 
+	String deviceId,
+
+	boolean revoked,
+
 	Long expirationTime
 ) {
 }
