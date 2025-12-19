@@ -1,6 +1,7 @@
 package com.remitro.auth.infrastructure.redis;
 
 import java.time.Duration;
+import java.util.Set;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -23,5 +24,9 @@ public class ValueRedisRepository {
 
 	public void delete(String key) {
 		stringRedisTemplate.delete(key);
+	}
+
+	public Set<String> scanKeys(String pattern) {
+		return stringRedisTemplate.keys(pattern);
 	}
 }
