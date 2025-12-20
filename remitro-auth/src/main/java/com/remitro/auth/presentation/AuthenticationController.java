@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitro.auth.application.dto.request.LoginRequest;
 import com.remitro.auth.application.dto.response.TokenResponse;
 import com.remitro.auth.application.service.AuthenticationService;
+import com.remitro.auth.application.service.LogoutService;
+import com.remitro.auth.application.service.TokenReissueService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
 
 	private final AuthenticationService authenticationService;
+	private final TokenReissueService tokenReissueService;
+	private final LogoutService logoutService;
 
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
@@ -54,6 +58,20 @@ public class AuthenticationController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public ResponseEntity<TokenResponse> reissueTokens(@RequestHeader("Authorization") String authorization) {
-		return ResponseEntity.ok().body(authenticationService.reissueTokens(authorization));
+		return ResponseEntity.ok().body(tokenReissueService.reissueTokens(authorization));
+	}
+
+	@PostMapping("/logout")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Operation(summary = "로그아웃", description = "현재 기기의 세션을 로그아웃합니다.")
+	public void logout(@RequestHeader("X-Member-Id") Long memberId, @RequestHeader("X-Device-Id") String deviceId) {
+		logoutService.logout(memberId, deviceId);
+	}
+
+	@PostMapping("/logout/all")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Operation(summary = "전체 로그아웃", description = "모든 기기에서 로그아웃합니다.")
+	public void logoutAll(@RequestHeader("X-Member-Id") Long memberId) {
+		logoutService.logoutAll(memberId);
 	}
 }
