@@ -5,6 +5,14 @@ public enum KycStatus {
 	UNVERIFIED,
 	PENDING,
 	VERIFIED,
-	REJECTED
+	REJECTED;
+
+	public boolean isFinalStatus() {
+		return this == VERIFIED;
+	}
+
+	public boolean isAccountOpenAllowed() {
+		return this == VERIFIED;
+	}
 }
 
