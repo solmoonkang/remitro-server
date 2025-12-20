@@ -59,7 +59,7 @@ public class KycVerification {
 	}
 
 	public void completeReject(String reason) {
-		this.kycVerificationStatus = KycVerificationStatus.VERIFIED;
+		this.kycVerificationStatus = KycVerificationStatus.REJECTED;
 		this.reason = reason;
 		this.completedAt = LocalDateTime.now();
 	}
