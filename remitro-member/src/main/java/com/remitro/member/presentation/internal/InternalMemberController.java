@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.common.contract.MemberAuthInfo;
+import com.remitro.common.auth.MemberAuthInfo;
 import com.remitro.member.application.service.internal.InternalMemberService;
 
 import lombok.RequiredArgsConstructor;
