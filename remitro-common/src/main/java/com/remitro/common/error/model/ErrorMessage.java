@@ -15,10 +15,17 @@ public enum ErrorMessage {
 	// MEMBER
 	INVALID_PASSWORD("입력하신 비밀번호가 올바르지 않습니다."),
 	INVALID_MEMBER_STATE("현재 회원 상태에서는 요청을 처리할 수 없습니다."),
+	MEMBER_ALREADY_WITHDRAWN("탈퇴 회원은 상태를 변경할 수 없습니다."),
+	INVALID_ACTIVITY_STATUS_TRANSITION("LOCKED 상태에서는 직접 ACTIVE로 변경할 수 없습니다."),
 
 	// KYC
 	INVALID_KYC_STATUS_REASON("KYC 상태(REJECTED 또는 PENDING)에서는 사유가 필수입니다."),
 	KYC_ALREADY_VERIFIED("이미 KYC 인증이 완료된 회원입니다."),
+	KYC_ALREADY_IN_PROGRESS("이미 진행 중인 KYC 요청이 존재합니다."),
+	KYC_REQUEST_NOT_ALLOWED("현재 KYC 상태에서는 새로운 KYC 요청이 불가능합니다."),
+
+	// ROLE
+	ROLE_ALREADY_ASSIGNED("이미 해당 권한이 부여된 회원입니다."),
 
 	// ACCOUNT
 	INVALID_AMOUNT("금액은 0보다 커야 합니다."),
@@ -47,6 +54,10 @@ public enum ErrorMessage {
 	 * ========================== */
 	TOKEN_EXPIRED("만료된 토큰입니다."),
 	INVALID_TOKEN("유효하지 않은 인증 토큰입니다."),
+	MEMBER_LOCKED("잠금 처리된 회원은 로그인할 수 없습니다."),
+	MEMBER_WITHDRAWN("탈퇴한 회원은 로그인할 수 없습니다."),
+	KYC_NOT_VERIFIED("KYC 인증이 완료되지 않은 회원입니다."),
+	KYC_REJECTED("KYC 인증이 반려된 회원입니다."),
 
 	/* ==========================
 	 * 403 FORBIDDEN
@@ -54,6 +65,7 @@ public enum ErrorMessage {
 	ACCOUNT_ACCESS_FORBIDDEN("해당 계좌에 접근할 권한이 없습니다."),
 	TRANSACTION_ACCESS_FORBIDDEN("해당 거래에 접근할 권한이 없습니다."),
 	MEMBER_ACCESS_FORBIDDEN("해당 회원 정보에 접근할 권한이 없습니다."),
+	ADMIN_PERMISSION_REQUIRED("관리자 권한이 필요합니다."),
 
 	/* ==========================
 	 * 404 NOT FOUND
