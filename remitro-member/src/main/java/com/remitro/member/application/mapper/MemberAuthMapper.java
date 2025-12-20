@@ -1,6 +1,7 @@
 package com.remitro.member.application.mapper;
 
-import com.remitro.common.contract.MemberAuthInfo;
+import com.remitro.common.auth.MemberAuthInfo;
+import com.remitro.member.domain.model.Member;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -8,17 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberAuthMapper {
 
-	public static MemberAuthInfo toMemberCredentialsResponse(
-		Long memberId,
-		String email,
-		String nickname,
-		String password
-	) {
+	public static MemberAuthInfo toMemberAuthInfo(Member member) {
 		return new MemberAuthInfo(
-			memberId,
-			email,
-			nickname,
-			password
+			member.getId(),
+			member.getEmail(),
+			member.getNickname(),
+			member.getHashedPassword(),
+			member.getRole()
 		);
 	}
 }
