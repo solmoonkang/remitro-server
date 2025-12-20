@@ -1,6 +1,6 @@
 package com.remitro.auth.domain.repository;
 
-import static com.remitro.auth.infrastructure.constant.RedisConstant.*;
+import static com.remitro.auth.infrastructure.redis.RedisKeys.*;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.remitro.auth.domain.model.RefreshToken;
-import com.remitro.auth.infrastructure.constant.JsonMapper;
+import com.remitro.auth.infrastructure.support.JsonMapper;
 import com.remitro.auth.infrastructure.redis.ValueRedisRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -43,13 +43,29 @@ public class TokenRepository {
 	}
 
 	private void revokeIfMatchesMemberAndDevice(Long memberId, String deviceId, String refreshTokenKey) {
-		RefreshToken refreshToken = JsonMapper.fromJSON(
+		RefreshToken token = JsonMapper.fromJSON(
 			valueRedisRepository.get(refreshTokenKey),
 			RefreshToken.class
 		);
 
-		if (refreshToken.memberId().equals(memberId) && refreshToken.deviceId().equals(deviceId)) {
+		if (token.memberId().equals(memberId) && token.deviceId().equals(deviceId)) {
 			valueRedisRepository.delete(refreshTokenKey);
+		}
+	}
+
+	public void revokeAllByMember(Long memberId) {
+		valueRedisRepository.scanKeys(REFRESH_TOKEN_PREFIX + "*")
+			.forEach(refreshToken -> revokeIfMatchesMember(memberId, refreshToken));
+	}
+
+	private void revokeIfMatchesMember(Long memberId, String refreshToken) {
+		RefreshToken token = JsonMapper.fromJSON(
+			valueRedisRepository.get(generateRefreshTokenKey(refreshToken)),
+			RefreshToken.class
+		);
+
+		if (token.memberId().equals(memberId)) {
+			valueRedisRepository.delete(generateRefreshTokenKey(refreshToken));
 		}
 	}
 
