@@ -1,4 +1,4 @@
-package com.remitro.auth.infrastructure.handler;
+package com.remitro.auth.presentation;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestControllerAdvice
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GlobalExceptionHandler {
+public class AuthExceptionHandler {
 
 	@ExceptionHandler(BadRequestException.class)
 	protected ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e) {
