@@ -1,9 +1,13 @@
 package com.remitro.member.application.mapper;
 
-import com.remitro.member.domain.enums.ActivityStatus;
-import com.remitro.member.domain.enums.KycStatus;
+import java.time.LocalDateTime;
+
+import com.remitro.common.security.Role;
 import com.remitro.member.domain.event.MemberCreatedEvent;
-import com.remitro.member.domain.event.MemberKycUpdatedEvent;
+import com.remitro.member.domain.event.MemberKycRejectedEvent;
+import com.remitro.member.domain.event.MemberKycRequestedEvent;
+import com.remitro.member.domain.event.MemberKycVerifiedEvent;
+import com.remitro.member.domain.event.MemberRoleUpdatedEvent;
 import com.remitro.member.domain.event.MemberStatusUpdatedEvent;
 import com.remitro.member.domain.model.Member;
 
@@ -34,12 +38,42 @@ public class MemberEventMapper {
 		);
 	}
 
-	public static MemberKycUpdatedEvent toMemberKycUpdatedEvent(Member member) {
-		return new MemberKycUpdatedEvent(
+	public static MemberKycRequestedEvent toMemberKycRequestedEvent(Member member) {
+		return new MemberKycRequestedEvent(
 			member.getId(),
-			member.getKycStatus(),
-			member.getKycVerifiedAt(),
-			member.isActiveForAccountOpen()
+			LocalDateTime.now()
+		);
+	}
+
+	public static MemberKycVerifiedEvent toMemberKycVerifiedEvent(Member member, Long adminMemberId) {
+		return new MemberKycVerifiedEvent(
+			member.getId(),
+			adminMemberId,
+			member.isActiveForAccountOpen(),
+			member.getKycVerifiedAt()
+		);
+	}
+
+	public static MemberKycRejectedEvent toMemberKycRejectedEvent(Member member, Long adminMemberId, String reason) {
+		return new MemberKycRejectedEvent(
+			member.getId(),
+			adminMemberId,
+			reason,
+			LocalDateTime.now()
+		);
+	}
+
+	public static MemberRoleUpdatedEvent toMemberRoleUpdatedEvent(
+		Member member,
+		Role previousRole,
+		Long adminMemberId
+	) {
+		return new MemberRoleUpdatedEvent(
+			member.getId(),
+			previousRole,
+			member.getRole(),
+			adminMemberId,
+			LocalDateTime.now()
 		);
 	}
 }
