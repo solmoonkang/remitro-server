@@ -3,17 +3,12 @@ package com.remitro.member.application.service.member;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.remitro.common.util.JsonMapper;
+import com.remitro.common.security.Role;
 import com.remitro.member.application.dto.request.SignUpRequest;
-import com.remitro.member.application.mapper.MemberEventMapper;
 import com.remitro.member.domain.enums.ActivityStatus;
-import com.remitro.member.domain.enums.AggregateType;
 import com.remitro.member.domain.enums.KycStatus;
-import com.remitro.member.domain.event.EventType;
 import com.remitro.member.domain.model.Member;
-import com.remitro.member.domain.model.OutboxMessage;
 import com.remitro.member.domain.repository.MemberRepository;
-import com.remitro.member.domain.repository.OutboxMessageRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,36 +18,43 @@ public class MemberWriteService {
 
 	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
-	private final OutboxMessageRepository outboxMessageRepository;
+	private final MemberEventPublisher memberEventPublisher;
 
 	public void saveMember(SignUpRequest signUpRequest) {
 		final Member member = saveMemberMetadata(signUpRequest);
-		requestMemberCreatedEvent(member);
+		memberEventPublisher.publishCreated(member);
 	}
 
-	public void updateActivityStatus(Member member, ActivityStatus activityStatus) {
-		member.updateActivityStatus(activityStatus);
-		requestMemberStatusUpdatedEvent(member);
+	public void updateActivityStatus(Member member, ActivityStatus nextActivityStatus) {
+		member.updateActivityStatus(nextActivityStatus);
+		memberEventPublisher.publishActivityStatusUpdated(member);
 	}
 
-	public void updateKycStatus(Member member, KycStatus kycStatus) {
-		member.updateKycStatus(kycStatus);
-		requestMemberKycStatusUpdatedEvent(member);
+	public void updateKycStatus(Member member, Long adminMemberId, KycStatus nextKycStatus, String reason) {
+		member.updateKycStatus(nextKycStatus);
+
+		if (nextKycStatus == KycStatus.VERIFIED) {
+			memberEventPublisher.publishKycVerified(member, adminMemberId);
+			return;
+		}
+
+		memberEventPublisher.publishKycRejected(member, adminMemberId, reason);
 	}
 
-	private void requestMemberCreatedEvent(Member member) {
-		final String eventPayload = JsonMapper.toJSON(MemberEventMapper.toMemberCreatedEvent(member));
-		saveOutboxMessageMetadata(member, EventType.MEMBER_CREATED, eventPayload);
+	public void requestKyc(Member member) {
+		memberEventPublisher.publishKycRequested(member);
 	}
 
-	private void requestMemberStatusUpdatedEvent(Member member) {
-		final String eventPayload = JsonMapper.toJSON(MemberEventMapper.toMemberStatusUpdatedEvent(member));
-		saveOutboxMessageMetadata(member, EventType.MEMBER_STATUS_UPDATED, eventPayload);
-	}
+	public void updateRole(Member member, Role nextRole, Long adminMemberId) {
+		final Role previousRole = member.getRole();
+		member.updateRole(nextRole);
 
-	private void requestMemberKycStatusUpdatedEvent(Member member) {
-		final String eventPayload = JsonMapper.toJSON(MemberEventMapper.toMemberKycUpdatedEvent(member));
-		saveOutboxMessageMetadata(member, EventType.MEMBER_KYC_UPDATED, eventPayload);
+		if (nextRole.isAdmin()) {
+			memberEventPublisher.publishRoleGranted(member, previousRole, adminMemberId);
+			return;
+		}
+
+		memberEventPublisher.publishRoleRevoked(member, previousRole, adminMemberId);
 	}
 
 	private Member saveMemberMetadata(SignUpRequest signUpRequest) {
@@ -62,16 +64,7 @@ public class MemberWriteService {
 			signUpRequest.nickname(),
 			signUpRequest.phoneNumber()
 		);
-		return memberRepository.save(member);
-	}
 
-	private void saveOutboxMessageMetadata(Member member, EventType eventType, String eventPayload) {
-		final OutboxMessage outboxMessage = OutboxMessage.create(
-			member.getId(),
-			AggregateType.MEMBER,
-			eventType,
-			eventPayload
-		);
-		outboxMessageRepository.save(outboxMessage);
+		return memberRepository.save(member);
 	}
 }
