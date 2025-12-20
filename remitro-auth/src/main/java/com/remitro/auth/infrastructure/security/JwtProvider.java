@@ -10,7 +10,6 @@ import javax.crypto.SecretKey;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.remitro.auth.infrastructure.config.TokenConfig;
 import com.remitro.common.error.exception.UnauthorizedException;
 import com.remitro.common.error.model.ErrorMessage;
 import com.remitro.common.security.Role;
