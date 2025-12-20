@@ -59,8 +59,8 @@ public class OutboxMessage extends BaseTimeEntity {
 		Long aggregateId,
 		AggregateType aggregateType,
 		EventType eventType,
-		String eventData) {
-
+		String eventData
+	) {
 		this.eventId = eventId;
 		this.aggregateId = aggregateId;
 		this.aggregateType = aggregateType;
@@ -73,9 +73,15 @@ public class OutboxMessage extends BaseTimeEntity {
 		Long aggregateId,
 		AggregateType aggregateType,
 		EventType eventType,
-		String eventData) {
-
-		return new OutboxMessage(UUID.randomUUID().toString(), aggregateId, aggregateType, eventType, eventData);
+		String eventData
+	) {
+		return new OutboxMessage(
+			UUID.randomUUID().toString(),
+			aggregateId,
+			aggregateType,
+			eventType,
+			eventData
+		);
 	}
 
 	public void markPublished() {
