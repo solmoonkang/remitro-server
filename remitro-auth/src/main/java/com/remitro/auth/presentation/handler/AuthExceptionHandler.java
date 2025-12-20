@@ -1,4 +1,4 @@
-package com.remitro.auth.presentation;
+package com.remitro.auth.presentation.handler;
 
 import java.util.Map;
 import java.util.stream.Collectors;
