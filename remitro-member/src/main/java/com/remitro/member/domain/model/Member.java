@@ -2,6 +2,9 @@ package com.remitro.member.domain.model;
 
 import java.time.LocalDateTime;
 
+import com.remitro.common.error.exception.BadRequestException;
+import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.security.Role;
 import com.remitro.member.domain.enums.ActivityStatus;
 import com.remitro.member.domain.enums.KycStatus;
 import com.remitro.member.infrastructure.BaseTimeEntity;
@@ -45,6 +48,10 @@ public class Member extends BaseTimeEntity {
 	private String phoneNumber;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "role", nullable = false)
+	private Role role;
+
+	@Enumerated(EnumType.STRING)
 	@Column(name = "activity_status", nullable = false)
 	private ActivityStatus activityStatus;
 
@@ -60,6 +67,7 @@ public class Member extends BaseTimeEntity {
 		this.hashedPassword = hashedPassword;
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
+		this.role = Role.MEMBER;
 		this.activityStatus = ActivityStatus.ACTIVE;
 		this.kycStatus = KycStatus.UNVERIFIED;
 	}
@@ -68,17 +76,40 @@ public class Member extends BaseTimeEntity {
 		return new Member(email, password, nickname, phoneNumber);
 	}
 
-	public void updateActivityStatus(ActivityStatus activityStatus) {
-		this.activityStatus = activityStatus;
+	public void updateActivityStatus(ActivityStatus nextActivityStatus) {
+		if (this.activityStatus.isTerminal()) {
+			throw new BadRequestException(ErrorMessage.MEMBER_ALREADY_WITHDRAWN);
+		}
+
+		if (this.activityStatus == ActivityStatus.LOCKED && nextActivityStatus == ActivityStatus.ACTIVE) {
+			throw new BadRequestException(ErrorMessage.INVALID_ACTIVITY_STATUS_TRANSITION);
+		}
+
+		this.activityStatus = nextActivityStatus;
 	}
 
-	public void updateKycStatus(KycStatus kycStatus) {
-		this.kycStatus = kycStatus;
-		this.kycVerifiedAt = LocalDateTime.now();
+	public void updateKycStatus(KycStatus nextKycStatus) {
+		if (this.kycStatus.isFinalStatus()) {
+			throw new BadRequestException(ErrorMessage.KYC_ALREADY_VERIFIED);
+		}
+
+		if (nextKycStatus == KycStatus.VERIFIED) {
+			this.kycVerifiedAt = LocalDateTime.now();
+		}
+
+		this.kycStatus = nextKycStatus;
 	}
 
 	public boolean isActiveForAccountOpen() {
 		return this.activityStatus == ActivityStatus.ACTIVE
 			&& this.kycStatus == KycStatus.VERIFIED;
+	}
+
+	public void updateRole(Role nextRole) {
+		if (this.role == nextRole) {
+			throw new BadRequestException(ErrorMessage.ROLE_ALREADY_ASSIGNED);
+		}
+
+		this.role = nextRole;
 	}
 }
