@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import com.remitro.auth.infrastructure.config.TokenConfig;
+import com.remitro.auth.infrastructure.security.TokenConfig;
 
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "com.remitro.auth")
