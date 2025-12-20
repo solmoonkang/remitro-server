@@ -1,6 +1,5 @@
 package com.remitro.member.application.validator;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.remitro.common.error.exception.BadRequestException;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberValidator {
 
-	private final PasswordEncoder passwordEncoder;
 	private final MemberRepository memberRepository;
 
 	public void validateEmailNotDuplicated(String email) {
@@ -37,12 +35,6 @@ public class MemberValidator {
 
 	public void validatePasswordMatche(String password, String checkPassword) {
 		if (!password.equals(checkPassword)) {
-			throw new BadRequestException(ErrorMessage.INVALID_PASSWORD);
-		}
-	}
-
-	public void validateLoginPassword(String rawPassword, String encodedPassword) {
-		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
 			throw new BadRequestException(ErrorMessage.INVALID_PASSWORD);
 		}
 	}
