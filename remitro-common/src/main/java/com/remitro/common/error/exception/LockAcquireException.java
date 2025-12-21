@@ -1,16 +1,11 @@
 package com.remitro.common.error.exception;
 
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.code.ErrorCode;
+import com.remitro.common.error.message.ErrorMessage;
 
-import lombok.Getter;
+public class LockAcquireException extends BaseException {
 
-@Getter
-public class LockAcquireException extends RuntimeException {
-
-	private final ErrorMessage errorMessage;
-
-	public LockAcquireException(ErrorMessage errorMessage, Object... args) {
-		super(errorMessage.formattedMessage(args));
-		this.errorMessage = errorMessage;
+	public LockAcquireException(ErrorCode errorCode, ErrorMessage errorMessage, Object... args) {
+		super(errorCode, errorMessage, args);
 	}
 }

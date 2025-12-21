@@ -1,16 +1,11 @@
 package com.remitro.common.error.exception;
 
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.code.ErrorCode;
+import com.remitro.common.error.message.ErrorMessage;
 
-import lombok.Getter;
+public class UnauthorizedException extends BaseException {
 
-@Getter
-public class UnauthorizedException extends RuntimeException {
-
-	private final ErrorMessage errorMessage;
-
-	public UnauthorizedException(ErrorMessage errorMessage, Object... args) {
-		super(errorMessage.formattedMessage(args));
-		this.errorMessage = errorMessage;
+	public UnauthorizedException(ErrorCode errorCode, ErrorMessage errorMessage, Object... args) {
+		super(errorCode, errorMessage, args);
 	}
 }

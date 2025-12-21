@@ -1,16 +1,11 @@
 package com.remitro.common.error.exception;
 
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.code.ErrorCode;
+import com.remitro.common.error.message.ErrorMessage;
 
-import lombok.Getter;
+public class NotFoundException extends BaseException {
 
-@Getter
-public class NotFoundException extends RuntimeException {
-
-	private final ErrorMessage errorMessage;
-
-	public NotFoundException(ErrorMessage errorMessage, Object... args) {
-		super(errorMessage.formattedMessage(args));
-		this.errorMessage = errorMessage;
+	public NotFoundException(ErrorCode errorCode, ErrorMessage errorMessage, Object... args) {
+		super(errorCode, errorMessage, args);
 	}
 }

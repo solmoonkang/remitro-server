@@ -1,16 +1,11 @@
 package com.remitro.common.error.exception;
 
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.code.ErrorCode;
+import com.remitro.common.error.message.ErrorMessage;
 
-import lombok.Getter;
+public class ConflictException extends BaseException {
 
-@Getter
-public class ConflictException extends RuntimeException {
-
-	private final ErrorMessage errorMessage;
-
-	public ConflictException(ErrorMessage errorMessage, Object... args) {
-		super(errorMessage.formattedMessage(args));
-		this.errorMessage = errorMessage;
+	public ConflictException(ErrorCode errorCode, ErrorMessage errorMessage, Object... args) {
+		super(errorCode, errorMessage, args);
 	}
 }

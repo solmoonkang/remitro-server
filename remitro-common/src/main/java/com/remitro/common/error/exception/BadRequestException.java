@@ -1,16 +1,13 @@
 package com.remitro.common.error.exception;
 
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.code.ErrorCode;
+import com.remitro.common.error.message.ErrorMessage;
 
 import lombok.Getter;
 
-@Getter
-public class BadRequestException extends RuntimeException {
+public class BadRequestException extends BaseException {
 
-	private final ErrorMessage errorMessage;
-
-	public BadRequestException(ErrorMessage errorMessage, Object... args) {
-		super(errorMessage.formattedMessage(args));
-		this.errorMessage = errorMessage;
+	public BadRequestException(ErrorCode errorCode, ErrorMessage errorMessage, Object... args) {
+		super(errorCode, errorMessage, args);
 	}
 }
