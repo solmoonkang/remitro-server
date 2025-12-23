@@ -1,52 +1,82 @@
 package com.remitro.member.presentation.admin;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.remitro.common.presentation.ApiSuccessResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
-import com.remitro.member.application.dto.request.UpdateKycStatusRequest;
-import com.remitro.member.application.service.kyc.KycService;
+import com.remitro.member.application.service.admin.AdminKycService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/internal/admin/members/kyc")
 @RequiredArgsConstructor
-@Tag(name = "관리자 KYC 심사 APIs", description = "관리자 전용 KYC 심사 API")
+@Tag(name = "관리자 KYC 심사 APIs", description = "관리자가 회원의 KYC 인증 요청을 승인 또는 거절하는 API")
 public class AdminKycController {
 
-	private final KycService kycService;
+	private final AdminKycService adminKycService;
 
-	@PatchMapping("/complete")
+	@PostMapping("/{memberId}/approve")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(
-		summary = "KYC 인증 심사 결과 처리",
-		description = "KYC 인증 심사 결과(VERIFIED/REJECTED/PENDING)를 반영합니다. VERIFIED가 아닐 경우 사유는 필수입니다."
+		summary = "KYC 인증 승인",
+		description = "관리자가 회원의 KYC 인증 요청을 승인합니다."
 	)
 	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "🎉 KYC 요청 생성 성공"),
-		@ApiResponse(responseCode = "400", description = "❌ 유효하지 않은 요청 데이터"),
+		@ApiResponse(
+			responseCode = "200",
+			description = "🎉 KYC 인증 승인 성공",
+			content = @Content(schema = @Schema(implementation = ApiSuccessResponse.class))
+		),
+		@ApiResponse(responseCode = "400", description = "❌ 유효하지 않은 KYC 요청"),
+		@ApiResponse(responseCode = "403", description = "❗️ 관리자 권한 없음"),
 		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자"),
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
-	public ResponseEntity<?> completeKyc(
-		@RequestParam Long memberId,
-		@Valid @RequestBody UpdateKycStatusRequest updateKycStatusRequest,
+	public ApiSuccessResponse approveKyc(
+		@PathVariable Long memberId,
 		@CurrentUser AuthenticatedUser authenticatedUser
 	) {
-		kycService.completeKyc(memberId, updateKycStatusRequest, authenticatedUser.memberId());
-		return ResponseEntity.ok("[✅ SUCCESS] KYC 심사 결과가 성공적으로 반영되었습니다.");
+		adminKycService.approveKycByAdmin(memberId, authenticatedUser.memberId());
+		return ApiSuccessResponse.success("KYC 인증이 성공적으로 승인되었습니다.");
+	}
+
+	@PostMapping("/{memberId}/reject")
+	@ResponseStatus(HttpStatus.OK)
+	@Operation(
+		summary = "KYC 인증 거절",
+		description = "관리자가 회원의 KYC 인증 요청을 거절합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "🎉 KYC 인증 거절 성공",
+			content = @Content(schema = @Schema(implementation = ApiSuccessResponse.class))
+		),
+		@ApiResponse(responseCode = "400", description = "❌ 유효하지 않은 거절 사유"),
+		@ApiResponse(responseCode = "403", description = "❗️ 관리자 권한 없음"),
+		@ApiResponse(responseCode = "404", description = "🔍 존재하지 않는 사용자"),
+		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
+	})
+	public ApiSuccessResponse rejectKyc(
+		@PathVariable Long memberId,
+		@CurrentUser AuthenticatedUser authenticatedUser,
+		@RequestParam String reason
+	) {
+		adminKycService.rejectKycByAdmin(memberId, authenticatedUser.memberId(), reason);
+		return ApiSuccessResponse.success("KYC 인증이 성공적으로 거절되었습니다.");
 	}
 }
