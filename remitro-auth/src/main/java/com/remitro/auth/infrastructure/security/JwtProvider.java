@@ -10,8 +10,9 @@ import javax.crypto.SecretKey;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.UnauthorizedException;
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.message.ErrorMessage;
 import com.remitro.common.security.Role;
 
 import io.jsonwebtoken.Claims;
@@ -61,11 +62,17 @@ public class JwtProvider {
 
 	public String extractToken(String authorizationHeader) {
 		if (!StringUtils.hasText(authorizationHeader)) {
-			throw new UnauthorizedException(ErrorMessage.INVALID_TOKEN);
+			throw new UnauthorizedException(
+				ErrorCode.TOKEN_INVALID,
+				ErrorMessage.TOKEN_INVALID
+			);
 		}
 
 		if (!authorizationHeader.startsWith(BEARER_PREFIX)) {
-			throw new UnauthorizedException(ErrorMessage.INVALID_TOKEN);
+			throw new UnauthorizedException(
+				ErrorCode.TOKEN_INVALID,
+				ErrorMessage.TOKEN_INVALID
+			);
 		}
 
 		return authorizationHeader.substring(7);
