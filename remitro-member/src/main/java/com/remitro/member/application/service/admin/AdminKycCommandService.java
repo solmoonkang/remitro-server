@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AdminKycService {
+public class AdminKycCommandService {
 
 	private final KycValidator kycValidator;
 	private final KycReadService kycReadService;
