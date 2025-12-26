@@ -1,24 +1,25 @@
 package com.remitro.member.application.service.member;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.dto.request.SignUpRequest;
-import com.remitro.member.application.dto.response.MemberInfoResponse;
-import com.remitro.member.application.mapper.MemberMapper;
 import com.remitro.member.application.validator.MemberValidator;
 import com.remitro.member.domain.model.Member;
+import com.remitro.member.domain.repository.MemberRepository;
+import com.remitro.member.infrastructure.messaging.MemberEventPublisher;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class MemberService {
+public class MemberSignUpService {
 
 	private final MemberValidator memberValidator;
-	private final MemberWriteService memberWriteService;
-	private final MemberReadService memberReadService;
+	private final PasswordEncoder passwordEncoder;
+	private final MemberRepository memberRepository;
+	private final MemberEventPublisher memberEventPublisher;
 
 	@Transactional
 	public void signUp(SignUpRequest signUpRequest) {
@@ -26,11 +27,15 @@ public class MemberService {
 		memberValidator.validateUniqueNickname(signUpRequest.nickname());
 		memberValidator.validateUniquePhoneNumber(signUpRequest.phoneNumber());
 		memberValidator.validatePasswordMatches(signUpRequest.password(), signUpRequest.checkPassword());
-		memberWriteService.register(signUpRequest);
-	}
 
-	public MemberInfoResponse getMemberInfo(Long memberId) {
-		final Member member = memberReadService.findMemberById(memberId);
-		return MemberMapper.toMemberInfoResponse(member);
+		final Member member = Member.create(
+			signUpRequest.email(),
+			passwordEncoder.encode(signUpRequest.password()),
+			signUpRequest.nickname(),
+			signUpRequest.phoneNumber()
+		);
+
+		memberRepository.save(member);
+		memberEventPublisher.publishMemberCreated(member);
 	}
 }
