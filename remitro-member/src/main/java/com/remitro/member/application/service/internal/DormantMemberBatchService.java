@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.domain.model.Member;
 import com.remitro.member.domain.repository.MemberRepository;
+import com.remitro.member.infrastructure.messaging.MemberEventPublisher;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,27 +20,32 @@ import lombok.RequiredArgsConstructor;
 public class DormantMemberBatchService {
 
 	private static final int DORMANT_MONTHS = 12;
-	private static final int DORMANT_MEMBER_FLUSH_SIZE = 500;
+	private static final int FLUSH_SIZE = 500;
 
 	private final MemberRepository memberRepository;
 	private final Clock clock;
+	private final MemberEventPublisher memberEventPublisher;
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Transactional
-	public void markInactiveMembersAsDormant() {
+	public void executeDormantMemberConversion() {
 		LocalDateTime now = LocalDateTime.now(clock);
 		LocalDateTime threshold = now.minusMonths(DORMANT_MONTHS);
 
 		final List<Member> candidateMembers = memberRepository.findActiveMembersWithLastLoginBefore(threshold);
 
-		int count = 0;
+		int processed = 0;
+
 		for (Member member : candidateMembers) {
 			member.markDormant();
-			count++;
 
-			if (count % DORMANT_MEMBER_FLUSH_SIZE == 0) {
+			memberEventPublisher.publishMemberDormant(member, now);
+
+			processed++;
+
+			if (processed % FLUSH_SIZE == 0) {
 				entityManager.flush();
 				entityManager.clear();
 			}
