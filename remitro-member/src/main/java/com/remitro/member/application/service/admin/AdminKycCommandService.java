@@ -22,14 +22,14 @@ public class AdminKycCommandService {
 	private final KycValidator kycValidator;
 	private final MemberFinder memberFinder;
 	private final KycVerificationFinder kycVerificationFinder;
-	private final MemberEventPublisher memberEventPublisher;
 	private final Clock clock;
+	private final MemberEventPublisher memberEventPublisher;
 
 	@Transactional
 	public void approveKycByAdmin(Long memberId, Long adminMemberId) {
 		final KycVerification kycVerification = kycVerificationFinder.getLatestVerificationByMemberId(memberId);
 		kycValidator.validateApproval(kycVerification);
-		kycVerification.completeSuccess();
+		kycVerification.completeSuccess(LocalDateTime.now(clock));
 
 		final Member member = memberFinder.getById(memberId);
 		member.verifyKyc(LocalDateTime.now(clock));
@@ -41,7 +41,7 @@ public class AdminKycCommandService {
 	public void rejectKycByAdmin(Long memberId, Long adminMemberId, String reason) {
 		final KycVerification kycVerification = kycVerificationFinder.getLatestVerificationByMemberId(memberId);
 		kycValidator.validateRejection(kycVerification, reason);
-		kycVerification.completeReject(reason);
+		kycVerification.completeReject(reason, LocalDateTime.now(clock));
 
 		final Member member = memberFinder.getById(memberId);
 		member.rejectKyc();
