@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.member.application.service.internal.InternalMemberCommandService;
+import com.remitro.member.application.service.internal.InternalMemberAuthCommandService;
+import com.remitro.member.application.service.internal.InternalMemberStatusCommandService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,30 +15,31 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/internal/members")
 public class InternalMemberCommandController {
 
-	private final InternalMemberCommandService internalMemberCommandService;
+	private final InternalMemberAuthCommandService internalMemberAuthCommandService;
+	private final InternalMemberStatusCommandService internalMemberStatusCommandService;
 
 	@PostMapping("/{memberId}/login-success")
 	public void recordLoginSuccess(@PathVariable Long memberId) {
-		internalMemberCommandService.recordLoginSuccess(memberId);
+		internalMemberAuthCommandService.recordLoginSuccess(memberId);
 	}
 
 	@PostMapping("/{memberId}/login-failure")
 	public void recordLoginFailure(@PathVariable Long memberId) {
-		internalMemberCommandService.recordLoginFailure(memberId);
+		internalMemberAuthCommandService.recordLoginFailure(memberId);
 	}
 
 	@PostMapping("/{memberId}/unlock/by-self")
 	public void unlockBySelf(@PathVariable Long memberId) {
-		internalMemberCommandService.unlockBySelfVerification(memberId);
+		internalMemberAuthCommandService.unlockBySelfVerification(memberId);
 	}
 
 	@PostMapping("/{memberId}/dormant")
 	public void markDormant(@PathVariable Long memberId) {
-		internalMemberCommandService.markDormant(memberId);
+		internalMemberStatusCommandService.markDormant(memberId);
 	}
 
 	@PostMapping("/{memberId}/activate")
 	public void activateDormant(@PathVariable Long memberId) {
-		internalMemberCommandService.activateDormant(memberId);
+		internalMemberStatusCommandService.activateDormant(memberId);
 	}
 }
