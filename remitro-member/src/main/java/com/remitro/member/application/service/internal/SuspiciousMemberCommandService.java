@@ -25,7 +25,7 @@ public class SuspiciousMemberCommandService {
 	@Transactional
 	public void lockBySuspiciousActivity(Long memberId) {
 		final Member member = memberFinder.getById(memberId);
-		member.lockBySuspiciousActivity();
+		member.lockBySuspiciousActivity(LocalDateTime.now(clock));
 
 		memberEventPublisher.publishMemberLocked(
 			member,
