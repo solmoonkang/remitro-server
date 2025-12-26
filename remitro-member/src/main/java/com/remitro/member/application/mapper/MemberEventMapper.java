@@ -15,6 +15,8 @@ import com.remitro.event.member.event.MemberKycRejectedEvent;
 import com.remitro.event.member.event.MemberKycRequestedEvent;
 import com.remitro.event.member.event.MemberKycVerifiedEvent;
 import com.remitro.event.member.event.MemberLockedEvent;
+import com.remitro.event.member.event.MemberPasswordChangedEvent;
+import com.remitro.event.member.event.MemberProfileUpdatedEvent;
 import com.remitro.event.member.event.MemberRoleChangedEvent;
 import com.remitro.event.member.event.MemberUnlockedEvent;
 import com.remitro.member.domain.enums.ActivityStatus;
@@ -139,6 +141,22 @@ public class MemberEventMapper {
 			previousRole,
 			member.getRole(),
 			adminMemberId,
+			occurredAt
+		);
+	}
+
+	public static MemberPasswordChangedEvent toMemberPasswordChangedEvent(Member member, LocalDateTime occurredAt) {
+		return new MemberPasswordChangedEvent(
+			member.getId(),
+			occurredAt
+		);
+	}
+
+	public static MemberProfileUpdatedEvent toMemberProfileUpdatedEvent(Member member, LocalDateTime occurredAt) {
+		return new MemberProfileUpdatedEvent(
+			member.getId(),
+			member.getNickname(),
+			member.getPhoneNumber(),
 			occurredAt
 		);
 	}
