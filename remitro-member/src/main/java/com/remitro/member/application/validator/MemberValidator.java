@@ -19,8 +19,7 @@ public class MemberValidator {
 	public void validateUniqueEmail(String email) {
 		if (memberRepository.existsByEmail(email)) {
 			throw new ConflictException(
-				ErrorCode.EMAIL_ALREADY_EXISTS,
-				ErrorMessage.EMAIL_ALREADY_EXISTS
+				ErrorCode.EMAIL_ALREADY_EXISTS, ErrorMessage.EMAIL_ALREADY_EXISTS
 			);
 		}
 	}
@@ -28,8 +27,7 @@ public class MemberValidator {
 	public void validateUniqueNickname(String nickname) {
 		if (memberRepository.existsByNickname(nickname)) {
 			throw new ConflictException(
-				ErrorCode.NICKNAME_ALREADY_EXISTS,
-				ErrorMessage.NICKNAME_ALREADY_EXISTS
+				ErrorCode.NICKNAME_ALREADY_EXISTS, ErrorMessage.NICKNAME_ALREADY_EXISTS
 			);
 		}
 	}
@@ -37,8 +35,7 @@ public class MemberValidator {
 	public void validateUniquePhoneNumber(String phoneNumber) {
 		if (memberRepository.existsByPhoneNumber(phoneNumber)) {
 			throw new ConflictException(
-				ErrorCode.PHONE_NUMBER_ALREADY_EXISTS,
-				ErrorMessage.PHONE_NUMBER_ALREADY_EXISTS
+				ErrorCode.PHONE_NUMBER_ALREADY_EXISTS, ErrorMessage.PHONE_NUMBER_ALREADY_EXISTS
 			);
 		}
 	}
@@ -46,8 +43,7 @@ public class MemberValidator {
 	public void validatePasswordMatches(String password, String checkPassword) {
 		if (!password.equals(checkPassword)) {
 			throw new BadRequestException(
-				ErrorCode.PASSWORD_INVALID,
-				ErrorMessage.PASSWORD_INVALID
+				ErrorCode.PASSWORD_INVALID, ErrorMessage.PASSWORD_INVALID
 			);
 		}
 	}
