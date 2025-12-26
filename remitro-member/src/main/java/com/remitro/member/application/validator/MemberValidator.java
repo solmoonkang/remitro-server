@@ -18,17 +18,13 @@ public class MemberValidator {
 
 	public void validateUniqueEmail(String email) {
 		if (memberRepository.existsByEmail(email)) {
-			throw new ConflictException(
-				ErrorCode.EMAIL_ALREADY_EXISTS, ErrorMessage.EMAIL_ALREADY_EXISTS
-			);
+			throw new ConflictException(ErrorCode.EMAIL_ALREADY_EXISTS, ErrorMessage.EMAIL_ALREADY_EXISTS);
 		}
 	}
 
 	public void validateUniqueNickname(String nickname) {
 		if (memberRepository.existsByNickname(nickname)) {
-			throw new ConflictException(
-				ErrorCode.NICKNAME_ALREADY_EXISTS, ErrorMessage.NICKNAME_ALREADY_EXISTS
-			);
+			throw new ConflictException(ErrorCode.NICKNAME_ALREADY_EXISTS, ErrorMessage.NICKNAME_ALREADY_EXISTS);
 		}
 	}
 
@@ -42,9 +38,7 @@ public class MemberValidator {
 
 	public void validatePasswordMatches(String password, String checkPassword) {
 		if (!password.equals(checkPassword)) {
-			throw new BadRequestException(
-				ErrorCode.PASSWORD_INVALID, ErrorMessage.PASSWORD_INVALID
-			);
+			throw new BadRequestException(ErrorCode.PASSWORD_INVALID, ErrorMessage.PASSWORD_INVALID);
 		}
 	}
 }
