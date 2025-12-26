@@ -16,6 +16,6 @@ public record MemberCreatedEvent(
 
 	MemberKycStatus kycStatus,
 
-	LocalDateTime createdAt
+	LocalDateTime occurredAt
 ) {
 }

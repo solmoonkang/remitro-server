@@ -7,6 +7,6 @@ public record MemberKycVerifiedEvent(
 
 	Long adminMemberId,
 
-	LocalDateTime verifiedAt
+	LocalDateTime occurredAt
 ) {
 }

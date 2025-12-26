@@ -14,6 +14,6 @@ public record MemberLockedEvent(
 
 	MemberLockReason lockReason,
 
-	LocalDateTime lockedAt
+	LocalDateTime occurredAt
 ) {
 }

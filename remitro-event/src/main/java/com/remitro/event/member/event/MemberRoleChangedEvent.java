@@ -13,6 +13,6 @@ public record MemberRoleChangedEvent(
 
 	Long adminMemberId,
 
-	LocalDateTime changedAt
+	LocalDateTime occurredAt
 ) {
 }

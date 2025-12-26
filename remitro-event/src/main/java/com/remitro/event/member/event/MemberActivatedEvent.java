@@ -5,6 +5,6 @@ import java.time.LocalDateTime;
 public record MemberActivatedEvent(
 	Long memberId,
 
-	LocalDateTime activatedAt
+	LocalDateTime occurredAt
 ) {
 }

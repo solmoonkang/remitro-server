@@ -11,6 +11,6 @@ public record MemberUnlockedEvent(
 
 	UnlockActorType unlockActorType,
 
-	LocalDateTime unlockedAt
+	LocalDateTime occurredAt
 ) {
 }

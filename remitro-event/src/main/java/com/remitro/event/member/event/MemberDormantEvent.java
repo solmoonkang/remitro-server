@@ -5,6 +5,6 @@ import java.time.LocalDateTime;
 public record MemberDormantEvent(
 	Long memberId,
 
-	LocalDateTime dormantAt
+	LocalDateTime occurredAt
 ) {
 }

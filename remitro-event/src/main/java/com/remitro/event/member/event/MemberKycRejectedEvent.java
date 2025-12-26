@@ -9,6 +9,6 @@ public record MemberKycRejectedEvent(
 
 	String reason,
 
-	LocalDateTime rejectedAt
+	LocalDateTime occurredAt
 ) {
 }
