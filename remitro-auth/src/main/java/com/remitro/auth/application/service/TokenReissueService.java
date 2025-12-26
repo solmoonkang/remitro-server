@@ -10,11 +10,12 @@ import com.remitro.auth.application.mapper.TokenMapper;
 import com.remitro.auth.domain.model.RefreshToken;
 import com.remitro.auth.domain.repository.TokenRepository;
 import com.remitro.auth.domain.token.TokenPolicy;
-import com.remitro.auth.infrastructure.client.MemberFeignClient;
+import com.remitro.auth.infrastructure.client.MemberQueryClient;
 import com.remitro.auth.infrastructure.security.JwtProvider;
 import com.remitro.common.auth.MemberAuthInfo;
+import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.UnauthorizedException;
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.message.ErrorMessage;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +25,7 @@ public class TokenReissueService {
 
 	private final JwtProvider jwtProvider;
 	private final TokenRepository tokenRepository;
-	private final MemberFeignClient memberFeignClient;
+	private final MemberQueryClient memberQueryClient;
 	private final TokenPolicy tokenPolicy;
 	private final TokenIssuer tokenIssuer;
 
@@ -32,12 +33,15 @@ public class TokenReissueService {
 	public TokenResponse reissueTokens(String authorizationHeader) {
 		final String refreshToken = jwtProvider.extractToken(authorizationHeader);
 		final RefreshToken savedToken = tokenRepository.findByToken(refreshToken)
-			.orElseThrow(() -> new UnauthorizedException(ErrorMessage.INVALID_TOKEN));
+			.orElseThrow(() -> new UnauthorizedException(
+				ErrorCode.TOKEN_INVALID,
+				ErrorMessage.TOKEN_INVALID
+			));
 
 		tokenPolicy.validateTokenReissuable(savedToken);
 		tokenRepository.revoke(refreshToken);
 
-		final MemberAuthInfo memberAuthInfo = memberFeignClient.findAuthInfo(
+		final MemberAuthInfo memberAuthInfo = memberQueryClient.findReissueAuthInfo(
 			jwtProvider.parseClaims(refreshToken).get(CLAIM_MEMBER_EMAIL, String.class)
 		);
 
