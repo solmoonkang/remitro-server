@@ -1,4 +1,4 @@
-package com.remitro.member.presentation.kyc;
+package com.remitro.member.presentation.member;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitro.common.presentation.ApiSuccessResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
-import com.remitro.member.application.service.kyc.KycRequestService;
+import com.remitro.member.application.service.member.MemberKycRequestService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "KYC 인증 APIs", description = "사용자 KYC 인증 요청 API")
 public class KycController {
 
-	private final KycRequestService kycRequestService;
+	private final MemberKycRequestService memberKycRequestService;
 
 	@PostMapping("/request")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -44,7 +44,7 @@ public class KycController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public ApiSuccessResponse requestKyc(@CurrentUser AuthenticatedUser authenticatedUser) {
-		kycRequestService.requestKyc(authenticatedUser.memberId());
+		memberKycRequestService.requestKyc(authenticatedUser.memberId());
 		return ApiSuccessResponse.success("KYC 요청이 성공적으로 생성되었습니다.");
 	}
 }
