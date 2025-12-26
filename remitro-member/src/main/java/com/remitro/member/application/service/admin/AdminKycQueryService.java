@@ -6,9 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.dto.response.PendingKycResponse;
-import com.remitro.member.application.mapper.MemberMapper;
-import com.remitro.member.application.service.kyc.KycReadService;
-import com.remitro.member.application.service.member.MemberReadService;
+import com.remitro.member.application.support.KycVerificationFinder;
+import com.remitro.member.application.support.MemberFinder;
 import com.remitro.member.domain.model.KycVerification;
 import com.remitro.member.domain.model.Member;
 
@@ -19,22 +18,23 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class AdminKycQueryService {
 
-	private final MemberReadService memberReadService;
-	private final KycReadService kycReadService;
+	private final MemberFinder memberFinder;
+	private final KycVerificationFinder kycVerificationFinder;
 
 	public List<PendingKycResponse> findAllPendingKyc() {
-		return kycReadService.findAllPending().stream()
+		return kycVerificationFinder.findAllPending().stream()
 			.map(this::toPendingKycResponse)
 			.toList();
 	}
 
 	public PendingKycResponse findPendingKycByMember(Long memberId) {
-		final KycVerification kycVerification = kycReadService.findKycVerificationByMemberId(memberId);
+		final KycVerification kycVerification = kycVerificationFinder.getLatestVerificationByMemberId(memberId);
 		return toPendingKycResponse(kycVerification);
 	}
 
 	private PendingKycResponse toPendingKycResponse(KycVerification kycVerification) {
-		final Member member = memberReadService.findMemberById(kycVerification.getMemberId());
+		final Member member = memberFinder.getById(kycVerification.getMemberId());
+
 		return new PendingKycResponse(
 			member.getId(),
 			member.getEmail(),
