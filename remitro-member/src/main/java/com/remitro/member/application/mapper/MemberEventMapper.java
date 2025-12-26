@@ -3,6 +3,7 @@ package com.remitro.member.application.mapper;
 import java.time.LocalDateTime;
 
 import com.remitro.common.security.Role;
+import com.remitro.event.member.enums.LockActorType;
 import com.remitro.event.member.enums.MemberActivityStatus;
 import com.remitro.event.member.enums.MemberKycStatus;
 import com.remitro.event.member.enums.MemberLockReason;
@@ -50,70 +51,66 @@ public class MemberEventMapper {
 		);
 	}
 
-	public static MemberLockedEvent toMemberLockedEvent(Member member, Long adminMemberId) {
+	public static MemberLockedEvent toMemberLockedEvent(
+		Member member,
+		Long adminMemberId,
+		LockActorType lockActorType,
+		LockReason lockReason,
+		LocalDateTime occurredAt
+	) {
 		return new MemberLockedEvent(
 			member.getId(),
 			adminMemberId,
-			mapLockReason(member.getLockReason()),
-			member.getLockedAt()
+			lockActorType,
+			mapLockReason(lockReason),
+			occurredAt
 		);
 	}
 
-	public static MemberUnlockedEvent toMemberUnlockedEventByAdmin(
+	public static MemberUnlockedEvent toMemberUnlockedEvent(
 		Member member,
 		Long adminMemberId,
-		LocalDateTime unlockedAt
+		UnlockActorType unlockActorType,
+		LocalDateTime occurredAt
 	) {
 		return new MemberUnlockedEvent(
 			member.getId(),
 			adminMemberId,
-			UnlockActorType.ADMIN,
-			unlockedAt
+			unlockActorType,
+			occurredAt
 		);
 	}
 
-	public static MemberUnlockedEvent toMemberUnlockedEventBySelf(
-		Member member,
-		LocalDateTime unlockedAt
-	) {
-		return new MemberUnlockedEvent(
-			member.getId(),
-			null,
-			UnlockActorType.SELF,
-			unlockedAt
-		);
-	}
-
-	public static MemberDormantEvent toMemberDormantEvent(Member member, LocalDateTime dormantAt) {
+	public static MemberDormantEvent toMemberDormantEvent(Member member, LocalDateTime occurredAt) {
 		return new MemberDormantEvent(
 			member.getId(),
-			dormantAt
+			occurredAt
 		);
 	}
 
-	public static MemberActivatedEvent toMemberActivatedEvent(Member member, LocalDateTime activatedAt) {
+	public static MemberActivatedEvent toMemberActivatedEvent(Member member, LocalDateTime occurredAt) {
 		return new MemberActivatedEvent(
 			member.getId(),
-			activatedAt
+			occurredAt
 		);
 	}
 
-	public static MemberKycRequestedEvent toMemberKycRequestedEvent(Member member, LocalDateTime requestedAt) {
+	public static MemberKycRequestedEvent toMemberKycRequestedEvent(Member member, LocalDateTime occurredAt) {
 		return new MemberKycRequestedEvent(
 			member.getId(),
-			requestedAt
+			occurredAt
 		);
 	}
 
 	public static MemberKycVerifiedEvent toMemberKycVerifiedEvent(
 		Member member,
 		Long adminMemberId,
-		LocalDateTime verifiedAt
+		LocalDateTime occurredAt
 	) {
 		return new MemberKycVerifiedEvent(
 			member.getId(),
 			adminMemberId,
-			verifiedAt
+			occurredAt
 		);
 	}
 
@@ -121,13 +118,13 @@ public class MemberEventMapper {
 		Member member,
 		Long adminMemberId,
 		String reason,
-		LocalDateTime rejectedAt
+		LocalDateTime occurredAt
 	) {
 		return new MemberKycRejectedEvent(
 			member.getId(),
 			adminMemberId,
 			reason,
-			rejectedAt
+			occurredAt
 		);
 	}
 
@@ -135,14 +132,14 @@ public class MemberEventMapper {
 		Member member,
 		Role previousRole,
 		Long adminMemberId,
-		LocalDateTime changedAt
+		LocalDateTime occurredAt
 	) {
 		return new MemberRoleChangedEvent(
 			member.getId(),
 			previousRole,
 			member.getRole(),
 			adminMemberId,
-			changedAt
+			occurredAt
 		);
 	}
 }
