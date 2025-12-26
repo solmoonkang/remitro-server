@@ -61,12 +61,6 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "kyc_status", nullable = false)
 	private KycStatus kycStatus;
 
-	@Column(name = "kyc_verified_at")
-	private LocalDateTime kycVerifiedAt;
-
-	@Column(name = "last_login_at")
-	private LocalDateTime lastLoginAt;
-
 	@Column(name = "login_failure_count", nullable = false)
 	private int loginFailureCount;
 
@@ -74,8 +68,16 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "lock_reason")
 	private LockReason lockReason;
 
+	@Column(name = "kyc_verified_at")
+	private LocalDateTime kycVerifiedAt;
+
+	@Column(name = "last_login_at")
+	private LocalDateTime lastLoginAt;
+
 	@Column(name = "locked_at")
 	private LocalDateTime lockedAt;
+
+	private static final int MAX_LOGIN_FAILURE_COUNT = 5;
 
 	private Member(String email, String hashedPassword, String nickname, String phoneNumber) {
 		this.email = email;
@@ -92,6 +94,18 @@ public class Member extends BaseTimeEntity {
 		return new Member(email, password, nickname, phoneNumber);
 	}
 
+	public boolean isLocked() {
+		return this.activityStatus == ActivityStatus.LOCKED;
+	}
+
+	public boolean isActive() {
+		return this.activityStatus == ActivityStatus.ACTIVE;
+	}
+
+	public boolean isDormant() {
+		return this.activityStatus == ActivityStatus.DORMANT;
+	}
+
 	/* ================= 로그인 ================= */
 
 	public void recordLoginSuccess(LocalDateTime now) {
@@ -99,46 +113,35 @@ public class Member extends BaseTimeEntity {
 		this.loginFailureCount = 0;
 	}
 
-	private static final int MAX_LOGIN_FAILURE_COUNT = 5;
-
-	public void recordLoginFailure() {
+	public void recordLoginFailure(LocalDateTime now) {
 		this.loginFailureCount++;
 
 		if (this.loginFailureCount >= MAX_LOGIN_FAILURE_COUNT) {
-			lockByLoginFailure();
+			lockInternal(LockReason.LOGIN_FAILURE, now);
 		}
 	}
 
 	/* ================= LOCK ================= */
 
-	private void lockByLoginFailure() {
-		lock(LockReason.LOGIN_FAILURE);
+	public void lockByAdmin(LocalDateTime now) {
+		lockInternal(LockReason.ADMIN_ACTION, now);
 	}
 
-	public void lockBySuspiciousActivity() {
-		lock(LockReason.SUSPICIOUS_ACTIVITY);
+	public void lockBySuspiciousActivity(LocalDateTime now) {
+		lockInternal(LockReason.SUSPICIOUS_ACTIVITY, now);
 	}
 
-	public void lockByAdmin() {
-		lock(LockReason.ADMIN_ACTION);
-	}
-
-	private void lock(LockReason lockReason) {
+	private void lockInternal(LockReason lockReason, LocalDateTime now) {
 		if (this.activityStatus == ActivityStatus.WITHDRAWN) {
 			return;
 		}
 
 		this.activityStatus = ActivityStatus.LOCKED;
 		this.lockReason = lockReason;
-		this.lockedAt = LocalDateTime.now();
+		this.lockedAt = now;
 	}
 
-	public void unlockByAdmin(LocalDateTime now) {
-		validateLocked();
-		resetLock(now);
-	}
-
-	public void unlockBySelfVerification(LocalDateTime now) {
+	public void unlock(LocalDateTime now) {
 		validateLocked();
 		resetLock(now);
 	}
@@ -152,10 +155,9 @@ public class Member extends BaseTimeEntity {
 	}
 
 	private void validateLocked() {
-		if (this.activityStatus != ActivityStatus.LOCKED) {
+		if (!isLocked()) {
 			throw new BadRequestException(
-				ErrorCode.MEMBER_STATE_INVALID,
-				ErrorMessage.MEMBER_STATE_INVALID
+				ErrorCode.MEMBER_STATE_INVALID, ErrorMessage.MEMBER_STATE_INVALID
 			);
 		}
 	}
@@ -163,16 +165,15 @@ public class Member extends BaseTimeEntity {
 	/* ================= 휴면 ================= */
 
 	public void markDormant() {
-		if (this.activityStatus == ActivityStatus.ACTIVE) {
+		if (isActive()) {
 			this.activityStatus = ActivityStatus.DORMANT;
 		}
 	}
 
 	public void activateFromDormant(LocalDateTime now) {
-		if (this.activityStatus != ActivityStatus.DORMANT) {
+		if (!isDormant()) {
 			throw new BadRequestException(
-				ErrorCode.MEMBER_STATE_INVALID,
-				ErrorMessage.MEMBER_STATE_INVALID
+				ErrorCode.MEMBER_STATE_INVALID, ErrorMessage.MEMBER_STATE_INVALID
 			);
 		}
 
@@ -183,26 +184,22 @@ public class Member extends BaseTimeEntity {
 	/* ================= KYC ================= */
 
 	public void verifyKyc(LocalDateTime now) {
-		if (this.kycStatus.isFinalStatus()) {
-			throw new BadRequestException(
-				ErrorCode.MEMBER_KYC_ALREADY_VERIFIED,
-				ErrorMessage.MEMBER_KYC_ALREADY_VERIFIED
-			);
-		}
-
+		validateKycNotFinal();
 		this.kycStatus = KycStatus.VERIFIED;
 		this.kycVerifiedAt = now;
 	}
 
 	public void rejectKyc() {
+		validateKycNotFinal();
+		this.kycStatus = KycStatus.REJECTED;
+	}
+
+	private void validateKycNotFinal() {
 		if (this.kycStatus.isFinalStatus()) {
 			throw new BadRequestException(
-				ErrorCode.MEMBER_KYC_ALREADY_VERIFIED,
-				ErrorMessage.MEMBER_KYC_ALREADY_VERIFIED
+				ErrorCode.MEMBER_KYC_ALREADY_VERIFIED, ErrorMessage.MEMBER_KYC_ALREADY_VERIFIED
 			);
 		}
-
-		this.kycStatus = KycStatus.REJECTED;
 	}
 
 	/* ================= Role ================= */
