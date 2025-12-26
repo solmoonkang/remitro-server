@@ -88,6 +88,22 @@ public class MemberEventPublisher {
 		);
 	}
 
+	public void publishMemberPasswordChanged(Member member, LocalDateTime occurredAt) {
+		publish(
+			member.getId(),
+			EventType.MEMBER_PASSWORD_CHANGED,
+			MemberEventMapper.toMemberPasswordChangedEvent(member, occurredAt)
+		);
+	}
+
+	public void publishMemberProfileUpdated(Member member, LocalDateTime occurredAt) {
+		publish(
+			member.getId(),
+			EventType.MEMBER_PROFILE_UPDATED,
+			MemberEventMapper.toMemberProfileUpdatedEvent(member, occurredAt)
+		);
+	}
+
 	public void publishKycRequested(Member member, LocalDateTime occurredAt) {
 		publish(
 			member.getId(),
