@@ -1,7 +1,6 @@
 package com.remitro.member.presentation.admin;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +13,7 @@ import com.remitro.common.presentation.ApiSuccessResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
 import com.remitro.common.security.Role;
-import com.remitro.member.application.service.admin.AdminMemberService;
-import com.remitro.member.application.service.member.MemberRoleService;
+import com.remitro.member.application.service.admin.AdminMemberCommandService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,8 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "관리자 회원 관리 APIs", description = "관리자가 회원의 권한 변경, 잠금 및 잠금 해제를 수행하는 API")
 public class AdminMemberController {
 
-	private final MemberRoleService memberRoleService;
-	private final AdminMemberService adminMemberService;
+	private final AdminMemberCommandService adminMemberCommandService;
 
 	@PatchMapping("/{memberId}/role")
 	@ResponseStatus(HttpStatus.OK)
@@ -56,7 +53,7 @@ public class AdminMemberController {
 		@RequestParam Role nextRole,
 		@CurrentUser AuthenticatedUser authenticatedUser
 	) {
-		memberRoleService.changeMemberRole(memberId, nextRole, authenticatedUser.memberId());
+		adminMemberCommandService.changeMemberRole(memberId, nextRole, authenticatedUser.memberId());
 		return ApiSuccessResponse.success("회원 권한이 성공적으로 변경되었습니다.");
 	}
 
@@ -81,7 +78,7 @@ public class AdminMemberController {
 		@PathVariable Long memberId,
 		@CurrentUser AuthenticatedUser authenticatedUser
 	) {
-		adminMemberService.lockMemberByAdmin(memberId, authenticatedUser.memberId());
+		adminMemberCommandService.lockMemberByAdmin(memberId, authenticatedUser.memberId());
 		return ApiSuccessResponse.success("회원이 성공적으로 잠금 처리되었습니다.");
 	}
 
@@ -106,7 +103,7 @@ public class AdminMemberController {
 		@PathVariable Long memberId,
 		@CurrentUser AuthenticatedUser authenticatedUser
 	) {
-		adminMemberService.unlockMemberByAdmin(memberId, authenticatedUser.memberId());
+		adminMemberCommandService.unlockMemberByAdmin(memberId, authenticatedUser.memberId());
 		return ApiSuccessResponse.success("회원이 성공적으로 잠금 해제되었습니다.");
 	}
 }
