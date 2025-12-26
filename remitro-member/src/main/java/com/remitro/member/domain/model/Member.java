@@ -94,6 +94,18 @@ public class Member extends BaseTimeEntity {
 		return new Member(email, password, nickname, phoneNumber);
 	}
 
+	public void changePassword(String newHashedPassword) {
+		this.hashedPassword = newHashedPassword;
+	}
+
+	public void updateNickname(String newNickname) {
+		this.nickname = newNickname;
+	}
+
+	public void updatePhoneNumber(String newPhoneNumber) {
+		this.phoneNumber = newPhoneNumber;
+	}
+
 	public boolean isLocked() {
 		return this.activityStatus == ActivityStatus.LOCKED;
 	}
