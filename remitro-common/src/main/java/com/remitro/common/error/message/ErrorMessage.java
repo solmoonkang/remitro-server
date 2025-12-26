@@ -17,12 +17,17 @@ public enum ErrorMessage {
 	MEMBER_STATE_INVALID("현재 회원 상태에서는 요청을 처리할 수 없습니다."),
 	MEMBER_ALREADY_WITHDRAWN("탈퇴한 회원은 상태를 변경할 수 없습니다."),
 	ACTIVITY_STATUS_TRANSITION_INVALID("LOCKED 상태에서는 직접 ACTIVE로 변경할 수 없습니다."),
+	MEMBER_KYC_ALREADY_VERIFIED("이미 KYC 인증이 완료된 회원입니다."),
 
 	/* KYC */
-	KYC_STATUS_REASON_REQUIRED("KYC 상태(REJECTED 또는 PENDING)에서는 사유 입력이 필요합니다."),
-	KYC_ALREADY_VERIFIED("이미 KYC 인증이 완료된 회원입니다."),
+	KYC_ALREADY_COMPLETED("이미 처리 완료된 KYC 요청입니다."),
+	KYC_APPROVAL_NOT_ALLOWED("현재 상태에서는 KYC 인증을 승인할 수 없습니다."),
+	KYC_REJECTION_NOT_ALLOWED("현재 상태에서는 KYC 인증을 거절할 수 없습니다."),
+	KYC_REJECTION_REASON_REQUIRED("KYC 인증 거절 시 사유는 필수입니다."),
+
 	KYC_ALREADY_IN_PROGRESS("이미 진행 중인 KYC 요청이 존재합니다."),
 	KYC_REQUEST_NOT_ALLOWED("현재 KYC 상태에서는 새로운 KYC 요청이 불가능합니다."),
+	KYC_RETRY_NOT_YET_ALLOWED("이전 KYC 거절 이후 일정 기간이 지나야 다시 요청할 수 있습니다."),
 
 	/* ROLE */
 	ROLE_ALREADY_ASSIGNED("이미 해당 권한이 부여된 회원입니다."),
