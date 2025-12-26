@@ -7,8 +7,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.messaging.EventEnvelope;
-import com.remitro.member.domain.event.EventStatus;
+import com.remitro.event.common.envelope.EventEnvelope;
+import com.remitro.event.common.status.EventStatus;
 import com.remitro.member.domain.model.OutboxMessage;
 import com.remitro.member.domain.repository.OutboxMessageRepository;
 
