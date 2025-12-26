@@ -10,8 +10,4 @@ public enum ActivityStatus {
 	public boolean isTerminal() {
 		return this == WITHDRAWN;
 	}
-
-	public boolean isLoginAllowed() {
-		return this == ACTIVE || this == DORMANT;
-	}
 }
