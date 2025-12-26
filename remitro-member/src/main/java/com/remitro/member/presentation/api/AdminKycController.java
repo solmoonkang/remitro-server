@@ -1,4 +1,4 @@
-package com.remitro.member.presentation.admin;
+package com.remitro.member.presentation.api;
 
 import java.util.List;
 

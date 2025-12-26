@@ -1,4 +1,4 @@
-package com.remitro.member.presentation.member;
+package com.remitro.member.presentation.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
