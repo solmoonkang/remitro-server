@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Schema(name = "KYC 심사 대기 회원 응답 DTO")
+@Schema(name = "PendingKycResponse", description = "KYC 심사 대기 회원 응답 DTO")
 public record PendingKycResponse(
 	@Schema(name = "사용자 ID", example = "999L")
 	Long memberId,
