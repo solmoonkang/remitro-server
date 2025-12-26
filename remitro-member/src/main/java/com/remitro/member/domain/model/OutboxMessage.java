@@ -87,4 +87,8 @@ public class OutboxMessage extends BaseTimeEntity {
 	public void markPublished() {
 		this.eventStatus = EventStatus.PUBLISHED;
 	}
+
+	public boolean isPublished() {
+		return this.eventStatus == EventStatus.PUBLISHED;
+	}
 }
