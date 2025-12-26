@@ -40,6 +40,9 @@ public class KycVerification {
 	@Column(name = "completed_at")
 	private LocalDateTime completedAt;
 
+	@Column(name = "rejected_at")
+	private LocalDateTime rejectedAt;
+
 	@Column(name = "reason")
 	private String reason;
 
@@ -53,6 +56,15 @@ public class KycVerification {
 		return new KycVerification(memberId);
 	}
 
+	public boolean isPending() {
+		return this.kycVerificationStatus == KycVerificationStatus.PENDING;
+	}
+
+	public boolean isCompleted() {
+		return this.kycVerificationStatus == KycVerificationStatus.VERIFIED
+			|| this.kycVerificationStatus == KycVerificationStatus.REJECTED;
+	}
+
 	public void completeSuccess() {
 		this.kycVerificationStatus = KycVerificationStatus.VERIFIED;
 		this.completedAt = LocalDateTime.now();
@@ -61,6 +73,7 @@ public class KycVerification {
 	public void completeReject(String reason) {
 		this.kycVerificationStatus = KycVerificationStatus.REJECTED;
 		this.reason = reason;
-		this.completedAt = LocalDateTime.now();
+		this.rejectedAt = LocalDateTime.now();
+		this.completedAt = this.rejectedAt;
 	}
 }
