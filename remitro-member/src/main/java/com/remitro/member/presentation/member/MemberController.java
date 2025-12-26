@@ -13,7 +13,8 @@ import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
 import com.remitro.member.application.dto.request.SignUpRequest;
 import com.remitro.member.application.dto.response.MemberInfoResponse;
-import com.remitro.member.application.service.member.MemberService;
+import com.remitro.member.application.service.member.MemberQueryService;
+import com.remitro.member.application.service.member.MemberSignUpService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +31,8 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "사용자 APIs", description = "회원가입 및 사용자 정보 관리 API")
 public class MemberController {
 
-	private final MemberService memberService;
+	private final MemberSignUpService memberSignUpService;
+	private final MemberQueryService memberQueryService;
 
 	@PostMapping("/signup")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -49,7 +51,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public ApiSuccessResponse signUpMember(@Valid @RequestBody SignUpRequest signUpRequest) {
-		memberService.signUp(signUpRequest);
+		memberSignUpService.signUp(signUpRequest);
 		return ApiSuccessResponse.success("회원가입이 성공적으로 완료되었습니다.");
 	}
 
@@ -70,6 +72,6 @@ public class MemberController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public MemberInfoResponse getMyInfo(@CurrentUser AuthenticatedUser authenticatedUser) {
-		return memberService.getMemberInfo(authenticatedUser.memberId());
+		return memberQueryService.getMemberInfo(authenticatedUser.memberId());
 	}
 }
