@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MemberSignUpService {
+public class MemberSignUpCommandService {
 
 	private final MemberValidator memberValidator;
 	private final PasswordEncoder passwordEncoder;
