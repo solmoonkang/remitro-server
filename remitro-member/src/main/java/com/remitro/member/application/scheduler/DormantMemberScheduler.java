@@ -3,7 +3,7 @@ package com.remitro.member.application.scheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.remitro.member.application.service.member.DormantMemberService;
+import com.remitro.member.application.service.internal.DormantMemberBatchService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DormantMemberScheduler {
 
-	private final DormantMemberService dormantMemberService;
+	private final DormantMemberBatchService dormantMemberBatchService;
 
 	@Scheduled(cron = "0 0 1 * * *")
 	public void markDormantMembers() {
-		dormantMemberService.convertDormantMembers();
+		dormantMemberBatchService.markInactiveMembersAsDormant();
 	}
 }
