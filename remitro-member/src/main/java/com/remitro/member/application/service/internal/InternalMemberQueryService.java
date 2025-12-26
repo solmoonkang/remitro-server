@@ -8,7 +8,7 @@ import com.remitro.common.error.exception.NotFoundException;
 import com.remitro.common.error.exception.UnauthorizedException;
 import com.remitro.common.error.message.ErrorMessage;
 import com.remitro.member.application.mapper.MemberAuthMapper;
-import com.remitro.member.application.service.member.MemberReadService;
+import com.remitro.member.application.support.MemberFinder;
 import com.remitro.member.domain.enums.ActivityStatus;
 import com.remitro.member.domain.enums.AuthPurpose;
 import com.remitro.member.domain.enums.KycStatus;
@@ -20,10 +20,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InternalMemberQueryService {
 
-	private final MemberReadService memberReadService;
+	private final MemberFinder memberFinder;
 
 	public MemberAuthInfo findAuthInfo(String email, AuthPurpose authPurpose) {
-		final Member member = memberReadService.findMemberByEmail(email);
+		final Member member = memberFinder.getByEmail(email);
 		validateAuthAllowed(member, authPurpose);
 		return MemberAuthMapper.toMemberAuthInfo(member);
 	}
