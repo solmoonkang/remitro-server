@@ -33,7 +33,7 @@ public class AdminMemberCommandService {
 		validateAdminPermission(adminMember);
 
 		final Member targetMember = memberFinder.getById(memberId);
-		targetMember.lockByAdmin();
+		targetMember.lockByAdmin(LocalDateTime.now(clock));
 
 		memberEventPublisher.publishMemberLocked(
 			targetMember,
@@ -50,7 +50,7 @@ public class AdminMemberCommandService {
 		validateAdminPermission(adminMember);
 
 		final Member targetMember = memberFinder.getById(memberId);
-		targetMember.unlockByAdmin(LocalDateTime.now(clock));
+		targetMember.unlock(LocalDateTime.now(clock));
 
 		memberEventPublisher.publishMemberUnlocked(
 			targetMember,
