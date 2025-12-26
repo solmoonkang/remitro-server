@@ -2,6 +2,9 @@ package com.remitro.member.domain.model;
 
 import java.time.LocalDateTime;
 
+import com.remitro.common.error.code.ErrorCode;
+import com.remitro.common.error.exception.BadRequestException;
+import com.remitro.common.error.message.ErrorMessage;
 import com.remitro.member.domain.enums.KycVerificationStatus;
 
 import jakarta.persistence.Column;
@@ -69,19 +72,28 @@ public class KycVerification {
 	}
 
 	public boolean isCompleted() {
-		return this.kycVerificationStatus == KycVerificationStatus.VERIFIED
-			|| this.kycVerificationStatus == KycVerificationStatus.REJECTED;
+		return isVerified() || isRejected();
 	}
 
-	public void completeSuccess() {
+	public void completeSuccess(LocalDateTime now) {
+		validatePending();
 		this.kycVerificationStatus = KycVerificationStatus.VERIFIED;
-		this.completedAt = LocalDateTime.now();
+		this.completedAt = now;
 	}
 
-	public void completeReject(String reason) {
+	public void completeReject(String reason, LocalDateTime now) {
+		validatePending();
 		this.kycVerificationStatus = KycVerificationStatus.REJECTED;
 		this.reason = reason;
-		this.rejectedAt = LocalDateTime.now();
-		this.completedAt = this.rejectedAt;
+		this.rejectedAt = now;
+		this.completedAt = now;
+	}
+
+	private void validatePending() {
+		if (!isPending()) {
+			throw new BadRequestException(
+				ErrorCode.KYC_ALREADY_COMPLETED, ErrorMessage.KYC_ALREADY_COMPLETED
+			);
+		}
 	}
 }
