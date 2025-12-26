@@ -14,7 +14,7 @@ public class DormantMemberScheduler {
 	private final DormantMemberBatchService dormantMemberBatchService;
 
 	@Scheduled(cron = "0 0 1 * * *")
-	public void markDormantMembers() {
-		dormantMemberBatchService.markInactiveMembersAsDormant();
+	public void runDormantMemberConversionJob() {
+		dormantMemberBatchService.executeDormantMemberConversion();
 	}
 }
