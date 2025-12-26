@@ -6,8 +6,9 @@ import java.time.Instant;
 import org.springframework.stereotype.Component;
 
 import com.remitro.auth.domain.model.RefreshToken;
+import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.UnauthorizedException;
-import com.remitro.common.error.model.ErrorMessage;
+import com.remitro.common.error.message.ErrorMessage;
 
 @Component
 public class TokenPolicy {
@@ -16,7 +17,10 @@ public class TokenPolicy {
 
 	public void validateTokenReissuable(RefreshToken refreshToken) {
 		if (refreshToken.revoked() || isExpired(refreshToken)) {
-			throw new UnauthorizedException(ErrorMessage.INVALID_TOKEN);
+			throw new UnauthorizedException(
+				ErrorCode.TOKEN_INVALID,
+				ErrorMessage.TOKEN_INVALID
+			);
 		}
 	}
 
