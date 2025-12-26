@@ -3,7 +3,7 @@ package com.remitro.member.infrastructure.messaging;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.messaging.EventEnvelope;
+import com.remitro.event.common.envelope.EventEnvelope;
 import com.remitro.member.infrastructure.support.JsonMapper;
 
 import lombok.RequiredArgsConstructor;
