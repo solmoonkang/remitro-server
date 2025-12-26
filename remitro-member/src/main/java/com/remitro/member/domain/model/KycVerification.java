@@ -60,6 +60,14 @@ public class KycVerification {
 		return this.kycVerificationStatus == KycVerificationStatus.PENDING;
 	}
 
+	public boolean isVerified() {
+		return this.kycVerificationStatus == KycVerificationStatus.VERIFIED;
+	}
+
+	public boolean isRejected() {
+		return this.kycVerificationStatus == KycVerificationStatus.REJECTED;
+	}
+
 	public boolean isCompleted() {
 		return this.kycVerificationStatus == KycVerificationStatus.VERIFIED
 			|| this.kycVerificationStatus == KycVerificationStatus.REJECTED;
