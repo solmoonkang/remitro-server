@@ -1,5 +1,6 @@
 package com.remitro.member.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,7 @@ public interface KycVerificationRepository extends JpaRepository<KycVerification
 
 	Optional<KycVerification> findTopByMemberIdOrderByRequestedAtDesc(Long memberId);
 
-	boolean existsByMemberIdAndKycVerificationStatus(Long memberId, KycVerificationStatus kycVerificationStatus);
+	List<KycVerification> findAllByKycVerificationStatusOrderByRequestedAtAsc(
+		KycVerificationStatus kycVerificationStatus
+	);
 }
