@@ -24,6 +24,7 @@ ext {
 
 dependencies {
     implementation project(':remitro-common')
+    implementation project(':remitro-event')
 
     // Swagger OpenAPI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10'
