@@ -1,4 +1,4 @@
-package com.remitro.member.application.service.admin;
+package com.remitro.member.application.usecase.kyc.admin;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.infrastructure.messaging.MemberEventPublisher;
-import com.remitro.member.application.support.KycVerificationFinder;
-import com.remitro.member.application.support.MemberFinder;
-import com.remitro.member.application.validator.KycValidator;
-import com.remitro.member.domain.model.KycVerification;
-import com.remitro.member.domain.model.Member;
+import com.remitro.member.application.common.support.KycVerificationFinder;
+import com.remitro.member.application.common.support.MemberFinder;
+import com.remitro.member.application.common.validator.KycValidator;
+import com.remitro.member.domain.kyc.model.KycVerification;
+import com.remitro.member.domain.member.model.Member;
 
 import lombok.RequiredArgsConstructor;
 
