@@ -1,10 +1,10 @@
-package com.remitro.account.domain.model;
+package com.remitro.account.domain.account.model;
 
-import com.remitro.account.domain.enums.AccountStatus;
-import com.remitro.account.domain.enums.AccountType;
-import com.remitro.account.infrastructure.BaseTimeEntity;
-import com.remitro.common.error.exception.InternalServerException;
-import com.remitro.common.error.model.ErrorMessage;
+import java.time.LocalDateTime;
+
+import com.remitro.account.domain.account.enums.LifecycleStatus;
+import com.remitro.account.domain.common.model.BaseTimeEntity;
+import com.remitro.account.domain.product.enums.ProductType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,54 +45,48 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "balance", nullable = false)
 	private Long balance;
 
-	@Column(name = "hashed_password", nullable = false)
-	private String hashedPassword;
+	@Column(name = "hashed_pin", nullable = false)
+	private String hashedPin;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "account_type", nullable = false)
-	private AccountType accountType;
+	private ProductType productType;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "account_status", nullable = false)
-	private AccountStatus accountStatus;
+	private LifecycleStatus lifecycleStatus;
 
 	private Account(
 		Long memberId,
 		String accountNumber,
 		String accountName,
-		String hashedPassword,
-		AccountType accountType
+		String hashedPin,
+		ProductType productType
 	) {
 		this.memberId = memberId;
 		this.accountNumber = accountNumber;
 		this.accountName = accountName;
 		this.balance = 0L;
-		this.hashedPassword = hashedPassword;
-		this.accountType = accountType;
-		this.accountStatus = AccountStatus.NORMAL;
+		this.hashedPin = hashedPin;
+		this.productType = productType;
+		this.lifecycleStatus = LifecycleStatus.NORMAL;
 	}
 
 	public static Account create(
 		Long memberId,
 		String accountNumber,
 		String accountName,
-		String hashedPassword,
-		AccountType accountType
+		String hashedPin,
+		ProductType productType
 	) {
-		return new Account(memberId, accountNumber, accountName, hashedPassword, accountType);
+		return new Account(memberId, accountNumber, accountName, hashedPin, productType);
 	}
 
-	public void increaseBalance(Long amount) {
-		long newBalance = this.balance + amount;
-
-		if (newBalance < 0) {
-			throw new InternalServerException(ErrorMessage.ACCOUNT_BALANCE_CORRUPTED);
-		}
-
-		this.balance = newBalance;
+	public static Account createLoan(Long memberId, String accountNumber, ProductType productType) {
+		return new Account(memberId, accountNumber, "LOAN_ACCOUNT", null, productType);
 	}
 
-	public void applyAccountStatus(AccountStatus targetStatus) {
-		this.accountStatus = targetStatus;
+	public static Account createVirtual(Long memberId, String accountNumber, LocalDateTime expiredAt) {
+		return new Account(memberId, accountNumber, "VIRTUAL_ACCOUNT", null, ProductType.VIRTUAL);
 	}
 }
