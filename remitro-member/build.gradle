@@ -43,9 +43,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // Kafka
-    implementation "org.springframework.kafka:spring-kafka"
-
     // Bean Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
@@ -58,10 +55,6 @@ dependencies {
 
     // H2 Database
     runtimeOnly 'com.h2database:h2'
-
-    // Logback
-    implementation 'ch.qos.logback:logback-core:1.5.20'
-    implementation 'ch.qos.logback:logback-classic:1.5.20'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
