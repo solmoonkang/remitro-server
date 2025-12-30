@@ -1,4 +1,6 @@
 plugins {
+    id 'org.springframework.boot' version '3.5.6' apply false
+    id 'io.spring.dependency-management'
     id 'java-library'
 }
 
@@ -19,14 +21,16 @@ repositories {
 dependencies {
     implementation project(':remitro-common')
 
+    // Spring Starter, Kafka
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation "org.springframework.kafka:spring-kafka"
+
+    // Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-    // Jackson
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
