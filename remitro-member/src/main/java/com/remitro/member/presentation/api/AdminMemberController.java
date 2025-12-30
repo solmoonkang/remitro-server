@@ -13,7 +13,7 @@ import com.remitro.common.presentation.ApiSuccessResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
 import com.remitro.common.security.Role;
-import com.remitro.member.application.service.admin.AdminMemberCommandService;
+import com.remitro.member.application.usecase.admin.service.AdminMemberCommandService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
