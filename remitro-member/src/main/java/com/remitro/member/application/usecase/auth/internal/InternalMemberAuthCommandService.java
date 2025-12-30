@@ -1,4 +1,4 @@
-package com.remitro.member.application.service.internal;
+package com.remitro.member.application.usecase.auth.internal;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.event.member.enums.UnlockActorType;
-import com.remitro.member.application.support.MemberFinder;
-import com.remitro.member.domain.model.Member;
+import com.remitro.event.domain.member.enums.UnlockActorType;
+import com.remitro.member.application.common.support.MemberFinder;
+import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.infrastructure.messaging.MemberEventPublisher;
 
 import lombok.RequiredArgsConstructor;
