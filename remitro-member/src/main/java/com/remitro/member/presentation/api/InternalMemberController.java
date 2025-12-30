@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.common.auth.MemberAuthInfo;
-import com.remitro.member.application.service.internal.InternalMemberAuthCommandService;
-import com.remitro.member.application.service.internal.InternalMemberQueryService;
-import com.remitro.member.application.service.internal.InternalMemberStatusCommandService;
-import com.remitro.member.domain.enums.AuthPurpose;
+import com.remitro.member.application.usecase.auth.internal.InternalMemberAuthCommandService;
+import com.remitro.member.application.usecase.query.internal.InternalMemberQueryService;
+import com.remitro.member.application.usecase.status.internal.InternalMemberStatusCommandService;
+import com.remitro.member.domain.member.enums.AuthPurpose;
 
 import lombok.RequiredArgsConstructor;
 
