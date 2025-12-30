@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitro.common.presentation.ApiSuccessResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
-import com.remitro.member.application.dto.response.PendingKycResponse;
-import com.remitro.member.application.service.admin.AdminKycCommandService;
-import com.remitro.member.application.service.admin.AdminKycQueryService;
+import com.remitro.member.application.usecase.kyc.dto.response.PendingKycResponse;
+import com.remitro.member.application.usecase.kyc.admin.AdminKycCommandService;
+import com.remitro.member.application.usecase.kyc.admin.AdminKycQueryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
