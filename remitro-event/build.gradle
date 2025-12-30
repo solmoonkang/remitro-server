@@ -1,6 +1,4 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.6' apply false
-    id 'io.spring.dependency-management'
     id 'java-library'
 }
 
@@ -21,19 +19,25 @@ repositories {
 dependencies {
     implementation project(':remitro-common')
 
-    // Spring Starter, Kafka
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation "org.springframework.kafka:spring-kafka"
+    // Spring Core
+    implementation 'org.springframework:spring-context:6.2.14'
+    implementation 'org.springframework:spring-tx:6.2.14'
+
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka:4.0.1'
 
     // Jackson
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
 
     // Lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Logback
+    implementation 'ch.qos.logback:logback-classic:1.5.20'
+    implementation 'ch.qos.logback:logback-core:1.5.20'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }
 
 tasks.named('test') {
