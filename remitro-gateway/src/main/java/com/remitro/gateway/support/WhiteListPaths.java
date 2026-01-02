@@ -1,4 +1,4 @@
-package com.remitro.gateway.security.whitelist;
+package com.remitro.gateway.support;
 
 import java.util.List;
 
