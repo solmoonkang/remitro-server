@@ -1,4 +1,4 @@
-package com.remitro.gateway.web;
+package com.remitro.gateway.error;
 
 import java.nio.charset.StandardCharsets;
 
@@ -16,10 +16,6 @@ public class GatewayErrorResponseWriter {
 
 	public Mono<Void> unauthorized(ServerWebExchange serverWebExchange) {
 		return write(serverWebExchange, HttpStatus.UNAUTHORIZED, GatewayErrorCode.INVALID_TOKEN);
-	}
-
-	public Mono<Void> forbidden(ServerWebExchange exchange) {
-		return write(exchange, HttpStatus.FORBIDDEN, GatewayErrorCode.FORBIDDEN);
 	}
 
 	private Mono<Void> write(ServerWebExchange serverWebExchange, HttpStatus status, GatewayErrorCode errorCode) {
