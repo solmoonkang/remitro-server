@@ -1,4 +1,4 @@
-package com.remitro.gateway.web.request;
+package com.remitro.gateway.support;
 
 import java.util.UUID;
 
