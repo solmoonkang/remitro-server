@@ -1,71 +1,30 @@
-plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.5.6'
-    id 'io.spring.dependency-management' version '1.1.7'
-}
+apply plugin: 'org.springframework.boot'
 
-group = 'com.remitro'
-version = '0.0.1-SNAPSHOT'
-description = 'remitro-member'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-ext {
-    set('springCloudVersion', "2023.0.3")
-}
+description = 'Member Service'
 
 dependencies {
-    implementation project(':remitro-common')
-    implementation project(':remitro-event')
+    implementation project(':remitro-common-support')
+    implementation project(':remitro-common-event')
 
-    // Swagger OpenAPI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10'
-
-    // Eureka Client
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
-    // Spring Web / JPA / Redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-    // Bean Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // Lombok
+    runtimeOnly 'com.h2database:h2'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // Utility
-    implementation 'org.apache.commons:commons-lang3:3.18.0'
-
-    // H2 Database
-    runtimeOnly 'com.h2database:h2'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
     }
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }

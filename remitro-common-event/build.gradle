@@ -1,0 +1,17 @@
+apply plugin: 'java-library'
+
+description = 'Common Event Contracts'
+
+dependencies {
+    implementation project(':remitro-common-support')
+
+    implementation 'org.springframework:spring-context:6.2.14'
+    implementation 'org.springframework:spring-tx:6.2.14'
+    implementation 'org.springframework.kafka:spring-kafka:4.0.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+}
