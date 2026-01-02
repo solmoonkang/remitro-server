@@ -1,9 +1,8 @@
-package com.remitro.gateway.web;
+package com.remitro.gateway.error;
 
 public enum GatewayErrorCode {
 
-	INVALID_TOKEN("INVALID_TOKEN"),
-	FORBIDDEN("FORBIDDEN");
+	INVALID_TOKEN("INVALID_TOKEN");
 
 	private final String code;
 
