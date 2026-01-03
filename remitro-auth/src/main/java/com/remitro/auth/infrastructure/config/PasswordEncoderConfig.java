@@ -1,4 +1,4 @@
-package com.remitro.auth.infrastructure.security;
+package com.remitro.auth.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
