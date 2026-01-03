@@ -30,26 +30,26 @@ public class JwtTokenService {
 		);
 	}
 
-	public String issueAccessToken(MemberAuthInfo info) {
+	public String issueAccessToken(MemberAuthInfo memberAuthInfo) {
 		return Jwts.builder()
 			.issuer(jwtConfig.getIssuer())
 			.issuedAt(new Date())
 			.expiration(new Date(System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration()))
-			.claim("memberId", info.memberId())
-			.claim("email", info.email())
-			.claim("nickname", info.nickname())
-			.claim("role", info.role().name())
+			.claim("memberId", memberAuthInfo.memberId())
+			.claim("email", memberAuthInfo.email())
+			.claim("nickname", memberAuthInfo.nickname())
+			.claim("role", memberAuthInfo.role().name())
 			.signWith(secretKey)
 			.compact();
 	}
 
-	public String issueRefreshToken(MemberAuthInfo info) {
+	public String issueRefreshToken(MemberAuthInfo memberAuthInfo) {
 		return Jwts.builder()
 			.issuer(jwtConfig.getIssuer())
 			.issuedAt(new Date())
 			.expiration(new Date(System.currentTimeMillis() + jwtConfig.getRefreshTokenExpiration()))
-			.claim("memberId", info.memberId())
-			.claim("email", info.email())
+			.claim("memberId", memberAuthInfo.memberId())
+			.claim("email", memberAuthInfo.email())
 			.signWith(secretKey)
 			.compact();
 	}
