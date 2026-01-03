@@ -18,8 +18,7 @@ public class TokenPolicy {
 	public void validateTokenReissuable(RefreshToken refreshToken) {
 		if (refreshToken.revoked() || isExpired(refreshToken)) {
 			throw new UnauthorizedException(
-				ErrorCode.TOKEN_INVALID,
-				ErrorMessage.TOKEN_INVALID
+				ErrorCode.TOKEN_INVALID, ErrorMessage.TOKEN_INVALID
 			);
 		}
 	}
