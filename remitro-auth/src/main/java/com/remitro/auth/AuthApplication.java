@@ -6,16 +6,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import com.remitro.auth.infrastructure.security.TokenConfig;
+import com.remitro.auth.infrastructure.config.JwtConfig;
 
+@SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients(basePackages = "com.remitro.auth")
-@EnableConfigurationProperties(TokenConfig.class)
-@SpringBootApplication
-public class RemitroAuthApplication {
-
+@EnableConfigurationProperties(JwtConfig.class)
+public class AuthApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(RemitroAuthApplication.class, args);
+		SpringApplication.run(AuthApplication.class, args);
 	}
-
 }
