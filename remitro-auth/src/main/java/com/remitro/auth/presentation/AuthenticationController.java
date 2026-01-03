@@ -1,4 +1,4 @@
-package com.remitro.auth.presentation.api;
+package com.remitro.auth.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.auth.application.dto.request.LoginRequest;
 import com.remitro.auth.application.dto.response.TokenResponse;
-import com.remitro.auth.application.service.AuthenticationService;
-import com.remitro.auth.application.service.LogoutService;
+import com.remitro.auth.application.service.AuthService;
+import com.remitro.auth.application.service.TokenRevokeService;
 import com.remitro.auth.application.service.TokenReissueService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,14 +24,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "사용자 인증 APIs", description = "로그인 및 토큰 관련 API")
 public class AuthenticationController {
 
-	private final AuthenticationService authenticationService;
+	private final AuthService authService;
 	private final TokenReissueService tokenReissueService;
-	private final LogoutService logoutService;
+	private final TokenRevokeService tokenRevokeService;
 
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
@@ -53,7 +53,7 @@ public class AuthenticationController {
 		@RequestHeader("X-Device-Id") String deviceId,
 		@Valid @RequestBody LoginRequest loginRequest
 	) {
-		return authenticationService.login(deviceId, loginRequest);
+		return authService.login(deviceId, loginRequest);
 	}
 
 	@PostMapping("/reissue")
@@ -88,7 +88,7 @@ public class AuthenticationController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public void logout(@RequestHeader("X-Member-Id") Long memberId, @RequestHeader("X-Device-Id") String deviceId) {
-		logoutService.logout(memberId, deviceId);
+		tokenRevokeService.logout(memberId, deviceId);
 	}
 
 	@PostMapping("/logout/all")
@@ -103,6 +103,6 @@ public class AuthenticationController {
 		@ApiResponse(responseCode = "500", description = "💥 서버 내부 오류")
 	})
 	public void logoutAll(@RequestHeader("X-Member-Id") Long memberId) {
-		logoutService.logoutAll(memberId);
+		tokenRevokeService.logoutAll(memberId);
 	}
 }
