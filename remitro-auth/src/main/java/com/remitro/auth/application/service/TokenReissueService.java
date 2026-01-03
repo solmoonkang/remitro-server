@@ -1,6 +1,6 @@
 package com.remitro.auth.application.service;
 
-import static com.remitro.common.security.AuthenticationConstant.*;
+import static com.remitro.common.security.JwtClaims.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class TokenReissueService {
 		refreshTokenRepository.revoke(refreshToken);
 
 		final MemberAuthInfo memberAuthInfo = memberQueryClient.findReissueAuthInfo(
-			jwtTokenService.parseClaims(refreshToken).get(CLAIM_MEMBER_EMAIL, String.class)
+			jwtTokenService.parseClaims(refreshToken).get(MEMBER_EMAIL, String.class)
 		);
 
 		final String newAccessToken = jwtTokenService.issueAccessToken(memberAuthInfo);
