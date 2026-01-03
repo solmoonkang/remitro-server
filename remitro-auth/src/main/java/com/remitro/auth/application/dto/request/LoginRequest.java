@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-@Schema(name = "로그인 요청 DTO")
+@Schema(name = "LoginRequest", description = "로그인 요청 DTO")
 public record LoginRequest(
 	@NotBlank(message = "사용자 이메일을 입력해주세요.")
 	@Schema(name = "사용자 이메일", example = "member@example.com")
