@@ -6,10 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.auth.application.dto.request.LoginRequest;
 import com.remitro.auth.application.dto.response.TokenResponse;
-import com.remitro.auth.domain.repository.TokenRepository;
-import com.remitro.auth.domain.token.TokenPolicy;
+import com.remitro.auth.domain.policy.TokenPolicy;
 import com.remitro.auth.infrastructure.client.MemberCommandClient;
 import com.remitro.auth.infrastructure.client.MemberQueryClient;
+import com.remitro.auth.infrastructure.persistence.RefreshTokenRepository;
+import com.remitro.auth.infrastructure.security.JwtTokenService;
 import com.remitro.common.auth.MemberAuthInfo;
 import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.UnauthorizedException;
@@ -19,25 +20,25 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthService {
 
 	private final PasswordEncoder passwordEncoder;
 	private final MemberQueryClient memberQueryClient;
 	private final MemberCommandClient memberCommandClient;
-	private final TokenRepository tokenRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
 	private final TokenPolicy tokenPolicy;
-	private final TokenIssuer tokenIssuer;
+	private final JwtTokenService jwtTokenService;
 
 	@Transactional
 	public TokenResponse login(String deviceId, LoginRequest loginRequest) {
 		final MemberAuthInfo memberAuthInfo = authenticate(loginRequest);
 
-		tokenRepository.revokeByMemberAndDevice(memberAuthInfo.memberId(), deviceId);
+		refreshTokenRepository.revokeByMemberAndDevice(memberAuthInfo.memberId(), deviceId);
 
-		final String accessToken = tokenIssuer.issueAccessToken(memberAuthInfo);
-		final String refreshToken = tokenIssuer.issueRefreshToken(memberAuthInfo);
+		final String accessToken = jwtTokenService.issueAccessToken(memberAuthInfo);
+		final String refreshToken = jwtTokenService.issueRefreshToken(memberAuthInfo);
 
-		tokenRepository.save(
+		refreshTokenRepository.save(
 			tokenPolicy.createRefreshToken(
 				memberAuthInfo.memberId(), refreshToken, deviceId
 			)
@@ -56,8 +57,7 @@ public class AuthenticationService {
 		if (!passwordEncoder.matches(loginRequest.password(), memberAuthInfo.hashedPassword())) {
 			memberCommandClient.recordLoginFailure(memberAuthInfo.memberId());
 			throw new UnauthorizedException(
-				ErrorCode.PASSWORD_INVALID,
-				ErrorMessage.PASSWORD_INVALID
+				ErrorCode.PASSWORD_INVALID, ErrorMessage.PASSWORD_INVALID
 			);
 		}
 
