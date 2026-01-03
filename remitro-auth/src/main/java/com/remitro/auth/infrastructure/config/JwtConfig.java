@@ -1,4 +1,4 @@
-package com.remitro.auth.infrastructure.security;
+package com.remitro.auth.infrastructure.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @ConfigurationProperties(prefix = "jwt")
-public class TokenConfig {
+public class JwtConfig {
 
 	private final String secret;
 
@@ -16,7 +16,7 @@ public class TokenConfig {
 
 	private final String issuer;
 
-	public TokenConfig(String secret, long accessTokenExpiration, long refreshTokenExpiration, String issuer) {
+	public JwtConfig(String secret, long accessTokenExpiration, long refreshTokenExpiration, String issuer) {
 		this.secret = secret;
 		this.accessTokenExpiration = accessTokenExpiration;
 		this.refreshTokenExpiration = refreshTokenExpiration;
