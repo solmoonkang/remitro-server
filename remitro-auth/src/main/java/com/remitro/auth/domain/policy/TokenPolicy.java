@@ -1,4 +1,4 @@
-package com.remitro.auth.domain.token;
+package com.remitro.auth.domain.policy;
 
 import java.time.Duration;
 import java.time.Instant;
