@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.remitro.auth.domain.model.RefreshToken;
 import com.remitro.common.util.JsonMapper;
 
@@ -19,19 +18,18 @@ public class RefreshTokenRepository {
 	private static final String PREFIX = "REFRESH:TOKEN:";
 
 	private final StringRedisTemplate stringRedisTemplate;
-	private final ObjectMapper objectMapper;
 
 	public void save(RefreshToken refreshToken) {
 		stringRedisTemplate.opsForValue().set(
 			generateKey(refreshToken.token()),
-			JsonMapper.toJSON(objectMapper, refreshToken),
+			JsonMapper.toJSON(refreshToken),
 			Duration.ofMillis(refreshToken.expirationTime())
 		);
 	}
 
 	public Optional<RefreshToken> findByToken(String token) {
 		return Optional.of(stringRedisTemplate.opsForValue().get(generateKey(token)))
-			.map(value -> JsonMapper.fromJSON(objectMapper, value, RefreshToken.class));
+			.map(value -> JsonMapper.fromJSON(value, RefreshToken.class));
 	}
 
 	public void revoke(String token) {
@@ -41,7 +39,6 @@ public class RefreshTokenRepository {
 	public void revokeByMemberAndDevice(Long memberId, String deviceId) {
 		stringRedisTemplate.keys(PREFIX + "*").forEach(key -> {
 			RefreshToken refreshToken = JsonMapper.fromJSON(
-				objectMapper,
 				stringRedisTemplate.opsForValue().get(key),
 				RefreshToken.class
 			);
@@ -55,7 +52,6 @@ public class RefreshTokenRepository {
 	public void revokeAllByMember(Long memberId) {
 		stringRedisTemplate.keys(PREFIX + "*").forEach(key -> {
 			RefreshToken refreshToken = JsonMapper.fromJSON(
-				objectMapper,
 				stringRedisTemplate.opsForValue().get(key),
 				RefreshToken.class
 			);
