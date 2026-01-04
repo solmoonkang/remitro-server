@@ -9,11 +9,14 @@ import lombok.Getter;
 public abstract class BaseException extends RuntimeException {
 
 	private final ErrorCode errorCode;
-	private final ErrorMessage errorMessage;
+
+	protected BaseException(ErrorCode errorCode, String message) {
+		super(message);
+		this.errorCode = errorCode;
+	}
 
 	protected BaseException(ErrorCode errorCode, ErrorMessage errorMessage, Object... args) {
 		super(errorMessage.formattedMessage(args));
 		this.errorCode = errorCode;
-		this.errorMessage = errorMessage;
 	}
 }
