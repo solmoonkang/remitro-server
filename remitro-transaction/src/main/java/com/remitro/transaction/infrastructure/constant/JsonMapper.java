@@ -1,4 +1,4 @@
-package com.remitro.member.infrastructure.support;
+package com.remitro.transaction.infrastructure.constant;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
