@@ -28,9 +28,7 @@ public class KafkaProducerConfig {
 
 		producerFactoryMap.put(ProducerConfig.ACKS_CONFIG, "all");
 		producerFactoryMap.put(ProducerConfig.RETRIES_CONFIG, 3);
-		producerFactoryMap.put(ProducerConfig.LINGER_MS_CONFIG, 10);
-		producerFactoryMap.put(ProducerConfig.BATCH_SIZE_CONFIG, 32_768);
-		producerFactoryMap.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "lz4");
+		producerFactoryMap.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
 		return new DefaultKafkaProducerFactory<>(producerFactoryMap);
 	}
