@@ -3,34 +3,22 @@ package com.remitro.member.infrastructure.messaging;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import com.remitro.event.common.envelope.EventEnvelope;
-import com.remitro.member.infrastructure.support.JsonMapper;
+import com.remitro.event.common.EventEnvelope;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class KafkaEventProducer {
+public class KafkaEventProducer implements EventProducer {
 
-	private final KafkaTemplate<String, String> kafkaTemplate;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
-	public void send(String eventTopic, EventEnvelope eventEnvelope) {
-		try {
-			final String eventMessage = JsonMapper.toJSON(eventEnvelope);
-			kafkaTemplate.send(eventTopic, eventEnvelope.eventId(), eventMessage);
-
-			log.info("[✅ LOGGER] KAFKA 메시지 발행에 성공했습니다: EVENT_ID={}, EVENT_TYPE={}",
-				eventEnvelope.eventId(),
-				eventEnvelope.eventType()
-			);
-
-		} catch (Exception e) {
-			log.error("[✅ LOGGER] KAFKA 메시지 발행에 실패했습니다: EVENT_ID={}, REASON={}",
-				eventEnvelope.eventId(),
-				e.getMessage()
-			);
-		}
+	@Override
+	public <T> void send(EventEnvelope<T> event) {
+		kafkaTemplate.send(
+			event.aggregateType().name(),
+			event.eventId(),
+			event
+		);
 	}
 }
