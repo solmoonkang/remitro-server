@@ -1,4 +1,4 @@
-package com.remitro.member.application.usecase.signup.dto.request;
+package com.remitro.member.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
