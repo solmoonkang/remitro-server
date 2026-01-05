@@ -2,11 +2,6 @@ package com.remitro.member.domain.kyc.model;
 
 import java.time.LocalDateTime;
 
-import com.remitro.common.error.code.ErrorCode;
-import com.remitro.common.error.exception.BadRequestException;
-import com.remitro.common.error.message.ErrorMessage;
-import com.remitro.member.domain.kyc.enums.KycVerificationStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -55,45 +50,18 @@ public class KycVerification {
 		this.requestedAt = LocalDateTime.now();
 	}
 
-	public static KycVerification create(Long memberId) {
+	public static KycVerification request(Long memberId) {
 		return new KycVerification(memberId);
 	}
 
-	public boolean isPending() {
-		return this.kycVerificationStatus == KycVerificationStatus.PENDING;
+	public void approve() {
+		this.kycVerificationStatus = KycVerificationStatus.APPROVED;
+		this.completedAt = LocalDateTime.now();
 	}
 
-	public boolean isVerified() {
-		return this.kycVerificationStatus == KycVerificationStatus.VERIFIED;
-	}
-
-	public boolean isRejected() {
-		return this.kycVerificationStatus == KycVerificationStatus.REJECTED;
-	}
-
-	public boolean isCompleted() {
-		return isVerified() || isRejected();
-	}
-
-	public void completeSuccess(LocalDateTime now) {
-		validatePending();
-		this.kycVerificationStatus = KycVerificationStatus.VERIFIED;
-		this.completedAt = now;
-	}
-
-	public void completeReject(String reason, LocalDateTime now) {
-		validatePending();
+	public void reject(String reason) {
 		this.kycVerificationStatus = KycVerificationStatus.REJECTED;
 		this.reason = reason;
-		this.rejectedAt = now;
-		this.completedAt = now;
-	}
-
-	private void validatePending() {
-		if (!isPending()) {
-			throw new BadRequestException(
-				ErrorCode.KYC_ALREADY_COMPLETED, ErrorMessage.KYC_ALREADY_COMPLETED
-			);
-		}
+		this.rejectedAt = LocalDateTime.now();
 	}
 }
