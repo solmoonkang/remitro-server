@@ -1,8 +1,9 @@
-package com.remitro.member.domain.kyc.enums;
+package com.remitro.member.domain.kyc.model;
 
 public enum KycVerificationStatus {
 
 	PENDING,
+	APPROVED,
 	VERIFIED,
 	REJECTED
 }
