@@ -2,6 +2,10 @@ package com.remitro.member.domain.kyc.model;
 
 import java.time.LocalDateTime;
 
+import com.remitro.common.error.code.ErrorCode;
+import com.remitro.common.error.exception.BadRequestException;
+import com.remitro.common.error.message.ErrorMessage;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,10 +33,13 @@ public class KycVerification {
 	private Long memberId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "kyc_verification_status", nullable = false)
-	private KycVerificationStatus kycVerificationStatus;
+	@Column(name = "kyc_status", nullable = false)
+	private KycStatus kycStatus;
 
-	@Column(name = "requested_at", nullable = false)
+	@Column(name = "reason")
+	private String reason;
+
+	@Column(name = "requested_at")
 	private LocalDateTime requestedAt;
 
 	@Column(name = "completed_at")
@@ -41,27 +48,45 @@ public class KycVerification {
 	@Column(name = "rejected_at")
 	private LocalDateTime rejectedAt;
 
-	@Column(name = "reason")
-	private String reason;
-
-	private KycVerification(Long memberId) {
+	private KycVerification(Long memberId, LocalDateTime requestedAt) {
 		this.memberId = memberId;
-		this.kycVerificationStatus = KycVerificationStatus.PENDING;
-		this.requestedAt = LocalDateTime.now();
+		this.kycStatus = KycStatus.REQUESTED;
+		this.requestedAt = requestedAt;
 	}
 
-	public static KycVerification request(Long memberId) {
-		return new KycVerification(memberId);
+	public static KycVerification request(Long memberId, LocalDateTime requestedAt) {
+		return new KycVerification(memberId, requestedAt);
 	}
 
-	public void approve() {
-		this.kycVerificationStatus = KycVerificationStatus.APPROVED;
-		this.completedAt = LocalDateTime.now();
+	public boolean isVerified() {
+		return this.kycStatus == KycStatus.VERIFIED;
 	}
 
-	public void reject(String reason) {
-		this.kycVerificationStatus = KycVerificationStatus.REJECTED;
+	public boolean isRejected() {
+		return this.kycStatus == KycStatus.REJECTED;
+	}
+
+	public void startVerification() {
+		if (this.kycStatus != KycStatus.REQUESTED) {
+			throw new BadRequestException(ErrorCode.KYC_INVALID_STATE, ErrorMessage.KYC_CANNOT_START);
+		}
+		this.kycStatus = KycStatus.IN_PROGRESS;
+	}
+
+	public void verify(LocalDateTime completedAt) {
+		if (this.kycStatus != KycStatus.IN_PROGRESS) {
+			throw new BadRequestException(ErrorCode.KYC_INVALID_STATE, ErrorMessage.KYC_CANNOT_VERIFY);
+		}
+		this.kycStatus = KycStatus.VERIFIED;
+		this.completedAt = completedAt;
+	}
+
+	public void reject(String reason, LocalDateTime rejectedAt) {
+		if (this.kycStatus != KycStatus.IN_PROGRESS) {
+			throw new BadRequestException(ErrorCode.KYC_INVALID_STATE, ErrorMessage.KYC_CANNOT_REJECT);
+		}
+		this.kycStatus = KycStatus.REJECTED;
 		this.reason = reason;
-		this.rejectedAt = LocalDateTime.now();
+		this.rejectedAt = rejectedAt;
 	}
 }
