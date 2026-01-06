@@ -3,7 +3,6 @@ package com.remitro.member.domain.member.model;
 import java.time.LocalDateTime;
 
 import com.remitro.common.security.Role;
-import com.remitro.member.domain.kyc.model.KycStatus;
 import com.remitro.member.infrastructure.persistence.base.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -52,19 +51,12 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "activity_status", nullable = false)
 	private ActivityStatus activityStatus;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "kyc_status", nullable = false)
-	private KycStatus kycStatus;
-
 	@Column(name = "login_failure_count", nullable = false)
 	private int loginFailureCount;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "lock_reason")
 	private LockReason lockReason;
-
-	@Column(name = "kyc_verified_at")
-	private LocalDateTime kycVerifiedAt;
 
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
@@ -79,7 +71,6 @@ public class Member extends BaseTimeEntity {
 		this.phoneNumber = phoneNumber;
 		this.role = Role.MEMBER;
 		this.activityStatus = ActivityStatus.ACTIVE;
-		this.kycStatus = KycStatus.UNVERIFIED;
 		this.loginFailureCount = 0;
 	}
 
@@ -92,33 +83,20 @@ public class Member extends BaseTimeEntity {
 		return new Member(email, hashedPassword, nickname, phoneNumber);
 	}
 
-	public void markKycApproved() {
-		this.kycStatus = KycStatus.VERIFIED;
-		this.kycVerifiedAt = LocalDateTime.now();
+	public void changePassword(String encodedPassword) {
+		this.hashedPassword = encodedPassword;
 	}
 
-	public void markKycRejected() {
-		this.kycStatus = KycStatus.REJECTED;
+	public void updateProfile(String nickname, String phoneNumber) {
+		this.nickname = nickname;
+		this.phoneNumber = phoneNumber;
 	}
 
-	public void increaseLoginFailureCount() {
-		this.loginFailureCount++;
+	public boolean isWithdrawn() {
+		return this.activityStatus == ActivityStatus.WITHDRAWN;
 	}
 
-	public void resetLoginFailureCount() {
-		this.loginFailureCount = 0;
-	}
-
-	public void lock(LockReason reason) {
-		this.activityStatus = ActivityStatus.LOCKED;
-		this.lockReason = reason;
-		this.lockedAt = LocalDateTime.now();
-	}
-
-	public void unlock() {
-		this.activityStatus = ActivityStatus.ACTIVE;
-		this.lockReason = null;
-		this.lockedAt = null;
-		this.loginFailureCount = 0;
+	public boolean isDormant() {
+		return this.activityStatus == ActivityStatus.DORMANT;
 	}
 }
