@@ -9,7 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.remitro.auth.infrastructure.error.ErrorStatusMapper;
 import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.BaseException;
 import com.remitro.common.error.response.ErrorResponse;
