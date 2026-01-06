@@ -1,10 +1,13 @@
 package com.remitro.member.domain.member.service;
 
+import org.springframework.stereotype.Component;
+
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.policy.MemberSignUpPolicy;
 
 import lombok.RequiredArgsConstructor;
 
+@Component
 @RequiredArgsConstructor
 public class MemberSignUpDomainService {
 
