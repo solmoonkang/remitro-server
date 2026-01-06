@@ -1,5 +1,8 @@
 package com.remitro.member.application.command;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberSignUpCommandService {
 
 	private final MemberQueryRepository memberQueryRepository;
@@ -28,7 +32,8 @@ public class MemberSignUpCommandService {
 
 	private final PasswordEncoder passwordEncoder;
 
-	@Transactional
+	private final Clock clock;
+
 	public void signUp(SignUpRequest signUpRequest) {
 		final boolean emailExists = memberQueryRepository.existsByEmail(signUpRequest.email());
 		final boolean nicknameExists = memberQueryRepository.existsByNickname(signUpRequest.nickname());
@@ -45,7 +50,7 @@ public class MemberSignUpCommandService {
 		);
 		memberCommandRepository.save(member);
 
-		final KycVerification kycVerification = KycVerification.request(member.getId());
+		final KycVerification kycVerification = KycVerification.request(member.getId(), LocalDateTime.now(clock));
 		kycVerificationCommandRepository.save(kycVerification);
 
 		memberEventPublisher.publishMemberSignedUp(member);
