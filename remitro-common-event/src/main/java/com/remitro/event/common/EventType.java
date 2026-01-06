@@ -1,0 +1,14 @@
+package com.remitro.event.common;
+
+public enum EventType {
+
+	MEMBER_SIGNED_UP,
+	MEMBER_PROFILE_UPDATED,
+	MEMBER_LOCKED,
+
+	ACCOUNT_OPENED,
+	ACCOUNT_BALANCE_CHANGED,
+
+	KYC_REQUESTED,
+	KYC_APPROVED
+}
