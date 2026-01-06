@@ -2,8 +2,8 @@ package com.remitro.member.domain.kyc.model;
 
 public enum KycStatus {
 
-	UNVERIFIED,
-	PENDING,
+	REQUESTED,
+	IN_PROGRESS,
 	VERIFIED,
 	REJECTED
 }
