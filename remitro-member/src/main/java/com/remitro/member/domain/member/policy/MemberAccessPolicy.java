@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.UnauthorizedException;
 import com.remitro.common.error.message.ErrorMessage;
+import com.remitro.member.domain.member.model.ActivityStatus;
 import com.remitro.member.domain.member.model.Member;
 
 @Component
@@ -20,6 +21,12 @@ public class MemberAccessPolicy {
 		if (member.isDormant()) {
 			throw new UnauthorizedException(
 				ErrorCode.MEMBER_DORMANT, ErrorMessage.MEMBER_DORMANT
+			);
+		}
+
+		if (member.getActivityStatus() == ActivityStatus.LOCKED) {
+			throw new UnauthorizedException(
+				ErrorCode.MEMBER_LOCKED, ErrorMessage.MEMBER_LOCKED
 			);
 		}
 	}
