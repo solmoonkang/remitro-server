@@ -1,4 +1,4 @@
-package com.remitro.member.application.event;
+package com.remitro.member.application.event.context;
 
 import org.springframework.stereotype.Component;
 
