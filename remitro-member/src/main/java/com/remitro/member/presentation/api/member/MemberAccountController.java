@@ -1,4 +1,4 @@
-package com.remitro.member.presentation;
+package com.remitro.member.presentation.api.member;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,8 +33,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
-@Tag(name = "사용자 APIs", description = "회원가입 및 사용자 정보 관리 API")
-public class MemberController {
+@Tag(name = "회원 계정 APIs", description = "회원가입, 내 정보 조회 및 수정 API")
+public class MemberAccountController {
 
 	private final MemberSignUpCommandService memberSignUpCommandService;
 	private final ChangePasswordCommandService changePasswordCommandService;
