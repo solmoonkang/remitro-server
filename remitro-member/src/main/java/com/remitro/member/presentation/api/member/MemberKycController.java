@@ -1,4 +1,4 @@
-package com.remitro.member.presentation;
+package com.remitro.member.presentation.api.member;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
-@Tag(name = "회원 KYC APIs", description = "회원 본인 인증(KYC) 요청 관련 API")
+@Tag(name = "회원 KYC APIs", description = "회원 본인 인증(KYC) 요청 API")
 public class MemberKycController {
 
 	private final KycRequestCommandService kycRequestCommandService;
