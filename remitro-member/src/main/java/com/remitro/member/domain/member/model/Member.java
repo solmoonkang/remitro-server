@@ -92,11 +92,48 @@ public class Member extends BaseTimeEntity {
 		this.phoneNumber = phoneNumber;
 	}
 
+	public boolean isDormant() {
+		return this.activityStatus == ActivityStatus.DORMANT;
+	}
+
 	public boolean isWithdrawn() {
 		return this.activityStatus == ActivityStatus.WITHDRAWN;
 	}
 
-	public boolean isDormant() {
-		return this.activityStatus == ActivityStatus.DORMANT;
+	public void dormant() {
+		this.activityStatus = ActivityStatus.DORMANT;
+	}
+
+	public void withdrawn() {
+		this.activityStatus = ActivityStatus.WITHDRAWN;
+	}
+
+	public void increaseLoginFailure(LocalDateTime lockedAt) {
+		this.loginFailureCount++;
+
+		if (this.loginFailureCount >= 5) {
+			lock(LockReason.LOGIN_FAILURE_EXCEEDED, lockedAt);
+		}
+	}
+
+	public void resetLoginFailure() {
+		this.loginFailureCount = 0;
+	}
+
+	public void lock(LockReason lockReason, LocalDateTime lockedAt) {
+		this.activityStatus = ActivityStatus.LOCKED;
+		this.lockReason = lockReason;
+		this.lockedAt = lockedAt;
+	}
+
+	public void unlock() {
+		this.activityStatus = ActivityStatus.ACTIVE;
+		this.lockReason = null;
+		this.loginFailureCount = 0;
+		this.lockedAt = null;
+	}
+
+	public void updateLastLoginAt(LocalDateTime lastLoginAt) {
+		this.lastLoginAt = lastLoginAt;
 	}
 }
