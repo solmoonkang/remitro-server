@@ -6,12 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.remitro.common.auth.MemberAuthInfo;
 
-@FeignClient(name = "remitro-member", path = "/internal/members")
+@FeignClient(name = "remitro-member", path = "/internal/members/auth-info")
 public interface MemberQueryClient {
 
-	@GetMapping("/auth-info/login")
-	MemberAuthInfo findLoginAuthInfo(@RequestParam String email);
-
-	@GetMapping("/auth-info/reissue")
-	MemberAuthInfo findReissueAuthInfo(@RequestParam String email);
+	@GetMapping("/login")
+	MemberAuthInfo getLoginInfo(@RequestParam String email);
 }
