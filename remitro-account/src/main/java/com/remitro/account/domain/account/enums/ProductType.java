@@ -1,4 +1,4 @@
-package com.remitro.account.domain.product.enums;
+package com.remitro.account.domain.account.enums;
 
 import lombok.Getter;
 
@@ -21,17 +21,5 @@ public enum ProductType {
 	ProductType(String code, Category category) {
 		this.code = code;
 		this.category = category;
-	}
-
-	public boolean isDepositAccount() {
-		return this.category == Category.DEPOSIT;
-	}
-
-	public boolean isLoanAccount() {
-		return this.category == Category.LOAN;
-	}
-
-	public boolean isVirtualAccount() {
-		return this.category == Category.VIRTUAL;
 	}
 }
