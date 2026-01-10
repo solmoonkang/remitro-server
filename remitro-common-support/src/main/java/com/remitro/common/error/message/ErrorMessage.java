@@ -39,6 +39,7 @@ public enum ErrorMessage {
 	 * 404 NOT FOUND
 	 * ========================== */
 	MEMBER_ID_NOT_FOUND("회원 ID %s를 찾을 수 없습니다."),
+	MEMBER_EMAIL_NOT_FOUND("회원 EMAIL %s를 찾을 수 없습니다."),
 	MEMBER_NICKNAME_NOT_FOUND("닉네임 %s를 가진 회원을 찾을 수 없습니다."),
 
 	ACCOUNT_NOT_FOUND("요청하신 계좌를 찾을 수 없습니다."),
@@ -53,6 +54,7 @@ public enum ErrorMessage {
 
 	DUPLICATE_REQUEST("이미 처리된 요청입니다."),
 	INSUFFICIENT_FUNDS("잔액이 부족합니다."),
+	ACCOUNT_LIMIT_EXCEEDED("계좌 개설 한도를 초과했습니다."),
 
 	/* ==========================
 	 * 500 INTERNAL SERVER ERROR / 503 SERVICE UNAVAILABLE
