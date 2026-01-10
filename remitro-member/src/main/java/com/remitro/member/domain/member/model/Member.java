@@ -3,6 +3,8 @@ package com.remitro.member.domain.member.model;
 import java.time.LocalDateTime;
 
 import com.remitro.common.security.Role;
+import com.remitro.member.domain.member.enums.ActivityStatus;
+import com.remitro.member.domain.member.enums.LockReason;
 import com.remitro.member.infrastructure.persistence.base.BaseTimeEntity;
 
 import jakarta.persistence.Column;
