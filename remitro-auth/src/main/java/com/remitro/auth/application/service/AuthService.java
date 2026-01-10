@@ -4,8 +4,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.auth.application.dto.request.LoginRequest;
-import com.remitro.auth.application.dto.response.TokenResponse;
+import com.remitro.auth.presentation.dto.request.LoginRequest;
+import com.remitro.auth.presentation.dto.response.TokenResponse;
 import com.remitro.auth.domain.policy.TokenPolicy;
 import com.remitro.auth.infrastructure.client.MemberCommandClient;
 import com.remitro.auth.infrastructure.client.MemberQueryClient;
@@ -50,7 +50,7 @@ public class AuthService {
 	}
 
 	private MemberAuthInfo authenticate(LoginRequest loginRequest) {
-		final MemberAuthInfo memberAuthInfo = memberQueryClient.findLoginAuthInfo(
+		final MemberAuthInfo memberAuthInfo = memberQueryClient.getLoginInfo(
 			loginRequest.email()
 		);
 
