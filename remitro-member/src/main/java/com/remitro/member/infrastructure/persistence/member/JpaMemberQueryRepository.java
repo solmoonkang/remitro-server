@@ -21,6 +21,11 @@ public class JpaMemberQueryRepository implements MemberQueryRepository {
 	}
 
 	@Override
+	public Optional<Member> findByEmail(String email) {
+		return springDataMemberRepository.findByEmail(email);
+	}
+
+	@Override
 	public boolean existsByEmail(String email) {
 		return springDataMemberRepository.existsByEmail(email);
 	}
