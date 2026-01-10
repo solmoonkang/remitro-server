@@ -22,4 +22,11 @@ public class MemberFinder {
 				ErrorCode.MEMBER_NOT_FOUND, ErrorMessage.MEMBER_ID_NOT_FOUND, memberId
 			));
 	}
+
+	public Member getByEmail(String email) {
+		return memberQueryRepository.findByEmail(email)
+			.orElseThrow(() -> new NotFoundException(
+				ErrorCode.MEMBER_NOT_FOUND, ErrorMessage.MEMBER_EMAIL_NOT_FOUND, email
+			));
+	}
 }
