@@ -1,4 +1,4 @@
-package com.remitro.account.domain.common.model;
+package com.remitro.account.infrastructure.persistence.base;
 
 import java.time.LocalDateTime;
 
