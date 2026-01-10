@@ -5,13 +5,13 @@ import static com.remitro.common.security.JwtClaims.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.auth.application.dto.response.TokenResponse;
+import com.remitro.auth.presentation.dto.response.TokenResponse;
 import com.remitro.auth.domain.model.RefreshToken;
 import com.remitro.auth.domain.policy.TokenPolicy;
 import com.remitro.auth.infrastructure.client.MemberQueryClient;
 import com.remitro.auth.infrastructure.persistence.RefreshTokenRepository;
 import com.remitro.auth.infrastructure.security.JwtTokenService;
-import com.remitro.auth.presentation.AuthorizationHeaderResolver;
+import com.remitro.auth.presentation.resolver.AuthorizationHeaderResolver;
 import com.remitro.common.auth.MemberAuthInfo;
 import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.UnauthorizedException;
@@ -40,7 +40,7 @@ public class TokenReissueService {
 		tokenPolicy.validateTokenReissuable(savedToken);
 		refreshTokenRepository.revoke(refreshToken);
 
-		final MemberAuthInfo memberAuthInfo = memberQueryClient.findReissueAuthInfo(
+		final MemberAuthInfo memberAuthInfo = memberQueryClient.getLoginInfo(
 			jwtTokenService.parseClaims(refreshToken).get(MEMBER_EMAIL, String.class)
 		);
 
