@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.remitro.common.error.code.ErrorCode;
 import com.remitro.common.error.exception.BadRequestException;
 import com.remitro.common.error.message.ErrorMessage;
+import com.remitro.member.domain.kyc.enums.KycStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
