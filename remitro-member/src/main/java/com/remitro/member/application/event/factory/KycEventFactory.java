@@ -1,4 +1,4 @@
-package com.remitro.member.application.event;
+package com.remitro.member.application.event.factory;
 
 import com.remitro.event.domain.kyc.KycApprovedEvent;
 import com.remitro.event.domain.kyc.KycRejectedEvent;
