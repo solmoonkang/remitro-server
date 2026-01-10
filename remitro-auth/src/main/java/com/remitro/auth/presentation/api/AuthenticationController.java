@@ -1,4 +1,4 @@
-package com.remitro.auth.presentation;
+package com.remitro.auth.presentation.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.auth.application.dto.request.LoginRequest;
-import com.remitro.auth.application.dto.response.TokenResponse;
+import com.remitro.auth.presentation.dto.request.LoginRequest;
+import com.remitro.auth.presentation.dto.response.TokenResponse;
 import com.remitro.auth.application.service.AuthService;
 import com.remitro.auth.application.service.TokenRevokeService;
 import com.remitro.auth.application.service.TokenReissueService;

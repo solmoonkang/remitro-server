@@ -1,4 +1,4 @@
-package com.remitro.auth.presentation;
+package com.remitro.auth.presentation.resolver;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
