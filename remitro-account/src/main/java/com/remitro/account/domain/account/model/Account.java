@@ -1,10 +1,8 @@
 package com.remitro.account.domain.account.model;
 
-import java.time.LocalDateTime;
-
-import com.remitro.account.domain.account.enums.LifecycleStatus;
-import com.remitro.account.domain.common.model.BaseTimeEntity;
-import com.remitro.account.domain.product.enums.ProductType;
+import com.remitro.account.domain.account.enums.ProductType;
+import com.remitro.account.domain.status.enums.AccountStatus;
+import com.remitro.account.infrastructure.persistence.base.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +34,7 @@ public class Account extends BaseTimeEntity {
 	@Column(name = "member_id", nullable = false)
 	private Long memberId;
 
-	@Column(name = "account_number", unique = true, nullable = false, length = 20)
+	@Column(name = "account_number", nullable = false, unique = true, length = 20)
 	private String accountNumber;
 
 	@Column(name = "account_name", length = 50)
@@ -49,12 +47,12 @@ public class Account extends BaseTimeEntity {
 	private String hashedPin;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "account_type", nullable = false)
+	@Column(name = "product_type", nullable = false, length = 20)
 	private ProductType productType;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "account_status", nullable = false)
-	private LifecycleStatus lifecycleStatus;
+	@Column(name = "account_status", nullable = false, length = 20)
+	private AccountStatus accountStatus;
 
 	private Account(
 		Long memberId,
@@ -69,7 +67,7 @@ public class Account extends BaseTimeEntity {
 		this.balance = 0L;
 		this.hashedPin = hashedPin;
 		this.productType = productType;
-		this.lifecycleStatus = LifecycleStatus.NORMAL;
+		this.accountStatus = AccountStatus.NORMAL;
 	}
 
 	public static Account create(
@@ -79,14 +77,24 @@ public class Account extends BaseTimeEntity {
 		String hashedPin,
 		ProductType productType
 	) {
-		return new Account(memberId, accountNumber, accountName, hashedPin, productType);
+		return new Account(
+			memberId,
+			accountNumber,
+			accountName,
+			hashedPin,
+			productType
+		);
 	}
 
-	public static Account createLoan(Long memberId, String accountNumber, ProductType productType) {
-		return new Account(memberId, accountNumber, "LOAN_ACCOUNT", null, productType);
+	public void increaseBalance(long amount) {
+		this.balance += amount;
 	}
 
-	public static Account createVirtual(Long memberId, String accountNumber, LocalDateTime expiredAt) {
-		return new Account(memberId, accountNumber, "VIRTUAL_ACCOUNT", null, ProductType.VIRTUAL);
+	public void decreaseBalance(long amount) {
+		this.balance -= amount;
+	}
+
+	public void rename(String newAccountName) {
+		this.accountName = newAccountName;
 	}
 }
