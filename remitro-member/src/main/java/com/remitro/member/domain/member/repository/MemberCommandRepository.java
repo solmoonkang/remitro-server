@@ -3,7 +3,7 @@ package com.remitro.member.domain.member.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.remitro.member.domain.member.model.ActivityStatus;
+import com.remitro.member.domain.member.enums.ActivityStatus;
 import com.remitro.member.domain.member.model.Member;
 
 public interface MemberCommandRepository {
