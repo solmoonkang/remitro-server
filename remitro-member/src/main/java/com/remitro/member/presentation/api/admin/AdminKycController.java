@@ -1,4 +1,4 @@
-package com.remitro.member.presentation;
+package com.remitro.member.presentation.api.admin;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin/members")
 @RequiredArgsConstructor
-@Tag(name = "관리자 KYC APIs", description = "관리자 KYC 승인/거절 관리 API")
+@Tag(name = "관리자 KYC APIs", description = "관리자 KYC 승인/거절 API")
 public class AdminKycController {
 
 	private final KycResultCommandService kycResultCommandService;
@@ -28,7 +28,7 @@ public class AdminKycController {
 	@PostMapping("/{memberId}/kyc/approve")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "KYC 승인")
-	public ApiSuccessResponse approveKyc(
+	public ApiSuccessResponse approve(
 		@PathVariable Long memberId
 	) {
 		kycResultCommandService.approve(memberId);
@@ -38,7 +38,7 @@ public class AdminKycController {
 	@PostMapping("/{memberId}/kyc/reject")
 	@ResponseStatus(HttpStatus.OK)
 	@Operation(summary = "KYC 거절")
-	public ApiSuccessResponse rejectKyc(
+	public ApiSuccessResponse reject(
 		@PathVariable Long memberId,
 		@Valid @RequestBody KycRejectRequest kycRejectRequest
 	) {
