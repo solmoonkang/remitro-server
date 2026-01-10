@@ -1,4 +1,4 @@
-package com.remitro.member.domain.member.model;
+package com.remitro.member.domain.member.enums;
 
 public enum LockReason {
 
