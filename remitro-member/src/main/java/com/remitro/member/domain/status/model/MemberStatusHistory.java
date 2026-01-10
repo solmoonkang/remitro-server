@@ -2,9 +2,8 @@ package com.remitro.member.domain.status.model;
 
 import java.time.LocalDateTime;
 
-import com.remitro.member.domain.member.model.ActivityStatus;
-import com.remitro.member.domain.member.model.LockReason;
-import com.remitro.member.domain.member.model.Member;
+import com.remitro.member.domain.member.enums.ActivityStatus;
+import com.remitro.member.domain.status.enums.StatusChangeReason;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,45 +36,46 @@ public class MemberStatusHistory {
 	private Long memberId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "from_status", nullable = false, length = 20)
-	private ActivityStatus fromStatus;
+	@Column(name = "previous_status", nullable = false, length = 20)
+	private ActivityStatus previousStatus;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "to_status", nullable = false, length = 20)
-	private ActivityStatus toStatus;
+	@Column(name = "new_status", nullable = false, length = 20)
+	private ActivityStatus newStatus;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "lock_reason", nullable = false, length = 30)
-	private LockReason lockReason;
+	@Column(name = "status_change_reason", nullable = false, length = 30)
+	private StatusChangeReason statusChangeReason;
 
 	@Column(name = "occurred_at", nullable = false)
 	private LocalDateTime occurredAt;
 
 	private MemberStatusHistory(
 		Long memberId,
-		ActivityStatus fromStatus,
-		ActivityStatus toStatus,
-		LockReason lockReason,
+		ActivityStatus previousStatus,
+		ActivityStatus newStatus,
+		StatusChangeReason statusChangeReason,
 		LocalDateTime occurredAt
 	) {
 		this.memberId = memberId;
-		this.fromStatus = fromStatus;
-		this.toStatus = toStatus;
-		this.lockReason = lockReason;
+		this.previousStatus = previousStatus;
+		this.newStatus = newStatus;
+		this.statusChangeReason = statusChangeReason;
 		this.occurredAt = occurredAt;
 	}
 
 	public static MemberStatusHistory record(
-		Member member,
-		ActivityStatus fromStatus,
-		LockReason lockReason,
+		Long memberId,
+		ActivityStatus previousStatus,
+		ActivityStatus newStatus,
+		StatusChangeReason statusChangeReason,
 		LocalDateTime occurredAt
 	) {
 		return new MemberStatusHistory(
-			member.getId(),
-			fromStatus,
-			member.getActivityStatus(),
-			lockReason,
+			memberId,
+			previousStatus,
+			newStatus,
+			statusChangeReason,
 			occurredAt
 		);
 	}
