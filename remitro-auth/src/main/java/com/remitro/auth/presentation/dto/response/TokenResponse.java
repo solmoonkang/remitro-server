@@ -1,4 +1,4 @@
-package com.remitro.auth.application.dto.response;
+package com.remitro.auth.presentation.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
