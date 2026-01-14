@@ -1,6 +1,26 @@
+server:
+  port: 8761
+
 spring:
   application:
     name: remitro-discovery
 
-  config:
-    import: "optional:configserver:http://localhost:8888"
+eureka:
+  instance:
+    # 유레카 서버가 기동되는 호스트의 이름을 지정합니다.
+    # 로컬 환경이므로 localhost로 설정합니다.
+    hostname: localhost
+
+  client:
+    # 1. 서버 스스로를 유레카 서비스 목록에 등록할지 여부 (기본값 true)
+    # 현재 프로젝트는 '서버' 역할이므로, 자기 자신을 클라이언트로 등록할 필요가 없어 false로 설정합니다.
+    register-with-eureka: false
+
+    # 2. 유레카 서버로부터 등록된 서비스 목록을 로컬로 가져올지 여부 (기본값 true)
+    # 서버는 이미 모든 목록을 메모리에 들고 있으므로 별도로 가져올 필요가 없어 false로 설정합니다.
+    fetch-registry: false
+
+    service-url:
+      # 다른 마이크로서비스들이(Gateway, Member, Account 등) 이 유레카 서버를 찾을 때 사용할 주소입니다.
+      # 위에서 설정한 hostname(localhost)과 port(8761)를 변수로 가져와서 조합합니다.
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
