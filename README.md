@@ -1,7 +1,8 @@
 # 💸 REMITRO (계좌 기반 Mock 결제 플랫폼)
 
-REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기술적 호기심"을 실현하기 위해 구축된 계좌 기반 Mock 결제 시스템입니다.
-사용자 가입부터 계좌 개설, 입출금 및 이체 이력 관리까지 결제 서비스의 핵심 기능을 관통하는 데이터 흐름을 직접 설계하고 구현하였습니다.
+REMITRO는 사용자 간 간편 송금을 안전하게 처리하기 위한 시스템입니다.
+금융 OpenAPI 제공자 관점에서 계좌 개설부터 입출금, 이체 이력 관리까지 결제 서비스의 핵심 기능을 직접 설계하였습니다.
+찰나의 순간에 발생하는 거래들 사이에서 데이터의 정합성과 신뢰성을 유지하는 것을 우선 목표로 구현하였습니다.
 
 ### 🛠 Tech Stack & Environment
 
@@ -16,9 +17,11 @@ REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기
 
 ### 🏗 시스템 아키텍처
 
-도메인 간의 명확한 책임 분리를 위해 각 서비스를 독립적으로 구성하였으며, `Gateway를` 단일 진입점으로 구성한 MSA 구조를 지향합니다.
+도메인 간의 명확한 책임 분리를 위해 각 서비스를 독립적으로 구성하였으며, `Gateway`를 단일 진입점으로 구성한 MSA 구조를 지향합니다.
 
-**[ 서비스 흐름 ]** `Client` → `Gateway (Routing/Auth)` → `Microservices (Member/Account/Transaction)` → `Isolated DB`
+**[ 서비스 흐름 ]**
+
+`Client` → `Gateway (Routing/Auth)` → `Microservices (Member/Account/Transaction)` → `Isolated DB`
 
 - **Gateway & Discovery**: 인프라의 관문으로서 라우팅과 각 서비스의 가용성을 관리합니다.
 - **Member Service**: 별도의 Auth 서비스를 두는 대신, 결제 도메인에 집중하기 위해 사용자 관리와 JWT 인증 책임을 하나로 통합하였습니다.
@@ -78,7 +81,7 @@ REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기
 
 ### 🔍 Swagger API 명세
 
-각 서비스는 **Swagger(SpringDoc)**를 통해 API 명세를 자동화합니다. 실행 후 아래 주소로 접속하여 API 문서를 확인할 수 있습니다.
+각 서비스는 **Swagger(SpringDoc)**를 통해 API 명세를 자동화합니다.
 
 - **Swagger UI**: `http://localhost:{service-port}/swagger-ui.html`
 
