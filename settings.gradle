@@ -7,8 +7,6 @@ include ':remitro-auth'
 include ':remitro-member'
 include ':remitro-account'
 include ':remitro-transaction'
-include ':remitro-notification'
-include ':remitro-audit'
 
 include ':remitro-common-support'
 include ':remitro-common-event'
