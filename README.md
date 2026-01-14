@@ -3,8 +3,6 @@
 REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기술적 호기심"을 실현하기 위해 구축된 계좌 기반 Mock 결제 시스템입니다.
 사용자 가입부터 계좌 개설, 입출금 및 이체 이력 관리까지 결제 서비스의 핵심 기능을 관통하는 데이터 흐름을 직접 설계하고 구현하였습니다.
 
----
-
 ### 🛠 Tech Stack & Environment
 
 - **Framework**: Spring Boot 3.4.1, Spring Cloud 2023.0.3
@@ -16,8 +14,6 @@ REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기
 - **Security**: JJWT (JSON Web Token) 0.12.7
 - **Documentation**: SpringDoc OpenAPI 2.8.10 (Swagger)
 
----
-
 ### 🏗 시스템 아키텍처
 
 도메인 간의 명확한 책임 분리를 위해 각 서비스를 독립적으로 구성하였으며, `Gateway를` 단일 진입점으로 구성한 MSA 구조를 지향합니다.
@@ -28,8 +24,6 @@ REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기
 - **Member Service**: 별도의 Auth 서비스를 두는 대신, 결제 도메인에 집중하기 위해 사용자 관리와 JWT 인증 책임을 하나로 통합하였습니다.
 - **Account Service**: 계좌 상태 관리와 잔액 증감을 처리하는 핵심 비즈니스 로직을 담당합니다.
 - **Transaction Service**: 모든 거래 결과를 불변(Immutable) 데이터로 기록하여 금융 서비스의 신뢰성을 확보합니다.
-
----
 
 ### ✨ 주요 설계 판단 (Key Points)
 
@@ -47,8 +41,6 @@ REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기
 
 중복 요청이나 네트워크 재시도 상황에서 중복 결제 등 부정 거래가 발생하지 않도록 Idempotency-Key를 도입하였습니다.
 이를 통해 동일한 요청에 대해 언제나 일관된 결과를 보장합니다.
-
----
 
 ### 📂 패키지 구조 (Standard Layered Architecture)
 
@@ -84,8 +76,6 @@ REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기
      └─ config
 ```
 
----
-
 ### 🔍 Swagger API 명세
 
 각 서비스는 **Swagger(SpringDoc)**를 통해 API 명세를 자동화합니다. 실행 후 아래 주소로 접속하여 API 문서를 확인할 수 있습니다.
@@ -97,8 +87,6 @@ REMITRO는 금융 OpenAPI를 연동하며 가졌던 "내부 처리에 대한 기
 | **remitro-member**      | `8081` | 회원 가입, 로그인, 내 정보 관리       |
 | **remitro-account**     | `8082` | 계좌 생성, 잔액 증감(입/출금), 계좌 조회 |
 | **remitro-transaction** | `8083` | 거래 내역 이력 조회               |
-
----
 
 ### 📑 주요 API 명세 요약
 
