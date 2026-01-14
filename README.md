@@ -1,25 +1,18 @@
-# 💸 REMITRO (계좌 기반 Mock 결제 플랫폼)
+## 💸 REMITRO (계좌 기반 Mock 결제 플랫폼)
 
 REMITRO는 사용자 간 간편 송금을 안전하게 처리하기 위한 시스템입니다.
+
 금융 OpenAPI 제공자 관점에서 계좌 개설부터 입출금, 이체 이력 관리까지 결제 서비스의 핵심 기능을 직접 설계하였습니다.
+
 찰나의 순간에 발생하는 거래들 사이에서 데이터의 정합성과 신뢰성을 유지하는 것을 우선 목표로 구현하였습니다.
-
-### 🛠 Tech Stack & Environment
-
-- **Framework**: Spring Boot 3.4.1, Spring Cloud 2023.0.3
-- **Language**: Java 17 (Toolchain)
-- **Build Tool**: Gradle
-- **Infrastructure**: Infrastructure: Netflix Eureka (Discovery), Spring Cloud Gateway, Spring Security
-- **Database**: Spring Data JPA (H2), Redis
-- **Messaging**: Apache Kafka (Spring Kafka 4.0.1)
-- **Security**: JJWT (JSON Web Token) 0.12.7
-- **Documentation**: SpringDoc OpenAPI 2.8.10 (Swagger)
 
 ### 🏗 시스템 아키텍처
 
-도메인 간의 명확한 책임 분리를 위해 각 서비스를 독립적으로 구성하였으며, `Gateway`를 단일 진입점으로 구성한 MSA 구조를 지향합니다.
+도메인 간의 명확한 책임 분리를 위해 각 서비스를 독립적으로 구성하였으며,
 
-**[ 서비스 흐름 ]**
+`Gateway`를 단일 진입점으로 구성한 MSA 구조를 지향합니다.
+
+#### [ 서비스 흐름 ]
 
 `Client` → `Gateway (Routing/Auth)` → `Microservices (Member/Account/Transaction)` → `Isolated DB`
 
@@ -33,50 +26,40 @@ REMITRO는 사용자 간 간편 송금을 안전하게 처리하기 위한 시�
 #### 1. 비관적 락(Pessimistic Lock) 기반의 정합성 확보
 
 금융 서비스에서 잔액의 불일치는 치명적입니다.
+
 충돌 가능성이 높은 입출금 및 이체 상황에서 데이터 일관성을 보장하기 위해, 낙관적 락보다 확실한 제어가 가능한 비관적 락을 사용하여 레이스 컨디션을 방지하였습니다.
 
 #### 2. Kafka를 활용한 비동기 이벤트 처리
 
 계좌 잔액의 변경(Account)과 거래 내역의 기록(Transaction) 사이의 물리적 결합도를 낮추기 위해 Kafka 기반 비동기 통신을 수행합니다.
+
 이를 통해 각 서비스는 자신의 책임에만 집중하며 시스템 전체의 응답 성능을 최적화합니다. (단, 실시간 조회가 필요한 구간은 OpenFeign을 활용한 동기 통신을 병행합니다.)
 
 #### 3. API 멱등성(Idempotency) 보장
 
 중복 요청이나 네트워크 재시도 상황에서 중복 결제 등 부정 거래가 발생하지 않도록 Idempotency-Key를 도입하였습니다.
+
 이를 통해 동일한 요청에 대해 언제나 일관된 결과를 보장합니다.
+
+### 🛠 기술 스택 및 개발 환경
+
+- **Framework**: Spring Boot 3.4.1, Spring Cloud 2023.0.3
+- **Language**: Java 17 (Toolchain)
+- **Build Tool**: Gradle
+- **Infrastructure**: Infrastructure: Netflix Eureka (Discovery), Spring Cloud Gateway, Spring Security
+- **Database**: Spring Data JPA (H2), Redis
+- **Messaging**: Apache Kafka (Spring Kafka 4.0.1)
+- **Security**: JJWT (JSON Web Token) 0.12.7
+- **Documentation**: SpringDoc OpenAPI 2.8.10 (Swagger)
 
 ### 📂 패키지 구조 (Standard Layered Architecture)
 
 ```text
 [ Service Name ]
- ├─ presentation
- │   ├─ DomainController
- │   └─ advice
- │
- ├─ application
- │   ├─ command
- │   |    ├─ DomainCommandService
- │   |    └─ dto
- │   |        ├─ request
- │   |        └─ response
- │   ├─ query
- │   |    ├─ DomainQueryService
- │   |    └─ dto
- │   |        ├─ request
- │   |        └─ response
- │   └─ mapper
- │
- ├─ domain
- │   └─ {Domain Name}
- │       ├─ model
- │       ├─ enums
- │       ├─ policy
- │       └─ repository
- │
- └─ infrastructure
-     ├─ persistence
-     ├─ messaging
-     └─ config
+ ├─ presentation    # API 엔드포인트 및 전역 예외 처리 (Controller, Advice)
+ ├─ application     # 유즈케이스 구현 (Command/Query 서비스 분리 및 DTO)
+ ├─ domain          # 핵심 비즈니스 로직 및 도메인 규칙 (Entity, Policy, Interface)
+ └─ infrastructure  # 외부 기술 연동 및 저장소 구현체 (Persistence, Messaging, Config)
 ```
 
 ### 🔍 Swagger API 명세
