@@ -3,12 +3,12 @@ apply plugin: 'java-library'
 description = 'Common Support Library'
 
 dependencies {
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
+    api 'com.fasterxml.jackson.core:jackson-databind'
+    api 'jakarta.validation:jakarta.validation-api'
 
-    compileOnly 'org.projectlombok:lombok:1.18.42'
-    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+    implementation 'org.hibernate.validator:hibernate-validator'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
