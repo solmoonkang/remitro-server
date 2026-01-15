@@ -43,10 +43,24 @@ spring:
           filters:
             - RewritePath=/api/v1/transactions/(?<segment>.*), /${segment}
 
+eureka:
+  instance:
+    # 서비스 인스턴스를 호스트 이름이 아닌 IP 주소로 등록 (Docker/운영 환경에서 필수)
+    prefer-ip-address: true
+
+  client:
+    # 유레카 서버에 자신을 등록할지 여부
+    register-with-eureka: true
+
+    # 유레카 서버로부터 다른 서비스 정보를 가져올지 여부
+    fetch-registry: true
+
+    service-url:
+      # 유레카 서버의 위치 (Discovery 서버에서 사용할 기본 포트 8761)
+      defaultZone: http://localhost:8761/eureka/
+
 logging:
   level:
     # 게이트웨이의 라우팅 로그를 상세히 확인하기 위함
     org.springframework.cloud.gateway: DEBUG
-    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: INFO
-
     com.remitro: DEBUG
