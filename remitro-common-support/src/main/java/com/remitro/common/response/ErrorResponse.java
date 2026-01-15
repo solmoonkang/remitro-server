@@ -21,6 +21,10 @@ public record ErrorResponse(
 		return new ErrorResponse(errorCode.getCode(), errorCode.getMessage(), null);
 	}
 
+	public static ErrorResponse of(String code, String message) {
+		return new ErrorResponse(code, message, null);
+	}
+
 	public static ErrorResponse of(ErrorCode errorCode, String formattedMessage) {
 		return new ErrorResponse(errorCode.getCode(), formattedMessage, null);
 	}
