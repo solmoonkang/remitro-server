@@ -83,10 +83,10 @@ public class JwtTokenProvider {
 			log.info("[✅ LOGGER] JWT 토큰이 만료되었습니다. ID = {}", e.getClaims().getSubject());
 			throw new UnauthorizedException(ErrorCode.EXPIRED_TOKEN);
 		} catch (JwtException e) {
-			log.info("[✅ LOGGER] 유효하지 않은 JWT 토큰으로 접근을 시도했습니다: {}", e.getMessage());
+			log.warn("[✅ LOGGER] 유효하지 않은 JWT 토큰으로 접근을 시도했습니다: {}", e.getMessage());
 			throw new UnauthorizedException(ErrorCode.INVALID_TOKEN, "보안 구성");
 		} catch (Exception e) {
-			log.info("[✅ LOGGER] JWT 시스템 오류가 발생했습니다: {}", e.getMessage());
+			log.error("[✅ LOGGER] JWT 시스템 오류가 발생했습니다: {}", e.getMessage());
 			throw new InternalServerException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
