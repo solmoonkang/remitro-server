@@ -9,6 +9,11 @@ public enum ErrorCode {
 
 	INVALID_INPUT_VALUE(400, "COMMON_400_001", "%s는 잘못된 입력 값입니다."),
 
+	UNAUTHORIZED_ACCESS(401, "AUTH_401_001", "인증이 필요합니다."),
+	INVALID_TOKEN(403, "AUTH_401_002", "%s이(가) 유효하지 않은 토큰입니다."),
+	EXPIRED_TOKEN(401, "AUTH_401_003", "만료된 토큰입니다."),
+	INVALID_PASSWORD(401, "MEMBER_AUTH_401_004", "잘못된 비밀번호입니다."),
+
 	MEMBER_NOT_FOUND(404, "MEMBER_404_001", "존재하지 않는 회원입니다."),
 
 	METHOD_NOT_ALLOWED(405, "COMMON_405_001", "허용되지 않은 HTTP 메소드입니다."),
