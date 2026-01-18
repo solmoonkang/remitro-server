@@ -20,7 +20,12 @@ public class RefreshToken {
 		this.expiresAt = expiresAt;
 	}
 
-	public static RefreshToken issue(Long memberId, String token, Duration expirationTime) {
-		return new RefreshToken(memberId, token, LocalDateTime.now().plus(expirationTime));
+	public static RefreshToken issue(Long memberId, String token, long expiresInMillis, LocalDateTime issuedAt) {
+		return new RefreshToken(memberId, token, issuedAt.plus(Duration.ofMillis(expiresInMillis)));
+	}
+
+	public long secondsUntilExpiration(LocalDateTime now) {
+		long seconds = Duration.between(now, expiresAt).toSeconds();
+		return Math.max(seconds, 0);
 	}
 }
