@@ -90,12 +90,4 @@ public class JwtTokenProvider {
 			throw new InternalServerException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
-
-	private Claims parseClaims(String token) {
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload();
-	}
 }
