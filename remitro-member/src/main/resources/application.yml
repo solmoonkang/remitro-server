@@ -33,6 +33,11 @@ spring:
       # 접속 경로 (http://localhost:8081/h2-console)
       path: /h2-console
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 eureka:
   client:
     service-url:
