@@ -44,3 +44,14 @@ eureka:
 
     # 유레카 서버로부터 다른 서비스들의 정보를 가져올지 여부
     fetch-registry: true
+
+jwt:
+  # 토큰 발급 주체 (서비스 식별용, 검증 시 사용)
+  issuer: remitro-auth
+
+  # 최소 256bit (32자 이상) 필수
+  secret: "secret-key-secret-key-secret-key-secret-key-secret-key"
+
+  # 밀리초 기준
+  access-token-expiration-time: 1800000       # 30분
+  refresh-token-expiration-time: 1209600000   # 14일
