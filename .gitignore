@@ -3,6 +3,7 @@
 build/
 /build/
 !gradle/wrapper/gradle-wrapper.jar
+.gradle-home/
 
 ### INTELLIJ IDEA ###
 .idea/
@@ -14,6 +15,9 @@ out/
 **/build/
 **/bin/
 **/out/
+.idea_modules/
+atlassian-ide-plugin.xml
+com_zeroturnaround_jrebel_intellij_jr.xml
 
 ### SPRING BOOT ###
 HELP.md
@@ -21,6 +25,8 @@ HELP.md
 *.log
 # TEMP FILES
 tmp/
+logs/
+temp/
 
 ### SYSTEM FILES ###
 .DS_Store
@@ -38,3 +44,7 @@ Thumbs.db
 .springBeans
 .sts4-cache
 bin/
+
+*.rdb
+*.aof
+.env
