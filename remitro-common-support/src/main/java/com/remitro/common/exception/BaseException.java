@@ -5,17 +5,17 @@ import com.remitro.common.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class BaseException extends RuntimeException {
+public abstract class BaseException extends RuntimeException {
 
 	private final ErrorCode errorCode;
 
-	public BaseException(ErrorCode errorCode, Object... args) {
-		super(errorCode.formatted(args));
+	protected BaseException(ErrorCode errorCode) {
+		super(errorCode.getMessage());
 		this.errorCode = errorCode;
 	}
 
-	public BaseException(ErrorCode errorCode) {
-		super(errorCode.getMessage());
+	protected BaseException(ErrorCode errorCode, Object... args) {
+		super(errorCode.formatted(args));
 		this.errorCode = errorCode;
 	}
 }
