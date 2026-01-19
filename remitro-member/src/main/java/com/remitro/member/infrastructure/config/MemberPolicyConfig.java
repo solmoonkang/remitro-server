@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.remitro.member.domain.member.policy.MemberPasswordPolicy;
 import com.remitro.member.domain.member.policy.MemberSignUpPolicy;
 import com.remitro.member.domain.member.repository.MemberRepository;
+import com.remitro.member.domain.token.policy.RefreshTokenPolicy;
 
 @Configuration
 public class MemberPolicyConfig {
@@ -19,5 +20,10 @@ public class MemberPolicyConfig {
 	@Bean
 	public MemberPasswordPolicy memberPasswordPolicy(PasswordEncoder passwordEncoder) {
 		return new MemberPasswordPolicy(passwordEncoder);
+	}
+
+	@Bean
+	public RefreshTokenPolicy refreshTokenPolicy() {
+		return new RefreshTokenPolicy();
 	}
 }
