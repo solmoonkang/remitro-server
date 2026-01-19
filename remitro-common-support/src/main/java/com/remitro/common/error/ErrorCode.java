@@ -2,7 +2,6 @@ package com.remitro.common.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
@@ -24,10 +23,13 @@ public enum ErrorCode {
 	/**
 	 * M (Member): 회원 정보/프로필 관련
 	 */
-	MEMBER_NOT_FOUND(404, "M301", "존재하지 않는 회원입니다."),
-	DUPLICATE_EMAIL(409, "M302", "%s는 이미 사용 중인 이메일입니다."),
-	DUPLICATE_NICKNAME(409, "M303", "%s는 이미 사용 중인 닉네임입니다."),
-	DUPLICATE_PHONE_NUMBER(409, "M304", "%s는 이미 등록된 전화번호입니다."),
+	MEMBER_LOCKED(403, "M301", "로그인 5회 실패로 인해 잠긴 계정입니다."),
+	MEMBER_DORMANT(403, "M302", "휴면 상태인 계정입니다. 본인 인증 후 해제하세요."),
+	MEMBER_SUSPENDED(403, "M303", "이용이 정지된 계정입니다. 고객센터에 문의하세요."),
+	MEMBER_NOT_FOUND(404, "M304", "존재하지 않는 회원입니다."),
+	DUPLICATE_EMAIL(409, "M305", "%s는 이미 사용 중인 이메일입니다."),
+	DUPLICATE_NICKNAME(409, "M306", "%s는 이미 사용 중인 닉네임입니다."),
+	DUPLICATE_PHONE_NUMBER(409, "M307", "%s는 이미 등록된 전화번호입니다."),
 
 	/**
 	 * P (Password): 비밀번호/보안 관련
@@ -45,3 +47,4 @@ public enum ErrorCode {
 		return String.format(this.message, args);
 	}
 }
+
