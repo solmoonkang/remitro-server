@@ -1,5 +1,6 @@
 package com.remitro.member.application.support;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.remitro.common.error.ErrorCode;
@@ -15,11 +16,13 @@ public class MemberFinder {
 
 	private final MemberRepository memberRepository;
 
+	@Cacheable(value = "members", key = "'ID:' + #memberId")
 	public Member getMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 
+	@Cacheable(value = "members", key = "'EMAIL:' + #email")
 	public Member getMemberByEmail(String email) {
 		return memberRepository.findByEmail(email)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
