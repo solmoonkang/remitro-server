@@ -8,9 +8,15 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.remitro.member.infrastructure.security.JwtAuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
 	private static final String[] SYSTEM_WHITELIST = {
@@ -21,8 +27,11 @@ public class SecurityConfig {
 	};
 	private static final String[] AUTH_WHITELIST = {
 		"/api/v1/members/signup",
-		"/api/v1/auth/login"
+		"/api/v1/auth/login",
+		"/api/v1/auth/reissue"
 	};
+
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -36,6 +45,9 @@ public class SecurityConfig {
 				.requestMatchers(SYSTEM_WHITELIST).permitAll()
 				.requestMatchers(AUTH_WHITELIST).permitAll()
 				.anyRequest().authenticated());
+
+		httpSecurity
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return httpSecurity.build();
 	}

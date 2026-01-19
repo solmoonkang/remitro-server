@@ -14,7 +14,11 @@ public interface MemberRepository {
 
 	boolean existsByNickname(String nickname);
 
+	boolean existsByNicknameAndIdNot(String nickname, Long memberId);
+
 	boolean existsByPhoneNumber(String phoneNumber);
+
+	boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long memberId);
 
 	Member save(Member member);
 }

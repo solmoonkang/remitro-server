@@ -48,6 +48,11 @@ docker compose down
 
 
 - **Redis Port**: `6379` (데이터 영속화 설정 적용)
+
+
+- **H2 Console (로컬 DB 확인)**: `http://localhost:8081/h2-console` 
+  - **JDBC URL**: `jdbc:h2:mem:remitro_db`
+  - **User Name**: `sa` / **Password**: (빈 값)
 <br>
 
 ### ✨ 주요 설계 판단

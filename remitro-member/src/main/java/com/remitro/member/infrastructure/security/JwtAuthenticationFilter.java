@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.remitro.common.security.AuthenticatedUser;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,25 +32,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		HttpServletResponse httpServletResponse,
 		FilterChain filterChain
 	) throws ServletException, IOException {
+
 		final String token = resolveToken(httpServletRequest);
 
 		if (token != null) {
 			final AuthenticatedUser authenticatedUser = jwtTokenProvider.authenticate(token);
-			final Authentication authentication = new UsernamePasswordAuthenticationToken(
-				authenticatedUser, null, List.of()
-			);
-
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			setAuthenticationToContext(authenticatedUser);
 		}
 
 		filterChain.doFilter(httpServletRequest, httpServletResponse);
 	}
 
 	private String resolveToken(HttpServletRequest httpServletRequest) {
-		String bearer = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
+		final String bearer = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
 		if (bearer != null && bearer.startsWith(BEARER_PREFIX)) {
-			return bearer.substring(7);
+			return bearer.substring(BEARER_PREFIX.length());
 		}
 		return null;
+	}
+
+	private void setAuthenticationToContext(AuthenticatedUser authenticatedUser) {
+		final Authentication authentication = new UsernamePasswordAuthenticationToken(
+			authenticatedUser, null, List.of()
+		);
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 }

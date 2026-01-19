@@ -1,6 +1,7 @@
 package com.remitro.member.presentation;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,13 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.common.response.CommonResponse;
 import com.remitro.member.application.command.LoginCommandService;
+import com.remitro.member.application.command.ReissueCommandService;
 import com.remitro.member.application.command.dto.request.LoginRequest;
-import com.remitro.member.application.command.dto.response.LoginResponse;
+import com.remitro.member.application.command.dto.response.TokenResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 
 	private final LoginCommandService loginCommandService;
+	private final ReissueCommandService reissueCommandService;
 
 	@Operation(
 		summary = "로그인",
@@ -39,7 +44,32 @@ public class AuthController {
 	})
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
-	public CommonResponse<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-		return CommonResponse.success(loginCommandService.login(loginRequest));
+	public CommonResponse<TokenResponse> login(
+		@Valid @RequestBody LoginRequest loginRequest,
+		@Parameter(hidden = true) HttpServletResponse httpServletResponse
+	) {
+		return CommonResponse.success(
+			loginCommandService.login(loginRequest, httpServletResponse)
+		);
+	}
+
+	@Operation(
+		summary = "재발급",
+		description = "액세스 토큰이 만료된 경우, 쿠키(리프레시 토큰)를 사용해 토큰을 발급합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "재발급 성공"),
+		@ApiResponse(responseCode = "401", description = "만료 및 유효하지 않은 토큰"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류"),
+	})
+	@PostMapping("/reissue")
+	@ResponseStatus(HttpStatus.OK)
+	public CommonResponse<TokenResponse> reissue(
+		@CookieValue("refreshToken") String refreshToken,
+		@Parameter(hidden = true) HttpServletResponse httpServletResponse
+	) {
+		return CommonResponse.success(
+			reissueCommandService.reissue(refreshToken, httpServletResponse)
+		);
 	}
 }
