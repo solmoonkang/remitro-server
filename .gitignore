@@ -5,27 +5,36 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 .gradle-home/
 
+### 빌드 부산물 및 임시 파일 (추가됨) ###
+# 컴파일 및 빌드 과정에서 생성되는 임시 파일들
+*.bin
+*.html
+*.jar
+*.war
+/build/
+**/build/
+**/bin/
+**/out/
+
 ### INTELLIJ IDEA ###
 .idea/
 *.iws
 *.iml
 *.ipr
 out/
-# EXCLUDE SUB-MODULE BUILD DIRECTORIES
-**/build/
-**/bin/
-**/out/
 .idea_modules/
 atlassian-ide-plugin.xml
 com_zeroturnaround_jrebel_intellij_jr.xml
 
 ### SPRING BOOT ###
 HELP.md
+
 # LOG FILES
 *.log
+logs/
+
 # TEMP FILES
 tmp/
-logs/
 temp/
 
 ### SYSTEM FILES ###
@@ -45,6 +54,10 @@ Thumbs.db
 .sts4-cache
 bin/
 
+### DATABASE & ENV ###
+# Redis 데이터 및 환경 설정 파일
 *.rdb
 *.aof
 .env
+infrastructure/redis/data/*
+!infrastructure/redis/data/.gitkeep

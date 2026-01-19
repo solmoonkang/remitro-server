@@ -5,25 +5,52 @@ REMITRO는 사용자 간 간편 송금을 안전하게 처리하기 위한 시�
 금융 OpenAPI 제공자 관점에서 계좌 개설부터 입출금, 이체 이력 관리까지 결제 서비스의 핵심 기능을 직접 설계하였습니다.
 
 찰나의 순간에 발생하는 거래들 사이에서 데이터의 정합성과 신뢰성을 유지하는 것을 우선 목표로 구현하였습니다.
-
 <br>
 
 ### 🏗 시스템 아키텍처
 
-각 서비스가 독립적인 책임을 갖도록 분리하고, 모든 요청이 `Gateway`를 거치도록 단일화하여 통합적인 인증과 라우팅 환경을 구축했습니다. 
+- **Gateway & Discovery**: 라우팅, 가용성 관리 및 통합 인증 환경 구축.
 
-- **Gateway & Discovery**: 인프라의 관문으로서 라우팅과 각 서비스의 가용성을 관리합니다.
-- **Member Service**: 별도의 Auth 서비스를 두는 대신, 결제 도메인에 집중하기 위해 사용자 관리와 JWT 인증 책임을 하나로 통합하였습니다.
-- **Account Service**: 계좌 상태 관리와 잔액 증감을 처리하는 핵심 비즈니스 로직을 담당합니다.
-- **Transaction Service**: 모든 거래 결과를 불변(Immutable) 데이터로 기록하여 금융 서비스의 신뢰성을 확보합니다.
 
-#### 서비스 흐름
+- **Member Service**: 사용자 관리 및 JWT 인증 책임 통합.
 
-`Client` → `Gateway (Routing/Auth)` → `Microservices (Member/Account/Transaction)` → `Isolated DB`
 
+- **Account Service**: 비관적 락을 활용한 계좌 상태 및 잔액 관리.
+
+
+- **Transaction Service**: 거래 결과를 불변(Immutable) 데이터로 기록하여 신뢰성 확보.
 <br>
 
-### ✨ 주요 설계 판단 (Key Points)
+### 🐳 Docker 인프라 환경 구축
+
+REMITRO 프로젝트는 서비스 실행에 필요한 핵심 인프라(Discovery, Gateway, Redis)를 Docker로 관리합니다.
+
+이를 통해 복잡한 로컬 설정 없이 즉시 개발 환경을 구성할 수 있습니다.
+
+#### 실행 명령어 (프로젝트 루트 기준)
+```Bash
+# 1. 전체 프로젝트 빌드 (테스트 제외)
+./gradlew clean build -x test
+
+# 2. 도커 컴포즈 실행 (백그라운드 모드)
+docker compose up --build -d
+
+# 3. 인프라 종료 및 컨테이너 삭제
+docker compose down
+```
+
+#### 관리 도구 주소
+
+- **Eureka Dashboard**: `http://localhost:8761` (서비스 등록 및 상태 확인)
+
+
+- **API Gateway**: `http://localhost:8080` (모든 서비스 요청의 단일 진입점)
+
+
+- **Redis Port**: `6379` (데이터 영속화 설정 적용)
+<br>
+
+### ✨ 주요 설계 판단
 
 #### 1. 비관적 락(Pessimistic Lock) 기반의 정합성 확보
 
@@ -42,20 +69,24 @@ REMITRO는 사용자 간 간편 송금을 안전하게 처리하기 위한 시�
 중복 요청이나 네트워크 재시도 상황에서 중복 결제 등 부정 거래가 발생하지 않도록 Idempotency-Key를 도입하였습니다.
 
 이를 통해 동일한 요청에 대해 언제나 일관된 결과를 보장합니다.
-
 <br>
 
 ### 🛠 기술 스택 및 개발 환경
 
-- **Framework**: Spring Boot 3.4.1, Spring Cloud 2023.0.3
+- **Framework**: Spring Boot 3.4.1 / Spring Cloud 2023.0.3
 - **Language**: Java 17 (Toolchain)
 - **Build Tool**: Gradle
+
+
 - **Infrastructure**: Infrastructure: Netflix Eureka (Discovery), Spring Cloud Gateway, Spring Security
+
+
 - **Database**: Spring Data JPA (H2), Redis
+
+
 - **Messaging**: Apache Kafka (Spring Kafka 4.0.1)
 - **Security**: JJWT (JSON Web Token) 0.12.7
 - **Documentation**: SpringDoc OpenAPI 2.8.10 (Swagger)
-
 <br>
 
 ### 📂 패키지 구조 (Standard Layered Architecture)
@@ -67,7 +98,6 @@ REMITRO는 사용자 간 간편 송금을 안전하게 처리하기 위한 시�
  ├─ domain          # 핵심 비즈니스 로직 및 도메인 규칙 (Entity, Policy, Interface)
  └─ infrastructure  # 외부 기술 연동 및 저장소 구현체 (Persistence, Messaging, Config)
 ```
-
 <br>
 
 ### 🔍 Swagger API 명세
@@ -81,7 +111,6 @@ REMITRO는 사용자 간 간편 송금을 안전하게 처리하기 위한 시�
 | **remitro-member**      | `8081` | 회원 가입, 로그인, 내 정보 관리       |
 | **remitro-account**     | `8082` | 계좌 생성, 잔액 증감(입/출금), 계좌 조회 |
 | **remitro-transaction** | `8083` | 거래 내역 이력 조회               |
-
 <br>
 
 ### 📑 주요 API 명세 요약
