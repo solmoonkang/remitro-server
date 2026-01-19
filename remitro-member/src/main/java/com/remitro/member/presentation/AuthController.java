@@ -48,7 +48,9 @@ public class AuthController {
 		@Valid @RequestBody LoginRequest loginRequest,
 		@Parameter(hidden = true) HttpServletResponse httpServletResponse
 	) {
-		return CommonResponse.success(loginCommandService.login(loginRequest, httpServletResponse));
+		return CommonResponse.success(
+			loginCommandService.login(loginRequest, httpServletResponse)
+		);
 	}
 
 	@Operation(
@@ -66,6 +68,8 @@ public class AuthController {
 		@CookieValue("refreshToken") String refreshToken,
 		@Parameter(hidden = true) HttpServletResponse httpServletResponse
 	) {
-		return CommonResponse.success(reissueCommandService.reissue(refreshToken, httpServletResponse));
+		return CommonResponse.success(
+			reissueCommandService.reissue(refreshToken, httpServletResponse)
+		);
 	}
 }
