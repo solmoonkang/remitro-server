@@ -24,6 +24,10 @@ public class RefreshToken {
 		return new RefreshToken(memberId, token, issuedAt.plus(Duration.ofMillis(expiresInMillis)));
 	}
 
+	public static RefreshToken reconstruct(Long memberId, String token) {
+		return new RefreshToken(memberId, token, null);
+	}
+
 	public long secondsUntilExpiration(LocalDateTime now) {
 		long seconds = Duration.between(now, expiresAt).toSeconds();
 		return Math.max(seconds, 0);
