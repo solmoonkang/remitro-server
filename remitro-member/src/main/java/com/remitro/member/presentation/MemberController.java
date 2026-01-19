@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitro.common.response.CommonResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
+import com.remitro.member.application.command.PasswordCommandService;
 import com.remitro.member.application.command.ProfileCommandService;
 import com.remitro.member.application.command.SignUpCommandService;
+import com.remitro.member.application.command.dto.request.PasswordChangeRequest;
 import com.remitro.member.application.command.dto.request.ProfileUpdateRequest;
 import com.remitro.member.application.command.dto.request.SignUpRequest;
 import com.remitro.member.application.query.ProfileQueryService;
@@ -36,6 +38,7 @@ public class MemberController {
 	private final SignUpCommandService signUpCommandService;
 	private final ProfileQueryService profileQueryService;
 	private final ProfileCommandService profileCommandService;
+	private final PasswordCommandService passwordCommandService;
 
 	@Operation(
 		summary = "회원가입",
@@ -91,6 +94,27 @@ public class MemberController {
 		@Valid @RequestBody ProfileUpdateRequest profileUpdateRequest
 	) {
 		profileCommandService.updateProfile(authenticatedUser.memberId(), profileUpdateRequest);
+		return CommonResponse.successNoContent();
+	}
+
+	@Operation(
+		summary = "비밀번호 변경",
+		description = "로그인한 사용자의 비밀번호를 변경합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "비밀번호 변경 성공"),
+		@ApiResponse(responseCode = "400", description = "비밀번호 불일치 및 재사용 방지 검증 실패"),
+		@ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+	})
+	@PatchMapping("/me/password")
+	@ResponseStatus(HttpStatus.OK)
+	public CommonResponse<Void> changePassword(
+		@Parameter(hidden = true) @CurrentUser AuthenticatedUser authenticatedUser,
+		@Valid @RequestBody PasswordChangeRequest passwordChangeRequest
+	) {
+		passwordCommandService.changePassword(authenticatedUser.memberId(), passwordChangeRequest);
 		return CommonResponse.successNoContent();
 	}
 }
