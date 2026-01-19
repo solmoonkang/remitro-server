@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.InternalServerException;
 import com.remitro.common.exception.UnauthorizedException;
+import com.remitro.common.security.AuthenticatedUser;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -55,10 +56,10 @@ public class JwtTokenProvider {
 
 	public AuthenticatedUser authenticate(String accessToken) {
 		final Claims claims = getVerifiedClaims(accessToken, TOKEN_TYPE_ACCESS);
-		return new AuthenticatedUser(Long.parseLong(claims.getSubject()));
+		return AuthenticatedUser.of(Long.parseLong(claims.getSubject()));
 	}
 
-	public Long validateRefreshToken(String refreshToken) {
+	public Long extractMemberId(String refreshToken) {
 		final Claims claims = getVerifiedClaims(refreshToken, TOKEN_TYPE_REFRESH);
 		return Long.parseLong(claims.getSubject());
 	}
@@ -89,5 +90,9 @@ public class JwtTokenProvider {
 			log.error("[✅ LOGGER] JWT 시스템 오류가 발생했습니다: {}", e.getMessage());
 			throw new InternalServerException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	public long getRefreshTokenExpirationTime() {
+		return jwtProperties.refreshTokenExpirationTime();
 	}
 }
