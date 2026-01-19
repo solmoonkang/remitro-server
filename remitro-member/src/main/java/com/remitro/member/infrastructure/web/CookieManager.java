@@ -20,10 +20,10 @@ public class CookieManager {
 	) {
 		ResponseCookie responseCookie = ResponseCookie.from(REFRESH_TOKEN, refreshToken)
 			.httpOnly(true)
-			.secure(true)
+			.secure(false)		// .secure(true) -> 로컬 HTTP 테스트를 위해 false로 변경
 			.path("/")
 			.maxAge(maxAgeSeconds)
-			.sameSite("Strict")
+			.sameSite("Lax") 	// .sameSite("Strict") -> 로컬에서 클라이언트/서버의 도메인이 다르면 Lax가 편함
 			.build();
 
 		httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
