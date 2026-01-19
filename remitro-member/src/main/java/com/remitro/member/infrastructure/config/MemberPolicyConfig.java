@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.remitro.member.domain.member.policy.MemberDataMaskingPolicy;
 import com.remitro.member.domain.member.policy.MemberPasswordPolicy;
 import com.remitro.member.domain.member.policy.MemberSignUpPolicy;
+import com.remitro.member.domain.member.policy.MemberUpdatePolicy;
 import com.remitro.member.domain.member.repository.MemberRepository;
 import com.remitro.member.domain.token.policy.RefreshTokenPolicy;
 
@@ -26,6 +27,11 @@ public class MemberPolicyConfig {
 	@Bean
 	public MemberDataMaskingPolicy memberDataMaskingPolicy() {
 		return new MemberDataMaskingPolicy();
+	}
+
+	@Bean
+	public MemberUpdatePolicy memberUpdatePolicy(MemberRepository memberRepository) {
+		return new MemberUpdatePolicy(memberRepository);
 	}
 
 	@Bean
