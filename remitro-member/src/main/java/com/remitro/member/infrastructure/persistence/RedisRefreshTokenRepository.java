@@ -2,6 +2,7 @@ package com.remitro.member.infrastructure.persistence;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,13 +21,20 @@ public class RedisRefreshTokenRepository implements RefreshTokenRepository {
 	private final StringRedisTemplate stringRedisTemplate;
 
 	@Override
-	public void save(RefreshToken refreshToken) {
-		long secondsUntilExpiration = refreshToken.secondsUntilExpiration(LocalDateTime.now());
+	public Optional<RefreshToken> findByMemberId(Long memberId) {
+		String token = stringRedisTemplate.opsForValue().get(generateKey(memberId));
+		if (token == null) {
+			return Optional.empty();
+		}
+		return Optional.of(RefreshToken.reconstruct(memberId, token));
+	}
 
+	@Override
+	public void save(RefreshToken refreshToken) {
 		stringRedisTemplate.opsForValue().set(
 			generateKey(refreshToken.getMemberId()),
 			refreshToken.getToken(),
-			Duration.ofSeconds(secondsUntilExpiration)
+			Duration.ofSeconds(refreshToken.secondsUntilExpiration(LocalDateTime.now()))
 		);
 	}
 
