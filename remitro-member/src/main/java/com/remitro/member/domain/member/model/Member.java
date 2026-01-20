@@ -14,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -28,6 +29,9 @@ import lombok.NoArgsConstructor;
 		@UniqueConstraint(name = "uk_member_email", columnNames = "email"),
 		@UniqueConstraint(name = "uk_member_nickname", columnNames = "nickname"),
 		@UniqueConstraint(name = "uk_member_phone", columnNames = "phone_number"),
+	},
+	indexes = {
+		@Index(name = "idx_member_status_last_login", columnList = "member_status, last_login_at")
 	}
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -70,6 +74,10 @@ public class Member extends BaseTimeEntity {
 	@Comment("최근 로그인 일시")
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
+
+	@Comment("휴면 전환 일시")
+	@Column(name = "dormant_at")
+	private LocalDateTime dormantAt;
 
 	private Member(String email, String password, String nickname, String phoneNumber) {
 		this.email = email;
@@ -117,5 +125,19 @@ public class Member extends BaseTimeEntity {
 		return this.memberStatus == MemberStatus.LOCKED &&
 			this.lockedAt != null &&
 			this.lockedAt.plusMinutes(10).isBefore(now);
+	}
+
+	public boolean isDormant() {
+		return this.memberStatus == MemberStatus.DORMANT;
+	}
+
+	public void changeToDormant(LocalDateTime now) {
+		this.memberStatus = MemberStatus.DORMANT;
+		this.dormantAt = now;
+	}
+
+	public void activate(LocalDateTime now) {
+		this.memberStatus = MemberStatus.ACTIVE;
+		this.lastLoginAt = now;
 	}
 }
