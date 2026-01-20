@@ -33,6 +33,11 @@ spring:
       # 접속 경로 (http://localhost:8081/h2-console)
       path: /h2-console
 
+  sql:
+    init:
+      # H2 실행 시 data.sql 파일을 읽기 위한 설정
+      mode: always
+
   data:
     redis:
       host: localhost
