@@ -12,6 +12,9 @@ spring:
     password:
 
   jpa:
+    # 테이블 생성 후 데이터 삽입
+    defer-datasource-initialization: true
+
     hibernate:
       ddl-auto: update
 
@@ -25,6 +28,11 @@ spring:
         # JPA가 H2 데이터베이스 전용 문법으로 쿼리를 생성하도록 지정
         dialect: org.hibernate.dialect.H2Dialect
 
+  sql:
+    init:
+      # H2 실행 시 data.sql 파일을 읽기 위한 설정
+      mode: always
+
   h2:
     console:
       # 웹 브라우저에서 DB 내부를 확인할 수 있는 GUI 도구 활성화
@@ -32,11 +40,6 @@ spring:
 
       # 접속 경로 (http://localhost:8081/h2-console)
       path: /h2-console
-
-  sql:
-    init:
-      # H2 실행 시 data.sql 파일을 읽기 위한 설정
-      mode: always
 
   data:
     redis:
@@ -68,8 +71,11 @@ jwt:
 
 batch:
   dormancy:
-    # 휴면 여부 확인 사용자 하루 처리 크기
+    # 한 번에 배치 작업에서 처리할 최대 회원 수
     size: 500
 
-    # 휴면 기준
+    # 휴면 상태로 전환되는 기준 미접속 기간
     inactivity-years: 1
+
+    # 휴면 전환 배치 실행 주기 (초 분 시 일 월 요일: 매일 새벽 3시)
+    cron: "0 0 3 * * *"
