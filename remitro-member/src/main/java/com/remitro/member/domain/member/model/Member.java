@@ -75,6 +75,10 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
 
+	@Comment("휴면 전환 일시")
+	@Column(name = "dormant_at")
+	private LocalDateTime dormantAt;
+
 	private Member(String email, String password, String nickname, String phoneNumber) {
 		this.email = email;
 		this.password = password;
@@ -127,8 +131,9 @@ public class Member extends BaseTimeEntity {
 		return this.memberStatus == MemberStatus.DORMANT;
 	}
 
-	public void changeToDormant() {
+	public void changeToDormant(LocalDateTime now) {
 		this.memberStatus = MemberStatus.DORMANT;
+		this.dormantAt = now;
 	}
 
 	public void activate(LocalDateTime now) {
