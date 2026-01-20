@@ -1,11 +1,11 @@
-package com.remitro.member.application.command;
+package com.remitro.member.application.batch;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,19 +20,23 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class DormancyCommandService {
 
+	private static final String SORT_FIELD_LAST_LOGIN_AT = "lastLoginAt";
+
 	private final MemberRepository memberRepository;
+	private final DormancyBatchProperties dormancyBatchProperties;
 	private final Clock clock;
 
 	public int processInactivityStatusChange() {
+		final LocalDateTime now = LocalDateTime.now(clock);
+
 		final Slice<Member> dormancyCandidates = memberRepository.findByMemberStatusAndLastLoginAtBefore(
 			MemberStatus.ACTIVE,
-			LocalDateTime.now(clock).minusYears(1),
-			PageRequest.of(0, 500)
+			now.minusYears(dormancyBatchProperties.inactivityYears()),
+			PageRequest.of(0, dormancyBatchProperties.size(), Sort.by(SORT_FIELD_LAST_LOGIN_AT).ascending())
 		);
 
-		final List<Member> members = dormancyCandidates.getContent();
-		members.forEach(Member::changeToDormant);
+		dormancyCandidates.forEach(member -> member.changeToDormant(now));
 
-		return members.size();
+		return dormancyCandidates.getNumberOfElements();
 	}
 }
