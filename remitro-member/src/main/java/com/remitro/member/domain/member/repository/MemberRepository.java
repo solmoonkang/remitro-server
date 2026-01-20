@@ -1,7 +1,12 @@
 package com.remitro.member.domain.member.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+
+import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
 
 public interface MemberRepository {
@@ -21,4 +26,10 @@ public interface MemberRepository {
 	boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long memberId);
 
 	Member save(Member member);
+
+	Slice<Member> findByMemberStatusAndLastLoginAtBefore(
+		MemberStatus memberStatus,
+		LocalDateTime lastLoginAt,
+		Pageable pageable
+	);
 }
