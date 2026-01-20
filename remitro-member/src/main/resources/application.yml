@@ -65,3 +65,11 @@ jwt:
   # 밀리초 기준
   access-token-expiration-time: 1800000       # 30분
   refresh-token-expiration-time: 1209600000   # 14일
+
+batch:
+  dormancy:
+    # 휴면 여부 확인 사용자 하루 처리 크기
+    size: 500
+
+    # 휴면 기준
+    inactivity-years: 1
