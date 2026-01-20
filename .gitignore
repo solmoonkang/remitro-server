@@ -5,13 +5,11 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 .gradle-home/
 
-### 빌드 부산물 및 임시 파일 (추가됨) ###
-# 컴파일 및 빌드 과정에서 생성되는 임시 파일들
+### 빌드 부산물 및 임시 파일 ###
 *.bin
 *.html
 *.jar
 *.war
-/build/
 **/build/
 **/bin/
 **/out/
@@ -55,7 +53,6 @@ Thumbs.db
 bin/
 
 ### DATABASE & ENV ###
-# Redis 데이터 및 환경 설정 파일
 *.rdb
 *.aof
 .env
