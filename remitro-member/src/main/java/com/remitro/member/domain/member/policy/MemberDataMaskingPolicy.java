@@ -1,5 +1,8 @@
 package com.remitro.member.domain.member.policy;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class MemberDataMaskingPolicy {
 
 	public String maskEmail(String email) {

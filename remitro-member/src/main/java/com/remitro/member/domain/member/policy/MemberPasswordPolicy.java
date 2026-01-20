@@ -1,12 +1,14 @@
 package com.remitro.member.domain.member.policy;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.BadRequestException;
 
 import lombok.RequiredArgsConstructor;
 
+@Component
 @RequiredArgsConstructor
 public class MemberPasswordPolicy {
 

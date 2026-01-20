@@ -1,11 +1,14 @@
 package com.remitro.member.domain.member.policy;
 
+import org.springframework.stereotype.Component;
+
 import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.ConflictException;
 import com.remitro.member.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Component
 @RequiredArgsConstructor
 public class MemberSignUpPolicy {
 
