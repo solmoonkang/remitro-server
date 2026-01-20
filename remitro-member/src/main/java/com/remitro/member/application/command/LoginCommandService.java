@@ -37,12 +37,13 @@ public class LoginCommandService {
 
 	@Transactional(noRollbackFor = BaseException.class)
 	public TokenResponse login(LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
+		final LocalDateTime now = LocalDateTime.now(clock);
 		final Member member = memberFinder.getMemberByEmail(loginRequest.email());
 
-		checkLoginAvailability(member, LocalDateTime.now(clock));
-		checkPassword(member, loginRequest.password(), LocalDateTime.now(clock));
+		checkLoginAvailability(member, now);
+		checkPassword(member, loginRequest.password(), now);
 
-		return processLoginSuccess(member, httpServletResponse);
+		return processLoginSuccess(member, now, httpServletResponse);
 	}
 
 	private void checkLoginAvailability(Member member, LocalDateTime now) {
@@ -67,12 +68,16 @@ public class LoginCommandService {
 		throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
 	}
 
-	private TokenResponse processLoginSuccess(Member member, HttpServletResponse httpServletResponse) {
+	private TokenResponse processLoginSuccess(
+		Member member,
+		LocalDateTime now,
+		HttpServletResponse httpServletResponse
+	) {
 		if (member.isDormant()) {
-			member.activate(LocalDateTime.now(clock));
+			member.activate(now);
 		}
 
-		member.resetFailedCount(LocalDateTime.now(clock));
+		member.resetFailedCount(now);
 
 		final String accessToken = jwtTokenProvider.issueAccessToken(member.getId());
 		final String refreshToken = jwtTokenProvider.issueRefreshToken(member.getId());
