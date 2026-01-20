@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.remitro.common.error.ErrorCode;
+import com.remitro.common.exception.BaseException;
+import com.remitro.common.exception.ForbiddenException;
+import com.remitro.common.exception.UnauthorizedException;
 import com.remitro.member.application.command.dto.request.LoginRequest;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
@@ -22,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class LoginCommandService {
 
 	private final MemberFinder memberFinder;
@@ -32,13 +35,41 @@ public class LoginCommandService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final Clock clock;
 
+	@Transactional(noRollbackFor = BaseException.class)
 	public TokenResponse login(LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
 		final Member member = memberFinder.getMemberByEmail(loginRequest.email());
 
-		memberLoginPolicy.validateLoginable(member, LocalDateTime.now(clock));
+		checkLoginAvailability(member, LocalDateTime.now(clock));
+		checkPassword(member, loginRequest.password(), LocalDateTime.now(clock));
 
-		if (!memberPasswordPolicy.isPasswordMatch(loginRequest.password(), member.getPassword())) {
-			memberLoginPolicy.validateFailure(member, LocalDateTime.now(clock));
+		return processLoginSuccess(member, httpServletResponse);
+	}
+
+	private void checkLoginAvailability(Member member, LocalDateTime now) {
+		memberLoginPolicy.validateLoginable(member, now);
+
+		if (member.getMemberStatus() == MemberStatus.LOCKED) {
+			throw new ForbiddenException(ErrorCode.MEMBER_LOCKED);
+		}
+	}
+
+	private void checkPassword(Member member, String rawPassword, LocalDateTime now) {
+		if (memberPasswordPolicy.isPasswordMatch(rawPassword, member.getPassword())) {
+			return;
+		}
+
+		memberLoginPolicy.validateFailure(member, now);
+
+		if (member.getMemberStatus() == MemberStatus.LOCKED) {
+			throw new ForbiddenException(ErrorCode.MEMBER_LOCKED);
+		}
+
+		throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
+	}
+
+	private TokenResponse processLoginSuccess(Member member, HttpServletResponse httpServletResponse) {
+		if (member.isDormant()) {
+			member.activate(LocalDateTime.now(clock));
 		}
 
 		member.resetFailedCount(LocalDateTime.now(clock));
