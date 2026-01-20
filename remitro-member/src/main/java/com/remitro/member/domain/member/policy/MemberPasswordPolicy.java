@@ -4,7 +4,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.BadRequestException;
-import com.remitro.common.exception.UnauthorizedException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,10 +12,8 @@ public class MemberPasswordPolicy {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public void validatePasswordMatch(String rawPassword, String encodedPassword) {
-		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-			throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
-		}
+	public boolean isPasswordMatch(String rawPassword, String encodedPassword) {
+		return passwordEncoder.matches(rawPassword, encodedPassword);
 	}
 
 	public void validatePasswordChange(

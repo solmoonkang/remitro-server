@@ -1,5 +1,7 @@
 package com.remitro.member.domain.member.model;
 
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.Comment;
 
 import com.remitro.member.domain.member.enums.MemberStatus;
@@ -57,12 +59,25 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "member_status", length = 20, nullable = false)
 	private MemberStatus memberStatus;
 
+	@Comment("로그인 실패 횟수")
+	@Column(name = "failed_count", nullable = false, columnDefinition = "int default 0")
+	private int failedCount;
+
+	@Comment("계정 잠금 일시")
+	@Column(name = "locked_at")
+	private LocalDateTime lockedAt;
+
+	@Comment("최근 로그인 일시")
+	@Column(name = "last_login_at")
+	private LocalDateTime lastLoginAt;
+
 	private Member(String email, String password, String nickname, String phoneNumber) {
 		this.email = email;
 		this.password = password;
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
 		this.memberStatus = MemberStatus.ACTIVE;
+		this.failedCount = 0;
 	}
 
 	public static Member register(String email, String password, String nickname, String phoneNumber) {
@@ -76,5 +91,31 @@ public class Member extends BaseTimeEntity {
 
 	public void changePassword(String newPassword) {
 		this.password = newPassword;
+	}
+
+	public void increaseFailedCount(LocalDateTime now) {
+		this.failedCount++;
+		if (this.failedCount >= 5) {
+			this.memberStatus = MemberStatus.LOCKED;
+			this.lockedAt = now;
+		}
+	}
+
+	public void resetFailedCount(LocalDateTime now) {
+		this.failedCount = 0;
+		this.lockedAt = null;
+		this.lastLoginAt = now;
+	}
+
+	public void unlock() {
+		this.memberStatus = MemberStatus.ACTIVE;
+		this.failedCount = 0;
+		this.lockedAt = null;
+	}
+
+	public boolean isUnlockable(LocalDateTime now) {
+		return this.memberStatus == MemberStatus.LOCKED &&
+			this.lockedAt != null &&
+			this.lockedAt.plusMinutes(10).isBefore(now);
 	}
 }
