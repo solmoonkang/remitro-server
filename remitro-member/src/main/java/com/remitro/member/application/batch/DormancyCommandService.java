@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.common.security.Role;
-import com.remitro.member.application.support.StatusHistoryRecorder;
+import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.domain.member.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
@@ -28,7 +28,7 @@ public class DormancyCommandService {
 	private static final String SORT_FIELD_LAST_LOGIN_AT = "lastLoginAt";
 
 	private final MemberRepository memberRepository;
-	private final StatusHistoryRecorder statusHistoryRecorder;
+	private final MemberStatusRecorder memberStatusRecorder;
 	private final DormancyBatchProperties dormancyBatchProperties;
 	private final Clock clock;
 
@@ -45,7 +45,7 @@ public class DormancyCommandService {
 			.map(member -> processDormancy(member, now))
 			.toList();
 
-		statusHistoryRecorder.recordAll(dormancyHistories);
+		memberStatusRecorder.recordAll(dormancyHistories);
 
 		return dormancyCandidates.getNumberOfElements();
 	}
@@ -55,7 +55,7 @@ public class DormancyCommandService {
 
 		member.changeToDormant(now);
 
-		return StatusHistory.record(
+		return StatusHistory.recordMemberStatus(
 			member,
 			previousStatus,
 			MemberStatus.DORMANT,
