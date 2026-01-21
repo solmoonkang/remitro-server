@@ -87,7 +87,8 @@ public class StatusHistory extends BaseTimeEntity {
 		MemberStatus previousStatus,
 		MemberStatus currentStatus,
 		ChangeReason changeReason,
-		Role changedByRole
+		Role changedByRole,
+		Long changedById
 	) {
 		return new StatusHistory(
 			member,
@@ -95,7 +96,7 @@ public class StatusHistory extends BaseTimeEntity {
 			currentStatus,
 			changeReason,
 			changedByRole,
-			member.getId()
+			changedById
 		);
 	}
 }
