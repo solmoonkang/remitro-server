@@ -57,12 +57,8 @@ public class LoginCommandService {
 
 		memberLoginPolicy.validateLoginable(member, now);
 
-		statusHistoryRecorder.recordIfChanged(
-			member,
-			previousStatus,
-			ChangeReason.SYSTEM_UNLOCKED_BY_LOGIN_SUCCESS,
-			Role.SYSTEM
-		);
+		statusHistoryRecorder.recordIfChanged(member, previousStatus, ChangeReason.SYSTEM_UNLOCKED_BY_LOGIN_SUCCESS,
+			Role.SYSTEM, member.getId());
 	}
 
 	private void validateLoginAvailability(Member member) {
@@ -84,7 +80,8 @@ public class LoginCommandService {
 			member,
 			previousStatus,
 			ChangeReason.SYSTEM_LOCKED_BY_PASSWORD_FAILURE,
-			Role.SYSTEM
+			Role.SYSTEM,
+			member.getId()
 		);
 
 		if (member.getMemberStatus() == MemberStatus.LOCKED) {
@@ -93,11 +90,8 @@ public class LoginCommandService {
 		throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
 	}
 
-	private TokenResponse processLoginSuccess(
-		Member member,
-		LocalDateTime now,
-		HttpServletResponse httpServletResponse
-	) {
+	private TokenResponse processLoginSuccess(Member member, LocalDateTime now,
+		HttpServletResponse httpServletResponse) {
 		releaseDormancyIfNeeded(member, now);
 
 		member.resetFailedCount(now);
@@ -119,11 +113,7 @@ public class LoginCommandService {
 
 		member.activate(now);
 
-		statusHistoryRecorder.recordIfChanged(
-			member,
-			previousStatus,
-			ChangeReason.USER_ACTIVE_BY_DORMANT_RELEASE,
-			Role.SYSTEM
-		);
+		statusHistoryRecorder.recordIfChanged(member, previousStatus, ChangeReason.USER_ACTIVE_BY_DORMANT_RELEASE,
+			Role.SYSTEM, member.getId());
 	}
 }
