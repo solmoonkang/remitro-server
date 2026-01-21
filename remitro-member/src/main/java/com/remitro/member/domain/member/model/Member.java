@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.Comment;
 
+import com.remitro.common.error.ErrorCode;
+import com.remitro.common.exception.BadRequestException;
 import com.remitro.common.security.Role;
+import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.infrastructure.persistence.BaseTimeEntity;
 
@@ -64,6 +67,11 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "member_status", nullable = false, length = 20)
 	private MemberStatus memberStatus;
 
+	@Comment("로그인 보안 상태")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "login_security_status", nullable = false, length = 20)
+	private LoginSecurityStatus loginSecurityStatus;
+
 	@Comment("회원 권한")
 	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false, length = 20)
@@ -95,6 +103,7 @@ public class Member extends BaseTimeEntity {
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
 		this.memberStatus = MemberStatus.ACTIVE;
+		this.loginSecurityStatus = LoginSecurityStatus.NORMAL;
 		this.role = Role.USER;
 		this.failedCount = 0;
 	}
@@ -115,25 +124,26 @@ public class Member extends BaseTimeEntity {
 	public void increaseFailedCount(LocalDateTime now) {
 		this.failedCount++;
 		if (this.failedCount >= 5) {
-			this.memberStatus = MemberStatus.LOCKED;
+			this.loginSecurityStatus = LoginSecurityStatus.LOCKED;
 			this.lockedAt = now;
 		}
 	}
 
 	public void resetFailedCount(LocalDateTime now) {
+		this.loginSecurityStatus = LoginSecurityStatus.NORMAL;
 		this.failedCount = 0;
 		this.lastLoginAt = now;
 		this.lockedAt = null;
 	}
 
 	public boolean isUnlockable(LocalDateTime now) {
-		return this.memberStatus == MemberStatus.LOCKED
+		return this.loginSecurityStatus == LoginSecurityStatus.LOCKED
 			&& this.lockedAt != null
 			&& this.lockedAt.plusMinutes(10).isBefore(now);
 	}
 
 	public void unlock() {
-		this.memberStatus = MemberStatus.ACTIVE;
+		this.loginSecurityStatus = LoginSecurityStatus.NORMAL;
 		this.failedCount = 0;
 		this.lockedAt = null;
 	}
@@ -154,11 +164,18 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void suspend(LocalDateTime now) {
+		// 정지는 운영 상태만 변경하며, 보안 상태(LoginSecurityStatus)는 변경하지 않는다.
+		if (this.memberStatus == MemberStatus.SUSPENDED) {
+			throw new BadRequestException(ErrorCode.ALREADY_SUSPENDED);
+		}
 		this.memberStatus = MemberStatus.SUSPENDED;
 		this.suspendedAt = now;
 	}
 
 	public void unsuspend() {
+		if (this.memberStatus != MemberStatus.SUSPENDED) {
+			throw new BadRequestException(ErrorCode.NOT_SUSPENDED);
+		}
 		this.memberStatus = MemberStatus.ACTIVE;
 		this.suspendedAt = null;
 	}
