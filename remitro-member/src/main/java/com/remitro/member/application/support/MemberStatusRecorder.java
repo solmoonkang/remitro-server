@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class StatusHistoryRecorder {
+public class MemberStatusRecorder {
 
 	private final StatusHistoryRepository statusHistoryRepository;
 
@@ -31,7 +31,7 @@ public class StatusHistoryRecorder {
 		}
 
 		statusHistoryRepository.save(
-			StatusHistory.record(
+			StatusHistory.recordMemberStatus(
 				member,
 				previousStatus,
 				member.getMemberStatus(),
