@@ -23,7 +23,8 @@ public class StatusHistoryRecorder {
 		Member member,
 		MemberStatus previousStatus,
 		ChangeReason changeReason,
-		Role changedByRole
+		Role changedByRole,
+		Long changedById
 	) {
 		if (previousStatus == member.getMemberStatus()) {
 			return;
@@ -35,7 +36,8 @@ public class StatusHistoryRecorder {
 				previousStatus,
 				member.getMemberStatus(),
 				changeReason,
-				changedByRole
+				changedByRole,
+				changedById
 			)
 		);
 	}
