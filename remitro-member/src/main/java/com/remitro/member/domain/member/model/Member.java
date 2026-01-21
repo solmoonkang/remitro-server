@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.Comment;
 
+import com.remitro.common.security.Role;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.infrastructure.persistence.BaseTimeEntity;
 
@@ -43,7 +44,7 @@ public class Member extends BaseTimeEntity {
 	private Long id;
 
 	@Comment("이메일")
-	@Column(name = "email", length = 100, nullable = false)
+	@Column(name = "email", nullable = false, length = 100)
 	private String email;
 
 	@Comment("해시 비밀번호")
@@ -51,33 +52,42 @@ public class Member extends BaseTimeEntity {
 	private String password;
 
 	@Comment("닉네임")
-	@Column(name = "nickname", length = 50, nullable = false)
+	@Column(name = "nickname", nullable = false, length = 50)
 	private String nickname;
 
 	@Comment("전화번호")
-	@Column(name = "phone_number", length = 20, nullable = false)
+	@Column(name = "phone_number", nullable = false, length = 20)
 	private String phoneNumber;
 
 	@Comment("회원 상태")
 	@Enumerated(EnumType.STRING)
-	@Column(name = "member_status", length = 20, nullable = false)
+	@Column(name = "member_status", nullable = false, length = 20)
 	private MemberStatus memberStatus;
+
+	@Comment("회원 권한")
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role", nullable = false, length = 20)
+	private Role role;
 
 	@Comment("로그인 실패 횟수")
 	@Column(name = "failed_count", nullable = false, columnDefinition = "int default 0")
 	private int failedCount;
 
-	@Comment("계정 잠금 일시")
-	@Column(name = "locked_at")
-	private LocalDateTime lockedAt;
-
 	@Comment("최근 로그인 일시")
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
 
-	@Comment("휴면 전환 일시")
+	@Comment("계정 잠금 일시")
+	@Column(name = "locked_at")
+	private LocalDateTime lockedAt;
+
+	@Comment("휴면 계정 전환 일시")
 	@Column(name = "dormant_at")
 	private LocalDateTime dormantAt;
+
+	@Comment("의심 계정 전환 일시")
+	@Column(name = "suspended_at")
+	private LocalDateTime suspendedAt;
 
 	private Member(String email, String password, String nickname, String phoneNumber) {
 		this.email = email;
@@ -85,6 +95,7 @@ public class Member extends BaseTimeEntity {
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
 		this.memberStatus = MemberStatus.ACTIVE;
+		this.role = Role.USER;
 		this.failedCount = 0;
 	}
 
@@ -111,20 +122,20 @@ public class Member extends BaseTimeEntity {
 
 	public void resetFailedCount(LocalDateTime now) {
 		this.failedCount = 0;
-		this.lockedAt = null;
 		this.lastLoginAt = now;
+		this.lockedAt = null;
+	}
+
+	public boolean isUnlockable(LocalDateTime now) {
+		return this.memberStatus == MemberStatus.LOCKED
+			&& this.lockedAt != null
+			&& this.lockedAt.plusMinutes(10).isBefore(now);
 	}
 
 	public void unlock() {
 		this.memberStatus = MemberStatus.ACTIVE;
 		this.failedCount = 0;
 		this.lockedAt = null;
-	}
-
-	public boolean isUnlockable(LocalDateTime now) {
-		return this.memberStatus == MemberStatus.LOCKED &&
-			this.lockedAt != null &&
-			this.lockedAt.plusMinutes(10).isBefore(now);
 	}
 
 	public boolean isDormant() {
@@ -139,5 +150,6 @@ public class Member extends BaseTimeEntity {
 	public void activate(LocalDateTime now) {
 		this.memberStatus = MemberStatus.ACTIVE;
 		this.lastLoginAt = now;
+		this.dormantAt = null;
 	}
 }
