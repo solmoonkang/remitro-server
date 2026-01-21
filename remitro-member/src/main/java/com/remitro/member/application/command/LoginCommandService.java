@@ -14,10 +14,12 @@ import com.remitro.common.security.Role;
 import com.remitro.member.application.command.dto.request.LoginRequest;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
+import com.remitro.member.application.support.LoginSecurityRecorder;
 import com.remitro.member.application.support.MemberFinder;
-import com.remitro.member.application.support.StatusHistoryRecorder;
+import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.application.support.TokenIssuanceSupport;
 import com.remitro.member.domain.member.enums.ChangeReason;
+import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.policy.MemberLoginPolicy;
@@ -35,7 +37,8 @@ public class LoginCommandService {
 	private final MemberPasswordPolicy memberPasswordPolicy;
 	private final MemberLoginPolicy memberLoginPolicy;
 	private final TokenIssuanceSupport tokenIssuanceSupport;
-	private final StatusHistoryRecorder statusHistoryRecorder;
+	private final MemberStatusRecorder memberStatusRecorder;
+	private final LoginSecurityRecorder loginSecurityRecorder;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final Clock clock;
 
@@ -53,17 +56,28 @@ public class LoginCommandService {
 	}
 
 	private void validateAndUnlockIfPossible(Member member, LocalDateTime now) {
-		final MemberStatus previousStatus = member.getMemberStatus();
+		final LoginSecurityStatus previousSecurityStatus = member.getLoginSecurityStatus();
 
-		memberLoginPolicy.validateLoginable(member, now);
+		if (!memberLoginPolicy.validateLoginable(member, now)) {
+			return;
+		}
 
-		statusHistoryRecorder.recordIfChanged(member, previousStatus, ChangeReason.SYSTEM_UNLOCKED_BY_LOGIN_SUCCESS,
-			Role.SYSTEM, member.getId());
+		loginSecurityRecorder.recordIfChanged(
+			member,
+			previousSecurityStatus,
+			ChangeReason.SYSTEM_UNLOCKED_BY_LOGIN_SUCCESS,
+			Role.SYSTEM,
+			member.getId()
+		);
 	}
 
 	private void validateLoginAvailability(Member member) {
-		if (member.getMemberStatus() == MemberStatus.LOCKED) {
+		if (member.getLoginSecurityStatus() == LoginSecurityStatus.LOCKED) {
 			throw new ForbiddenException(ErrorCode.MEMBER_LOCKED);
+		}
+
+		if (member.getMemberStatus() == MemberStatus.SUSPENDED) {
+			throw new ForbiddenException(ErrorCode.MEMBER_SUSPENDED);
 		}
 	}
 
@@ -72,19 +86,19 @@ public class LoginCommandService {
 			return;
 		}
 
-		final MemberStatus previousStatus = member.getMemberStatus();
+		final LoginSecurityStatus previousSecurityStatus = member.getLoginSecurityStatus();
 
 		memberLoginPolicy.validateFailure(member, now);
 
-		statusHistoryRecorder.recordIfChanged(
+		loginSecurityRecorder.recordIfChanged(
 			member,
-			previousStatus,
+			previousSecurityStatus,
 			ChangeReason.SYSTEM_LOCKED_BY_PASSWORD_FAILURE,
 			Role.SYSTEM,
 			member.getId()
 		);
 
-		if (member.getMemberStatus() == MemberStatus.LOCKED) {
+		if (member.getLoginSecurityStatus() == LoginSecurityStatus.LOCKED) {
 			throw new ForbiddenException(ErrorCode.MEMBER_LOCKED);
 		}
 		throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
@@ -113,7 +127,12 @@ public class LoginCommandService {
 
 		member.activate(now);
 
-		statusHistoryRecorder.recordIfChanged(member, previousStatus, ChangeReason.USER_ACTIVE_BY_DORMANT_RELEASE,
-			Role.SYSTEM, member.getId());
+		memberStatusRecorder.recordIfChanged(
+			member,
+			previousStatus,
+			ChangeReason.USER_ACTIVE_BY_DORMANT_RELEASE,
+			Role.SYSTEM,
+			member.getId()
+		);
 	}
 }
