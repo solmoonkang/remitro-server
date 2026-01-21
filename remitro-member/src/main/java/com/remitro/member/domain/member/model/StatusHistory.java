@@ -4,7 +4,9 @@ import org.hibernate.annotations.Comment;
 
 import com.remitro.common.security.Role;
 import com.remitro.member.domain.member.enums.ChangeReason;
+import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
+import com.remitro.member.domain.member.enums.StatusType;
 import com.remitro.member.infrastructure.persistence.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -28,7 +30,8 @@ import lombok.NoArgsConstructor;
 @Table(
 	name = "MEMBER_STATUS_HISTORIES",
 	indexes = {
-		@Index(name = "idx_member_status_history_member_created_at", columnList = "member_id, created_at")
+		@Index(name = "idx_member_status_history_member_created_at", columnList = "member_id, created_at"),
+		@Index(name = "idx_member_status_history_type_created_at", columnList = "status_type, created_at")
 	}
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,15 +46,18 @@ public class StatusHistory extends BaseTimeEntity {
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
-	@Comment("변경 전 회원 상태")
+	@Comment("")
 	@Enumerated(EnumType.STRING)
+	@Column(name = "status_type", nullable = false, length = 30)
+	private StatusType statusType;
+
+	@Comment("변경 전 회원 상태")
 	@Column(name = "previous_status", nullable = false, length = 20)
-	private MemberStatus previousStatus;
+	private String previousStatus;
 
 	@Comment("변경 후 회원 상태")
-	@Enumerated(EnumType.STRING)
 	@Column(name = "current_status", nullable = false, length = 20)
-	private MemberStatus currentStatus;
+	private String currentStatus;
 
 	@Comment("상태 변경 사유")
 	@Enumerated(EnumType.STRING)
@@ -68,13 +74,15 @@ public class StatusHistory extends BaseTimeEntity {
 
 	private StatusHistory(
 		Member member,
-		MemberStatus previousStatus,
-		MemberStatus currentStatus,
+		StatusType statusType,
+		String previousStatus,
+		String currentStatus,
 		ChangeReason changeReason,
 		Role changedByRole,
 		Long changedById
 	) {
 		this.member = member;
+		this.statusType = statusType;
 		this.previousStatus = previousStatus;
 		this.currentStatus = currentStatus;
 		this.changeReason = changeReason;
@@ -82,7 +90,7 @@ public class StatusHistory extends BaseTimeEntity {
 		this.changedById = changedById;
 	}
 
-	public static StatusHistory record(
+	public static StatusHistory recordMemberStatus(
 		Member member,
 		MemberStatus previousStatus,
 		MemberStatus currentStatus,
@@ -92,8 +100,28 @@ public class StatusHistory extends BaseTimeEntity {
 	) {
 		return new StatusHistory(
 			member,
-			previousStatus,
-			currentStatus,
+			StatusType.MEMBER_STATUS,
+			previousStatus.name(),
+			currentStatus.name(),
+			changeReason,
+			changedByRole,
+			changedById
+		);
+	}
+
+	public static StatusHistory recordLoginSecurityStatus(
+		Member member,
+		LoginSecurityStatus previousSecurityStatus,
+		LoginSecurityStatus currentSecurityStatus,
+		ChangeReason changeReason,
+		Role changedByRole,
+		Long changedById
+	) {
+		return new StatusHistory(
+			member,
+			StatusType.LOGIN_SECURITY_STATUS,
+			previousSecurityStatus.name(),
+			currentSecurityStatus.name(),
 			changeReason,
 			changedByRole,
 			changedById
