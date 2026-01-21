@@ -1,15 +1,18 @@
 package com.remitro.member.infrastructure.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.remitro.common.security.Role;
 import com.remitro.member.infrastructure.security.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -19,19 +22,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	private static final String[] SYSTEM_WHITELIST = {
+	private static final String[] SHOULD_IGNORE_URLS = {
 		"/h2-console/**",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
 		"/favicon.ico"
 	};
-	private static final String[] AUTH_WHITELIST = {
+	private static final String[] PERMIT_ALL_URLS = {
 		"/api/v1/members/signup",
 		"/api/v1/auth/login",
 		"/api/v1/auth/reissue"
 	};
+	private static final String[] ROLE_ADMIN_URLS = {
+		"/api/v1/admin/**"
+	};
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return web -> web.ignoring()
+			.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+			.requestMatchers(SHOULD_IGNORE_URLS);
+	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -42,8 +55,8 @@ public class SecurityConfig {
 
 		httpSecurity
 			.authorizeHttpRequests(authorization -> authorization
-				.requestMatchers(SYSTEM_WHITELIST).permitAll()
-				.requestMatchers(AUTH_WHITELIST).permitAll()
+				.requestMatchers(PERMIT_ALL_URLS).permitAll()
+				.requestMatchers(ROLE_ADMIN_URLS).hasRole(Role.ADMIN.name())
 				.anyRequest().authenticated());
 
 		httpSecurity
