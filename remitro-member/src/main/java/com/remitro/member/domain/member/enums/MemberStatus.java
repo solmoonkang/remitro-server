@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 public enum MemberStatus {
 
 	ACTIVE("정상"),
-	LOCKED("잠금"),
 	DORMANT("휴면"),
 	SUSPENDED("정지"),
 	WITHDRAWN("탈퇴");
