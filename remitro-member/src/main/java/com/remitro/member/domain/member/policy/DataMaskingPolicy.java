@@ -3,7 +3,7 @@ package com.remitro.member.domain.member.policy;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MemberDataMaskingPolicy {
+public class DataMaskingPolicy {
 
 	public String maskEmail(String email) {
 		final String[] parts = email.split("@");
