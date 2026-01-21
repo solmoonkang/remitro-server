@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,10 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain
 	) throws ServletException, IOException {
 
-		final String token = resolveToken(httpServletRequest);
+		final String accessToken = resolveToken(httpServletRequest);
 
-		if (token != null) {
-			final AuthenticatedUser authenticatedUser = jwtTokenProvider.authenticate(token);
+		if (accessToken != null) {
+			final AuthenticatedUser authenticatedUser = jwtTokenProvider.authenticate(accessToken);
 			setAuthenticationToContext(authenticatedUser);
 		}
 
@@ -45,15 +46,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private String resolveToken(HttpServletRequest httpServletRequest) {
 		final String bearer = httpServletRequest.getHeader(AUTHORIZATION_HEADER);
+
 		if (bearer != null && bearer.startsWith(BEARER_PREFIX)) {
 			return bearer.substring(BEARER_PREFIX.length());
 		}
+
 		return null;
 	}
 
 	private void setAuthenticationToContext(AuthenticatedUser authenticatedUser) {
+		final SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(
+			authenticatedUser.role().toAuthority()
+		);
+
 		final Authentication authentication = new UsernamePasswordAuthenticationToken(
-			authenticatedUser, null, List.of()
+			authenticatedUser,
+			null,
+			List.of(grantedAuthority)
 		);
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
