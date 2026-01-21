@@ -60,7 +60,8 @@ public class DormancyCommandService {
 			previousStatus,
 			MemberStatus.DORMANT,
 			ChangeReason.SYSTEM_DORMANT_BY_INACTIVITY,
-			Role.SYSTEM
+			Role.SYSTEM,
+			member.getId()
 		);
 	}
 }
