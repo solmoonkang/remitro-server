@@ -11,6 +11,7 @@ import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.InternalServerException;
 import com.remitro.common.exception.UnauthorizedException;
 import com.remitro.common.security.AuthenticatedUser;
+import com.remitro.common.security.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,7 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtTokenProvider {
 
+	private static final String CLAIM_TOKEN_ROLE = "role";
 	private static final String CLAIM_TOKEN_TYPE = "type";
+
 	private static final String TOKEN_TYPE_ACCESS = "ACCESS";
 	private static final String TOKEN_TYPE_REFRESH = "REFRESH";
 
@@ -35,18 +38,19 @@ public class JwtTokenProvider {
 		this.secretKey = Keys.hmacShaKeyFor(jwtProperties.secret().getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String issueAccessToken(Long memberId) {
-		return issueToken(memberId, TOKEN_TYPE_ACCESS, jwtProperties.accessTokenExpirationTime());
+	public String issueAccessToken(Long memberId, Role role) {
+		return issueToken(memberId, role, TOKEN_TYPE_ACCESS, jwtProperties.accessTokenExpirationTime());
 	}
 
-	public String issueRefreshToken(Long memberId) {
-		return issueToken(memberId, TOKEN_TYPE_REFRESH, jwtProperties.refreshTokenExpirationTime());
+	public String issueRefreshToken(Long memberId, Role role) {
+		return issueToken(memberId, role, TOKEN_TYPE_REFRESH, jwtProperties.refreshTokenExpirationTime());
 	}
 
-	private String issueToken(Long memberId, String type, long expirationTime) {
+	private String issueToken(Long memberId, Role role, String type, long expirationTime) {
 		return Jwts.builder()
 			.subject(String.valueOf(memberId))
 			.issuer(jwtProperties.issuer())
+			.claim(CLAIM_TOKEN_ROLE, role.name())
 			.claim(CLAIM_TOKEN_TYPE, type)
 			.issuedAt(new Date())
 			.expiration(new Date(System.currentTimeMillis() + expirationTime))
@@ -55,26 +59,33 @@ public class JwtTokenProvider {
 	}
 
 	public AuthenticatedUser authenticate(String accessToken) {
-		final Claims claims = getVerifiedClaims(accessToken, TOKEN_TYPE_ACCESS);
-		return AuthenticatedUser.of(Long.parseLong(claims.getSubject()));
+		return extractUserInfo(accessToken, TOKEN_TYPE_ACCESS);
 	}
 
-	public Long extractMemberId(String refreshToken) {
-		final Claims claims = getVerifiedClaims(refreshToken, TOKEN_TYPE_REFRESH);
-		return Long.parseLong(claims.getSubject());
+	public AuthenticatedUser extractUserInfoFromRefreshToken(String refreshToken) {
+		return extractUserInfo(refreshToken, TOKEN_TYPE_REFRESH);
 	}
 
-	private Claims getVerifiedClaims(String token, String expectedTokenType) {
+	private AuthenticatedUser extractUserInfo(String token, String expectedType) {
+		final Claims claims = getVerifiedClaims(token, expectedType);
+
+		return AuthenticatedUser.of(
+			Long.parseLong(claims.getSubject()),
+			Role.valueOf(claims.get(CLAIM_TOKEN_ROLE, String.class))
+		);
+	}
+
+	private Claims getVerifiedClaims(String token, String expectedType) {
 		try {
-			Claims claims = Jwts.parser()
+			final Claims claims = Jwts.parser()
 				.verifyWith(secretKey)
 				.build()
 				.parseSignedClaims(token)
 				.getPayload();
 
-			String actualTokenType = claims.get(CLAIM_TOKEN_TYPE, String.class);
+			final String actualType = claims.get(CLAIM_TOKEN_TYPE, String.class);
 
-			if (!expectedTokenType.equals(actualTokenType)) {
+			if (!expectedType.equals(actualType)) {
 				throw new UnauthorizedException(ErrorCode.INVALID_TOKEN, "타입");
 			}
 
