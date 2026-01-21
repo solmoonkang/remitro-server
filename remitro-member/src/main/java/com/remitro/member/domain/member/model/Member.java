@@ -81,11 +81,11 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "locked_at")
 	private LocalDateTime lockedAt;
 
-	@Comment("휴면 계정 전환 일시")
+	@Comment("계정 휴면 일시")
 	@Column(name = "dormant_at")
 	private LocalDateTime dormantAt;
 
-	@Comment("의심 계정 전환 일시")
+	@Comment("계정 정지 일시")
 	@Column(name = "suspended_at")
 	private LocalDateTime suspendedAt;
 
@@ -151,5 +151,15 @@ public class Member extends BaseTimeEntity {
 		this.memberStatus = MemberStatus.ACTIVE;
 		this.lastLoginAt = now;
 		this.dormantAt = null;
+	}
+
+	public void suspend(LocalDateTime now) {
+		this.memberStatus = MemberStatus.SUSPENDED;
+		this.suspendedAt = now;
+	}
+
+	public void unsuspend() {
+		this.memberStatus = MemberStatus.ACTIVE;
+		this.suspendedAt = null;
 	}
 }
