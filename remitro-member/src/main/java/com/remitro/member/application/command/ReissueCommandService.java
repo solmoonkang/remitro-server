@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.common.exception.UnauthorizedException;
+import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
 import com.remitro.member.application.support.TokenFinder;
@@ -28,20 +29,26 @@ public class ReissueCommandService {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	public TokenResponse reissue(String refreshToken, HttpServletResponse httpServletResponse) {
-		final Long memberId = jwtTokenProvider.extractMemberId(refreshToken);
-		final RefreshToken storedToken = tokenFinder.getRefreshTokenByMemberId(memberId);
+		final AuthenticatedUser authenticatedUser = jwtTokenProvider.extractUserInfoFromRefreshToken(refreshToken);
+		final RefreshToken storedToken = tokenFinder.getRefreshTokenByMemberId(authenticatedUser.memberId());
 
 		try {
 			refreshTokenPolicy.validateMatch(storedToken, refreshToken);
 
 		} catch (UnauthorizedException e) {
-			refreshTokenRepository.deleteByMemberId(memberId);
+			refreshTokenRepository.deleteByMemberId(authenticatedUser.memberId());
 			throw e;
 		}
 
-		final String newAccessToken = jwtTokenProvider.issueAccessToken(memberId);
-		final String newRefreshToken = jwtTokenProvider.issueRefreshToken(memberId);
-		tokenIssuanceSupport.process(memberId, newRefreshToken, httpServletResponse);
+		final String newAccessToken = jwtTokenProvider.issueAccessToken(
+			authenticatedUser.memberId(),
+			authenticatedUser.role()
+		);
+		final String newRefreshToken = jwtTokenProvider.issueRefreshToken(
+			authenticatedUser.memberId(),
+			authenticatedUser.role()
+		);
+		tokenIssuanceSupport.process(authenticatedUser.memberId(), newRefreshToken, httpServletResponse);
 
 		return TokenMapper.toLoginResponse(newAccessToken, newRefreshToken);
 	}
