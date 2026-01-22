@@ -72,10 +72,14 @@ jwt:
 batch:
   dormancy:
     # 한 번에 배치 작업에서 처리할 최대 회원 수
-    size: 500
+    chunk-size: 500
 
     # 휴면 상태로 전환되는 기준 미접속 기간
     inactivity-years: 1
 
     # 휴면 전환 배치 실행 주기 (초 분 시 일 월 요일: 매일 새벽 3시)
+    cron: "0 0 3 * * *"
+
+  suspension:
+    chunk-size: 1000
     cron: "0 0 3 * * *"
