@@ -30,7 +30,9 @@ public class AdminMemberCommandService {
 		final Member member = memberFinder.getMemberById(memberId);
 		final MemberStatus previousStatus = member.getMemberStatus();
 
-		member.suspend(now);
+		// TODO: account 모듈에서 이상 거래 감지 이벤트를 보낼 때, 위반 강도에 따라 기간을 담아 보낸다.
+		//  -> 1회 위반 7일, 2회 위반 30일, 중대 위반 무기한(null)
+		member.suspend(now, null);
 
 		memberStatusRecorder.recordIfChanged(
 			member,
