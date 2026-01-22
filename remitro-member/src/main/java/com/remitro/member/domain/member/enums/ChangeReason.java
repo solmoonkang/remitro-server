@@ -11,6 +11,8 @@ public enum ChangeReason {
 	SYSTEM_LOCKED_BY_PASSWORD_FAILURE("비밀번호 5회 실패로 인한 자동 잠금"),
 	SYSTEM_DORMANT_BY_INACTIVITY("장기 미접속으로 인한 자동 휴면 전환"),
 	SYSTEM_UNLOCKED_BY_LOGIN_SUCCESS("잠금 기간 만료 후 정상 로그인에 따른 보안 잠금 해제"),
+	SYSTEM_SUSPENDED_BY_ABNORMAL_ACTIVITY("이상 거래 및 부정 행위 탐지로 인한 자동 정지"),
+	SYSTEM_ACTIVE_BY_SUSPENSION_EXPIRED("정지 기간 만료에 따른 자동 해제"),
 
 	// 관리자 처리 (ADMIN)
 	ADMIN_SUSPENDED_BY_ABUSE("부정 사용 의심으로 인한 관리자 정지"),
