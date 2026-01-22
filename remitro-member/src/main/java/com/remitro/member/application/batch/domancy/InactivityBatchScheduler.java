@@ -1,4 +1,4 @@
-package com.remitro.member.application.batch;
+package com.remitro.member.application.batch.domancy;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

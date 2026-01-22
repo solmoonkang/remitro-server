@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisRefreshTokenRepository implements RefreshTokenRepository {
+public class RedisTokenRepository implements RefreshTokenRepository {
 
 	private static final String REFRESH_TOKEN_PREFIX = "REFRESH_TOKEN:";
 

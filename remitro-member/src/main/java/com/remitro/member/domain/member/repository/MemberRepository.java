@@ -27,9 +27,15 @@ public interface MemberRepository {
 
 	Member save(Member member);
 
-	Slice<Member> findByMemberStatusAndLastLoginAtBefore(
+	Slice<Member> findDormancyCandidates(
 		MemberStatus memberStatus,
 		LocalDateTime lastLoginAt,
+		Pageable pageable
+	);
+
+	Slice<Member> findExpiredSuspensionCandidates(
+		MemberStatus memberStatus,
+		LocalDateTime suspendUntil,
 		Pageable pageable
 	);
 }
