@@ -1,4 +1,4 @@
-package com.remitro.member.application.batch;
+package com.remitro.member.application.batch.domancy;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -35,10 +35,10 @@ public class DormancyCommandService {
 	public int processInactivityStatusChange() {
 		final LocalDateTime now = LocalDateTime.now(clock);
 
-		final Slice<Member> dormancyCandidates = memberRepository.findByMemberStatusAndLastLoginAtBefore(
+		final Slice<Member> dormancyCandidates = memberRepository.findDormancyCandidates(
 			MemberStatus.ACTIVE,
 			now.minusYears(dormancyBatchProperties.inactivityYears()),
-			PageRequest.of(0, dormancyBatchProperties.size(), Sort.by(SORT_FIELD_LAST_LOGIN_AT).ascending())
+			PageRequest.of(0, dormancyBatchProperties.chunkSize(), Sort.by(SORT_FIELD_LAST_LOGIN_AT).ascending())
 		);
 
 		final List<StatusHistory> dormancyHistories = dormancyCandidates.stream()
