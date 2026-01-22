@@ -21,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,8 @@ import lombok.NoArgsConstructor;
 		@UniqueConstraint(name = "uk_member_phone", columnNames = "phone_number"),
 	},
 	indexes = {
-		@Index(name = "idx_member_status_last_login", columnList = "member_status, last_login_at")
+		@Index(name = "idx_member_status_last_login", columnList = "member_status, last_login_at"),
+		@Index(name = "idx_member_status_suspend_until", columnList = "member_status, suspend_until")
 	}
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -96,6 +98,14 @@ public class Member extends BaseTimeEntity {
 	@Comment("계정 정지 일시")
 	@Column(name = "suspended_at")
 	private LocalDateTime suspendedAt;
+
+	@Comment("정지 해제 예정 시각")
+	@Column(name = "suspend_until")
+	private LocalDateTime suspendUntil;
+
+	@Version
+	@Column(name = "version")
+	private Long version;
 
 	private Member(String email, String password, String nickname, String phoneNumber) {
 		this.email = email;
@@ -163,13 +173,17 @@ public class Member extends BaseTimeEntity {
 		this.dormantAt = null;
 	}
 
-	public void suspend(LocalDateTime now) {
+	public void suspend(LocalDateTime now, LocalDateTime until) {
 		// 정지는 운영 상태만 변경하며, 보안 상태(LoginSecurityStatus)는 변경하지 않는다.
 		if (this.memberStatus == MemberStatus.SUSPENDED) {
 			throw new BadRequestException(ErrorCode.ALREADY_SUSPENDED);
 		}
+		if (until != null && until.isBefore(now)) {
+			throw new BadRequestException(ErrorCode.INVALID_SUSPEND_UNTIL);
+		}
 		this.memberStatus = MemberStatus.SUSPENDED;
 		this.suspendedAt = now;
+		this.suspendUntil = until;
 	}
 
 	public void unsuspend() {
@@ -178,5 +192,18 @@ public class Member extends BaseTimeEntity {
 		}
 		this.memberStatus = MemberStatus.ACTIVE;
 		this.suspendedAt = null;
+		this.suspendUntil = null;
+	}
+
+	public void suspendBySystem(LocalDateTime now, LocalDateTime until) {
+		if (this.memberStatus == MemberStatus.SUSPENDED) {
+			return;
+		}
+		if (until != null && until.isBefore(now)) {
+			throw new BadRequestException(ErrorCode.INVALID_SUSPEND_UNTIL);
+		}
+		this.memberStatus = MemberStatus.SUSPENDED;
+		this.suspendedAt = now;
+		this.suspendUntil = until;
 	}
 }
