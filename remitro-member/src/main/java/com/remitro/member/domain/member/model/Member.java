@@ -1,6 +1,7 @@
 package com.remitro.member.domain.member.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.Comment;
 
@@ -52,9 +53,9 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "email", nullable = false, length = 100)
 	private String email;
 
-	@Comment("해시 비밀번호")
-	@Column(name = "password", nullable = false)
-	private String password;
+	@Comment("비밀번호 해시")
+	@Column(name = "password_hash", nullable = false)
+	private String passwordHash;
 
 	@Comment("닉네임")
 	@Column(name = "nickname", nullable = false, length = 50)
@@ -63,6 +64,10 @@ public class Member extends BaseTimeEntity {
 	@Comment("전화번호")
 	@Column(name = "phone_number", nullable = false, length = 20)
 	private String phoneNumber;
+
+	@Comment("전화번호 해시 (식별/중복/재가입 차단)")
+	@Column(name = "phone_number_hash", nullable = false, length = 64)
+	private String phoneNumberHash;
 
 	@Comment("회원 상태")
 	@Enumerated(EnumType.STRING)
@@ -103,23 +108,34 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "suspend_until")
 	private LocalDateTime suspendUntil;
 
+	@Comment("계정 탈퇴 일시")
+	@Column(name = "withdrawn_at")
+	private LocalDateTime withdrawnAt;
+
 	@Version
 	@Column(name = "version")
 	private Long version;
 
-	private Member(String email, String password, String nickname, String phoneNumber) {
+	private Member(String email, String passwordHash, String nickname, String phoneNumber, String phoneNumberHash) {
 		this.email = email;
-		this.password = password;
+		this.passwordHash = passwordHash;
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
+		this.phoneNumberHash = phoneNumberHash;
 		this.memberStatus = MemberStatus.ACTIVE;
 		this.loginSecurityStatus = LoginSecurityStatus.NORMAL;
 		this.role = Role.USER;
 		this.failedCount = 0;
 	}
 
-	public static Member register(String email, String password, String nickname, String phoneNumber) {
-		return new Member(email, password, nickname, phoneNumber);
+	public static Member register(
+		String email,
+		String passwordHash,
+		String nickname,
+		String phoneNumber,
+		String phoneNumberHash
+	) {
+		return new Member(email, passwordHash, nickname, phoneNumber, phoneNumberHash);
 	}
 
 	public void updateProfile(String newNickname, String newPhoneNumber) {
@@ -127,8 +143,8 @@ public class Member extends BaseTimeEntity {
 		this.phoneNumber = newPhoneNumber;
 	}
 
-	public void changePassword(String newPassword) {
-		this.password = newPassword;
+	public void changePassword(String newPasswordHash) {
+		this.passwordHash = newPasswordHash;
 	}
 
 	public void increaseFailedCount(LocalDateTime now) {
@@ -205,5 +221,17 @@ public class Member extends BaseTimeEntity {
 		this.memberStatus = MemberStatus.SUSPENDED;
 		this.suspendedAt = now;
 		this.suspendUntil = until;
+	}
+
+	public void withdraw(String email, String nickname, String phoneNumber, LocalDateTime now) {
+		if (this.memberStatus == MemberStatus.WITHDRAWN) {
+			throw new BadRequestException(ErrorCode.ALREADY_WITHDRAWN);
+		}
+		this.email = email;
+		this.passwordHash = UUID.randomUUID().toString();
+		this.nickname = nickname;
+		this.phoneNumber = phoneNumber;
+		this.memberStatus = MemberStatus.WITHDRAWN;
+		this.withdrawnAt = now;
 	}
 }
