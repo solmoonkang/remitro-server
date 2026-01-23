@@ -22,7 +22,7 @@ public class TokenIssuanceSupport {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final Clock clock;
 
-	public void process(Long memberId, String refreshToken, HttpServletResponse httpServletResponse) {
+	public void issueAndStoreRefreshToken(Long memberId, String refreshToken, HttpServletResponse httpServletResponse) {
 		final long expirationTime = jwtTokenProvider.getRefreshTokenExpirationTime();
 
 		final RefreshToken tokenToStore = RefreshToken.issue(
@@ -31,8 +31,8 @@ public class TokenIssuanceSupport {
 			expirationTime,
 			LocalDateTime.now(clock)
 		);
-		refreshTokenRepository.save(tokenToStore);
 
+		refreshTokenRepository.save(tokenToStore);
 		cookieManager.setRefreshTokenCookie(httpServletResponse, refreshToken, expirationTime / 1000);
 	}
 }
