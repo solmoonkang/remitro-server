@@ -1,5 +1,9 @@
--- 1. 테스트용 데이터 삽입
-DELETE FROM member;
+-- 기존 데이터 초기화
+DELETE
+FROM member;
 
-INSERT INTO member (email, password, nickname, phone_number, member_status, last_login_at, failed_count, created_at, updated_at)
-VALUES ('testMember@example.com', 'password123!', 'testNickname', '01012345678', 'ACTIVE', DATEADD('YEAR', -2, CURRENT_TIMESTAMP), 0, now(), now());
+-- 시스템 관리자 (ADMIN)
+INSERT INTO member (email, password_hash, nickname, phone_number, phone_number_hash, member_status,
+                    login_security_status, role, failed_count, created_at, updated_at, version)
+VALUES ('adminMember@example.com', 'adminP@ss0rd!', 'adminNickname', '01012345678', 'ADMIN_PHONE_HASH_VALUE',
+        'ACTIVE', 'NORMAL', 'ADMIN', 0, now(), now(), 0);
