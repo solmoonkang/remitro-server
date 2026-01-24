@@ -1,4 +1,4 @@
-package com.remitro.member.domain.member.enums;
+package com.remitro.member.domain.history.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
