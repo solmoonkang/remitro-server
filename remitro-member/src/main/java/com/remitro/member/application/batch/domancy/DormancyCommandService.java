@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.support.MemberStatusRecorder;
-import com.remitro.member.domain.history.enums.ChangeReason;
+import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
-import com.remitro.member.domain.history.model.StatusHistory;
+import com.remitro.member.domain.audit.model.StatusHistory;
 import com.remitro.member.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;

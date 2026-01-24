@@ -1,12 +1,12 @@
-package com.remitro.member.domain.history.model;
+package com.remitro.member.domain.audit.model;
 
 import org.hibernate.annotations.Comment;
 
 import com.remitro.common.security.Role;
-import com.remitro.member.domain.history.enums.ChangeReason;
+import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
-import com.remitro.member.domain.history.enums.StatusType;
+import com.remitro.member.domain.audit.enums.StatusType;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.infrastructure.persistence.BaseTimeEntity;
 

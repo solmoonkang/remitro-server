@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.ForbiddenException;
 import com.remitro.member.application.support.LoginSecurityRecorder;
-import com.remitro.member.domain.history.enums.ChangeReason;
+import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;

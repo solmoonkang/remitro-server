@@ -1,8 +1,8 @@
-package com.remitro.member.domain.history.repository;
+package com.remitro.member.domain.audit.repository;
 
 import java.util.List;
 
-import com.remitro.member.domain.history.model.StatusHistory;
+import com.remitro.member.domain.audit.model.StatusHistory;
 
 public interface StatusHistoryRepository {
 
