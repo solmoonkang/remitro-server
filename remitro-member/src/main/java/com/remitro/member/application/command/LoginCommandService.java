@@ -47,8 +47,8 @@ public class LoginCommandService {
 		loginValidator.validateLoginEligibility(member);
 
 		try {
+			passwordValidator.validatePasswordMatch(loginRequest.password(), member.getPasswordHash());
 
-			passwordValidator.validatePasswordMatch(member.getPasswordHash(), loginRequest.password());
 		} catch (UnauthorizedException e) {
 			loginValidator.handlePasswordFailure(member, now);
 			throw e;
