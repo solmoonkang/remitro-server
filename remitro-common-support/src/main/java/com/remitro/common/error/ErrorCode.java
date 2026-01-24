@@ -12,6 +12,8 @@ public enum ErrorCode {
 
 	METHOD_NOT_ALLOWED(405, "C405001", "허용되지 않은 HTTP 메소드입니다."),
 
+	DUPLICATE_RESOURCE(409, "C409001", "이미 가입된 정보가 존재하거나 중복된 데이터가 있습니다."),
+
 	INTERNAL_SERVER_ERROR(500, "C500001", "서버 내부 오류가 발생했습니다."),
 	ALGORITHM_CRYPTO_ERROR(500, "C500002", "암호화 알고리즘 실행 중 오류가 발생했습니다."),
 
