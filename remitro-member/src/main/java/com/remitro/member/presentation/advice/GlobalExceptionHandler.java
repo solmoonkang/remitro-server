@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -54,6 +56,15 @@ public class GlobalExceptionHandler {
 			.message(ErrorCode.INVALID_INPUT_VALUE.getMessage())
 			.validation(validationErrors)
 			.build());
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+		log.error("[✅ LOGGER] DATA INTEGRITY VIOLATION: {}", e.getMessage());
+
+		return ResponseEntity
+			.status(HttpStatus.CONFLICT)
+			.body(ErrorResponse.of(ErrorCode.DUPLICATE_RESOURCE));
 	}
 
 	@ExceptionHandler(Exception.class)
