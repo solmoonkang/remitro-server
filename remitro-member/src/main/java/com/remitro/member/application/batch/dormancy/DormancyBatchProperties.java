@@ -1,4 +1,4 @@
-package com.remitro.member.application.batch.domancy;
+package com.remitro.member.application.batch.dormancy;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

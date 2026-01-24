@@ -10,7 +10,7 @@ import com.remitro.common.exception.BadRequestException;
 import com.remitro.common.security.Role;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
-import com.remitro.member.infrastructure.persistence.BaseTimeEntity;
+import com.remitro.member.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

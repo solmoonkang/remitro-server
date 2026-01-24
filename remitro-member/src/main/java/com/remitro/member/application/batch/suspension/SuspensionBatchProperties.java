@@ -1,4 +1,4 @@
-package com.remitro.member.application.batch.suspend;
+package com.remitro.member.application.batch.suspension;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

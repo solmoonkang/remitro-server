@@ -1,4 +1,4 @@
-package com.remitro.member.application.support;
+package com.remitro.member.application.query;
 
 import org.springframework.stereotype.Component;
 

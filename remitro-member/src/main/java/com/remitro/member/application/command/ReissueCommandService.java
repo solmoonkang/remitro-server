@@ -7,7 +7,7 @@ import com.remitro.common.exception.UnauthorizedException;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
-import com.remitro.member.application.support.TokenFinder;
+import com.remitro.member.application.query.TokenFinder;
 import com.remitro.member.application.support.TokenIssuanceSupport;
 import com.remitro.member.application.validator.TokenValidator;
 import com.remitro.member.domain.token.model.RefreshToken;

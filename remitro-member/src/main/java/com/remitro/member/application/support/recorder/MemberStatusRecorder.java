@@ -1,4 +1,4 @@
-package com.remitro.member.application.support;
+package com.remitro.member.application.support.recorder;
 
 import java.util.Collection;
 

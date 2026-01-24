@@ -13,7 +13,7 @@ import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.NotFoundException;
 import com.remitro.common.security.Role;
 import com.remitro.member.application.command.dto.request.WithdrawalRequest;
-import com.remitro.member.application.support.MemberStatusRecorder;
+import com.remitro.member.application.support.recorder.MemberStatusRecorder;
 import com.remitro.member.application.validator.PasswordValidator;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;

@@ -1,4 +1,4 @@
-package com.remitro.member.application.batch.suspend;
+package com.remitro.member.application.command;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -12,7 +12,8 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.member.application.support.MemberStatusRecorder;
+import com.remitro.member.application.batch.suspension.SuspensionBatchProperties;
+import com.remitro.member.application.support.recorder.MemberStatusRecorder;
 import com.remitro.member.application.support.SuspensionReleaseSupport;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;

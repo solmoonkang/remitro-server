@@ -1,4 +1,4 @@
-package com.remitro.member.infrastructure.persistence;
+package com.remitro.member.domain.common;
 
 import java.time.LocalDateTime;
 
