@@ -1,25 +1,23 @@
-package com.remitro.member.domain.member.model;
+package com.remitro.member.domain.history.model;
 
 import org.hibernate.annotations.Comment;
 
 import com.remitro.common.security.Role;
-import com.remitro.member.domain.member.enums.ChangeReason;
+import com.remitro.member.domain.history.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
-import com.remitro.member.domain.member.enums.StatusType;
+import com.remitro.member.domain.history.enums.StatusType;
+import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.infrastructure.persistence.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,9 +40,9 @@ public class StatusHistory extends BaseTimeEntity {
 	@Column(name = "member_status_history_id")
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "member_id", nullable = false)
-	private Member member;
+	@Comment("회원 ID")
+	@Column(name = "member_id", nullable = false)
+	private Long memberId;
 
 	@Comment("")
 	@Enumerated(EnumType.STRING)
@@ -73,7 +71,7 @@ public class StatusHistory extends BaseTimeEntity {
 	private Long changedById;
 
 	private StatusHistory(
-		Member member,
+		Long memberId,
 		StatusType statusType,
 		String previousStatus,
 		String currentStatus,
@@ -81,7 +79,7 @@ public class StatusHistory extends BaseTimeEntity {
 		Role changedByRole,
 		Long changedById
 	) {
-		this.member = member;
+		this.memberId = memberId;
 		this.statusType = statusType;
 		this.previousStatus = previousStatus;
 		this.currentStatus = currentStatus;
@@ -90,38 +88,68 @@ public class StatusHistory extends BaseTimeEntity {
 		this.changedById = changedById;
 	}
 
-	public static StatusHistory recordMemberStatus(
+	// MemberStatus 시스템 자동 처리용
+	public static StatusHistory ofSystem(Member member, MemberStatus previousStatus, ChangeReason changeReason) {
+		return new StatusHistory(
+			member.getId(),
+			StatusType.MEMBER_STATUS,
+			previousStatus.name(),
+			member.getMemberStatus().name(),
+			changeReason,
+			Role.SYSTEM,
+			null
+		);
+	}
+
+	// MemberStatus 수동 변경용 (관리자/유저)
+	public static StatusHistory ofManual(
 		Member member,
 		MemberStatus previousStatus,
-		MemberStatus currentStatus,
 		ChangeReason changeReason,
 		Role changedByRole,
 		Long changedById
 	) {
 		return new StatusHistory(
-			member,
+			member.getId(),
 			StatusType.MEMBER_STATUS,
 			previousStatus.name(),
-			currentStatus.name(),
+			member.getMemberStatus().name(),
 			changeReason,
 			changedByRole,
 			changedById
 		);
 	}
 
-	public static StatusHistory recordLoginSecurityStatus(
+	// LoginSecurityStatus 시스템 자동 처리용
+	public static StatusHistory ofSecuritySystem(
 		Member member,
-		LoginSecurityStatus previousSecurityStatus,
-		LoginSecurityStatus currentSecurityStatus,
+		LoginSecurityStatus previousStatus,
+		ChangeReason changeReason
+	) {
+		return new StatusHistory(
+			member.getId(),
+			StatusType.LOGIN_SECURITY_STATUS,
+			previousStatus.name(),
+			member.getLoginSecurityStatus().name(),
+			changeReason,
+			Role.SYSTEM,
+			null
+		);
+	}
+
+	// 4. LoginSecurityStatus 수동 변경용 (관리자 등)
+	public static StatusHistory ofSecurityManual(
+		Member member,
+		LoginSecurityStatus previousStatus,
 		ChangeReason changeReason,
 		Role changedByRole,
 		Long changedById
 	) {
 		return new StatusHistory(
-			member,
+			member.getId(),
 			StatusType.LOGIN_SECURITY_STATUS,
-			previousSecurityStatus.name(),
-			currentSecurityStatus.name(),
+			previousStatus.name(),
+			member.getLoginSecurityStatus().name(),
 			changeReason,
 			changedByRole,
 			changedById
