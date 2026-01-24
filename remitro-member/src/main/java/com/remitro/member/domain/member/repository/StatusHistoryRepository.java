@@ -1,12 +1,12 @@
 package com.remitro.member.domain.member.repository;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.remitro.member.domain.member.model.StatusHistory;
 
 public interface StatusHistoryRepository {
 
-	void save(StatusHistory statusHistory);
+	StatusHistory save(StatusHistory statusHistory);
 
-	void saveAll(Collection<StatusHistory> statusHistories);
+	<S extends StatusHistory> List<S> saveAll(Iterable<S> statusHistories);
 }
