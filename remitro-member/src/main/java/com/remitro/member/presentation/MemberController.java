@@ -1,6 +1,7 @@
 package com.remitro.member.presentation;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +16,11 @@ import com.remitro.common.security.CurrentUser;
 import com.remitro.member.application.command.PasswordCommandService;
 import com.remitro.member.application.command.ProfileCommandService;
 import com.remitro.member.application.command.SignUpCommandService;
+import com.remitro.member.application.command.WithdrawalCommandService;
 import com.remitro.member.application.command.dto.request.PasswordChangeRequest;
 import com.remitro.member.application.command.dto.request.ProfileUpdateRequest;
 import com.remitro.member.application.command.dto.request.SignUpRequest;
+import com.remitro.member.application.command.dto.request.WithdrawalRequest;
 import com.remitro.member.application.query.ProfileQueryService;
 import com.remitro.member.application.query.dto.response.MemberProfileResponse;
 
@@ -26,6 +29,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +43,7 @@ public class MemberController {
 	private final ProfileQueryService profileQueryService;
 	private final ProfileCommandService profileCommandService;
 	private final PasswordCommandService passwordCommandService;
+	private final WithdrawalCommandService withdrawalCommandService;
 
 	@Operation(
 		summary = "회원가입",
@@ -115,6 +120,27 @@ public class MemberController {
 		@Valid @RequestBody PasswordChangeRequest passwordChangeRequest
 	) {
 		passwordCommandService.changePassword(authenticatedUser.memberId(), passwordChangeRequest);
+		return CommonResponse.successNoContent();
+	}
+
+	@Operation(
+		summary = "회원 탈퇴",
+		description = "로그인한 사용자의 계정을 탈퇴 처리하고 세션을 만료시킵니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "회원 탈퇴 성공"),
+		@ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+	})
+	@DeleteMapping("/me")
+	@ResponseStatus(HttpStatus.OK)
+	public CommonResponse<Void> withdraw(
+		@Parameter(hidden = true) @CurrentUser AuthenticatedUser authenticatedUser,
+		@Valid @RequestBody WithdrawalRequest withdrawalRequest,
+		HttpServletResponse httpServletResponse
+	) {
+		withdrawalCommandService.withdraw(authenticatedUser.memberId(), withdrawalRequest, httpServletResponse);
 		return CommonResponse.successNoContent();
 	}
 }

@@ -1,6 +1,7 @@
 package com.remitro.member.infrastructure.persistence;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,6 +14,18 @@ import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.repository.MemberRepository;
 
 public interface JpaMemberRepository extends JpaRepository<Member, Long>, MemberRepository {
+
+	@Query("SELECT m "
+		+ "FROM Member m "
+		+ "WHERE m.id = :memberId AND m.memberStatus != 'WITHDRAWN'"
+	)
+	Optional<Member> findActiveById(@Param("memberId") Long memberId);
+
+	@Query("SELECT m "
+		+ "FROM Member m "
+		+ "WHERE m.email = :email AND m.memberStatus != 'WITHDRAWN'"
+	)
+	Optional<Member> findActiveByEmail(@Param("email") String email);
 
 	@Query("SELECT m "
 		+ "FROM Member m "
@@ -33,4 +46,10 @@ public interface JpaMemberRepository extends JpaRepository<Member, Long>, Member
 		@Param("suspendUntil") LocalDateTime suspendUntil,
 		Pageable pageable
 	);
+
+	@Query("SELECT m "
+		+ "FROM Member m "
+		+ "WHERE m.phoneNumberHash = :phoneNumberHash AND m.memberStatus = 'WITHDRAWN'"
+	)
+	Optional<Member> findWithdrawnByPhoneNumberHash(@Param("phoneNumberHash") String phoneNumberHash);
 }

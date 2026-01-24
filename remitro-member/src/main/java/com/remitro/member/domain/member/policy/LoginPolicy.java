@@ -8,9 +8,9 @@ import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.model.Member;
 
 @Component
-public class MemberLoginPolicy {
+public class LoginPolicy {
 
-	public boolean validateLoginable(Member member, LocalDateTime now) {
+	public boolean unlockIfEligible(Member member, LocalDateTime now) {
 		if (member.getLoginSecurityStatus() == LoginSecurityStatus.LOCKED && member.isUnlockable(now)) {
 			member.unlock();
 			return true;
@@ -19,7 +19,7 @@ public class MemberLoginPolicy {
 		return false;
 	}
 
-	public void validateFailure(Member member, LocalDateTime now) {
+	public void applyLoginFailure(Member member, LocalDateTime now) {
 		member.increaseFailedCount(now);
 	}
 }

@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.command.dto.request.ProfileUpdateRequest;
 import com.remitro.member.application.support.MemberFinder;
+import com.remitro.member.application.validator.UpdateValidator;
 import com.remitro.member.domain.member.model.Member;
-import com.remitro.member.domain.member.policy.MemberUpdatePolicy;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,13 +17,13 @@ import lombok.RequiredArgsConstructor;
 public class ProfileCommandService {
 
 	private final MemberFinder memberFinder;
-	private final MemberUpdatePolicy memberUpdatePolicy;
+	private final UpdateValidator updateValidator;
 
-	@CacheEvict(value = "members", key = "'ID:' + #memberId")
+	@CacheEvict(value = "memberProfile", key = "'ID:' + #memberId")
 	public void updateProfile(Long memberId, ProfileUpdateRequest profileUpdateRequest) {
 		final Member member = memberFinder.getMemberById(memberId);
 
-		memberUpdatePolicy.validateUniqueness(
+		updateValidator.validateProfileUpdateUniqueness(
 			memberId,
 			profileUpdateRequest.nickname(),
 			profileUpdateRequest.phoneNumber()

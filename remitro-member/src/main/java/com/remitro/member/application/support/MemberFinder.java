@@ -16,15 +16,14 @@ public class MemberFinder {
 
 	private final MemberRepository memberRepository;
 
-	@Cacheable(value = "members", key = "'ID:' + #memberId")
 	public Member getMemberById(Long memberId) {
-		return memberRepository.findById(memberId)
+		return memberRepository.findActiveById(memberId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 
-	@Cacheable(value = "members", key = "'EMAIL:' + #email")
+	@Cacheable(value = "memberSession", key = "'EMAIL:' + #email")
 	public Member getMemberByEmail(String email) {
-		return memberRepository.findByEmail(email)
+		return memberRepository.findActiveByEmail(email)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 }

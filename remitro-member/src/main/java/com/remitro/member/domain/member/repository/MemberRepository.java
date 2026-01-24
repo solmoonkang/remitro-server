@@ -13,7 +13,9 @@ public interface MemberRepository {
 
 	Optional<Member> findById(Long memberId);
 
-	Optional<Member> findByEmail(String email);
+	Optional<Member> findActiveById(Long memberId);
+
+	Optional<Member> findActiveByEmail(String email);
 
 	boolean existsByEmail(String email);
 
@@ -21,7 +23,7 @@ public interface MemberRepository {
 
 	boolean existsByNicknameAndIdNot(String nickname, Long memberId);
 
-	boolean existsByPhoneNumber(String phoneNumber);
+	boolean existsByPhoneNumberHash(String phoneNumberHash);
 
 	boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long memberId);
 
@@ -38,4 +40,6 @@ public interface MemberRepository {
 		LocalDateTime suspendUntil,
 		Pageable pageable
 	);
+
+	Optional<Member> findWithdrawnByPhoneNumberHash(String phoneNumberHash);
 }

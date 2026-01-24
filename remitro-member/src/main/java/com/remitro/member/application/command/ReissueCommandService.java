@@ -9,8 +9,8 @@ import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
 import com.remitro.member.application.support.TokenFinder;
 import com.remitro.member.application.support.TokenIssuanceSupport;
+import com.remitro.member.application.validator.TokenValidator;
 import com.remitro.member.domain.token.model.RefreshToken;
-import com.remitro.member.domain.token.policy.RefreshTokenPolicy;
 import com.remitro.member.domain.token.repository.RefreshTokenRepository;
 import com.remitro.member.infrastructure.security.JwtTokenProvider;
 
@@ -24,7 +24,7 @@ public class ReissueCommandService {
 
 	private final TokenFinder tokenFinder;
 	private final RefreshTokenRepository refreshTokenRepository;
-	private final RefreshTokenPolicy refreshTokenPolicy;
+	private final TokenValidator tokenValidator;
 	private final TokenIssuanceSupport tokenIssuanceSupport;
 	private final JwtTokenProvider jwtTokenProvider;
 
@@ -33,7 +33,7 @@ public class ReissueCommandService {
 		final RefreshToken storedToken = tokenFinder.getRefreshTokenByMemberId(authenticatedUser.memberId());
 
 		try {
-			refreshTokenPolicy.validateMatch(storedToken, refreshToken);
+			tokenValidator.validateTokenMatch(storedToken, refreshToken);
 
 		} catch (UnauthorizedException e) {
 			refreshTokenRepository.deleteByMemberId(authenticatedUser.memberId());
@@ -48,7 +48,12 @@ public class ReissueCommandService {
 			authenticatedUser.memberId(),
 			authenticatedUser.role()
 		);
-		tokenIssuanceSupport.process(authenticatedUser.memberId(), newRefreshToken, httpServletResponse);
+
+		tokenIssuanceSupport.issueAndStoreRefreshToken(
+			authenticatedUser.memberId(),
+			newRefreshToken,
+			httpServletResponse
+		);
 
 		return TokenMapper.toLoginResponse(newAccessToken, newRefreshToken);
 	}
