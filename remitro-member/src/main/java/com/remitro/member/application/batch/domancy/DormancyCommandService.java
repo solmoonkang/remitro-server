@@ -10,12 +10,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.security.Role;
 import com.remitro.member.application.support.MemberStatusRecorder;
-import com.remitro.member.domain.member.enums.ChangeReason;
+import com.remitro.member.domain.history.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
-import com.remitro.member.domain.member.model.StatusHistory;
+import com.remitro.member.domain.history.model.StatusHistory;
 import com.remitro.member.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -52,16 +51,8 @@ public class DormancyCommandService {
 
 	private StatusHistory processDormancy(Member member, LocalDateTime now) {
 		final MemberStatus previousStatus = member.getMemberStatus();
-
 		member.changeToDormant(now);
 
-		return StatusHistory.recordMemberStatus(
-			member,
-			previousStatus,
-			MemberStatus.DORMANT,
-			ChangeReason.SYSTEM_DORMANT_BY_INACTIVITY,
-			Role.SYSTEM,
-			member.getId()
-		);
+		return StatusHistory.ofSystem(member, previousStatus, ChangeReason.SYSTEM_DORMANT_BY_INACTIVITY);
 	}
 }

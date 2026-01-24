@@ -15,7 +15,7 @@ import com.remitro.common.security.Role;
 import com.remitro.member.application.command.dto.request.WithdrawalRequest;
 import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.application.validator.PasswordValidator;
-import com.remitro.member.domain.member.enums.ChangeReason;
+import com.remitro.member.domain.history.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.policy.MaskingPolicy;
@@ -61,12 +61,8 @@ public class WithdrawalCommandService {
 		refreshTokenRepository.deleteByMemberId(memberId);
 		cookieManager.deleteRefreshTokenCookie(httpServletResponse);
 
-		memberStatusRecorder.recordIfChanged(
-			member,
-			previousStatus,
-			ChangeReason.USER_WITHDRAWN_BY_SELF,
-			Role.USER,
-			memberId
+		memberStatusRecorder.recordManualAction(
+			member, previousStatus, ChangeReason.USER_WITHDRAWN_BY_SELF, Role.USER, memberId
 		);
 
 		evictCaches(memberId, member.getEmail());

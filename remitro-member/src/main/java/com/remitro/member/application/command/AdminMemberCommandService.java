@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.remitro.common.security.Role;
 import com.remitro.member.application.support.MemberFinder;
 import com.remitro.member.application.support.MemberStatusRecorder;
-import com.remitro.member.domain.member.enums.ChangeReason;
+import com.remitro.member.domain.history.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
 
@@ -34,27 +34,18 @@ public class AdminMemberCommandService {
 		//  -> 1회 위반 7일, 2회 위반 30일, 중대 위반 무기한(null)
 		member.suspend(now, null);
 
-		memberStatusRecorder.recordIfChanged(
-			member,
-			previousStatus,
-			ChangeReason.ADMIN_SUSPENDED_BY_REPORT,
-			Role.ADMIN,
-			adminId
+		memberStatusRecorder.recordManualAction(
+			member, previousStatus, ChangeReason.ADMIN_SUSPENDED_BY_REPORT, Role.ADMIN, adminId
 		);
 	}
 
 	public void unsuspend(Long adminId, Long memberId) {
 		final Member member = memberFinder.getMemberById(memberId);
 		final MemberStatus previousStatus = member.getMemberStatus();
-
 		member.unsuspend();
 
-		memberStatusRecorder.recordIfChanged(
-			member,
-			previousStatus,
-			ChangeReason.ADMIN_ACTIVE_BY_APPEAL,
-			Role.ADMIN,
-			adminId
+		memberStatusRecorder.recordManualAction(
+			member, previousStatus, ChangeReason.ADMIN_ACTIVE_BY_APPEAL, Role.ADMIN, adminId
 		);
 	}
 }

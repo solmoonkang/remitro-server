@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 
 import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.ForbiddenException;
-import com.remitro.common.security.Role;
 import com.remitro.member.application.support.LoginSecurityRecorder;
-import com.remitro.member.domain.member.enums.ChangeReason;
+import com.remitro.member.domain.history.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
@@ -27,12 +26,8 @@ public class LoginValidator {
 		final LoginSecurityStatus previousSecurityStatus = member.getLoginSecurityStatus();
 
 		if (loginPolicy.unlockIfEligible(member, now)) {
-			loginSecurityRecorder.recordIfChanged(
-				member,
-				previousSecurityStatus,
-				ChangeReason.SYSTEM_UNLOCKED_BY_LOGIN_SUCCESS,
-				Role.SYSTEM,
-				member.getId()
+			loginSecurityRecorder.recordSystemAction(
+				member, previousSecurityStatus, ChangeReason.SYSTEM_UNLOCKED_BY_LOGIN_SUCCESS
 			);
 		}
 	}
@@ -52,16 +47,12 @@ public class LoginValidator {
 	}
 
 	public void handlePasswordFailure(Member member, LocalDateTime now) {
-		final LoginSecurityStatus previous = member.getLoginSecurityStatus();
+		final LoginSecurityStatus previousSecurityStatus = member.getLoginSecurityStatus();
 
 		loginPolicy.applyLoginFailure(member, now);
 
-		loginSecurityRecorder.recordIfChanged(
-			member,
-			previous,
-			ChangeReason.SYSTEM_LOCKED_BY_PASSWORD_FAILURE,
-			Role.SYSTEM,
-			member.getId()
+		loginSecurityRecorder.recordSystemAction(
+			member, previousSecurityStatus, ChangeReason.SYSTEM_LOCKED_BY_PASSWORD_FAILURE
 		);
 
 		if (member.getLoginSecurityStatus() == LoginSecurityStatus.LOCKED) {
