@@ -1,4 +1,4 @@
-package com.remitro.member.application.command;
+package com.remitro.member.application.command.signup;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.common.support.DataHasher;
 import com.remitro.member.application.command.dto.request.SignUpRequest;
-import com.remitro.member.application.validator.SignUpValidator;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.repository.MemberRepository;
 

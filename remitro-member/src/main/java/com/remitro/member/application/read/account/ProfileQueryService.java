@@ -1,11 +1,11 @@
-package com.remitro.member.application.query;
+package com.remitro.member.application.read.account;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.mapper.MemberMapper;
-import com.remitro.member.application.query.dto.response.MemberProfileResponse;
+import com.remitro.member.application.read.account.dto.MemberProfileResponse;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.policy.MaskingPolicy;
 

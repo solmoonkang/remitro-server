@@ -1,6 +1,6 @@
 package com.remitro.member.application.mapper;
 
-import com.remitro.member.application.query.dto.response.MemberProfileResponse;
+import com.remitro.member.application.read.account.dto.MemberProfileResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

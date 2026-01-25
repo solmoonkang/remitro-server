@@ -1,4 +1,4 @@
-package com.remitro.member.application.validator;
+package com.remitro.member.application.command.signup;
 
 import java.time.LocalDateTime;
 

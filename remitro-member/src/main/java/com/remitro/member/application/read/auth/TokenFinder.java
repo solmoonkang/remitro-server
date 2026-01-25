@@ -1,4 +1,4 @@
-package com.remitro.member.application.query;
+package com.remitro.member.application.read.auth;
 
 import org.springframework.stereotype.Component;
 

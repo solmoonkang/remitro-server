@@ -1,4 +1,4 @@
-package com.remitro.member.application.support.recorder;
+package com.remitro.member.application.support;
 
 import org.springframework.stereotype.Component;
 

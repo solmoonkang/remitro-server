@@ -1,4 +1,4 @@
-package com.remitro.member.application.query.dto.response;
+package com.remitro.member.application.read.account.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

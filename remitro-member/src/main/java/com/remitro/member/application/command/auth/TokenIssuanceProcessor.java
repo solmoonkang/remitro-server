@@ -1,4 +1,4 @@
-package com.remitro.member.application.support;
+package com.remitro.member.application.command.auth;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class TokenIssuanceSupport {
+public class TokenIssuanceProcessor {
 
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final CookieManager cookieManager;

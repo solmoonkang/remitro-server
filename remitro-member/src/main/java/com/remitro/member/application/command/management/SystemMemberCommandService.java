@@ -1,4 +1,4 @@
-package com.remitro.member.application.command;
+package com.remitro.member.application.command.management;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.member.application.query.MemberFinder;
-import com.remitro.member.application.support.recorder.MemberStatusRecorder;
+import com.remitro.member.application.read.account.MemberFinder;
+import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;

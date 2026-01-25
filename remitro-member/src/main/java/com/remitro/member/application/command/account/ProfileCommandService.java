@@ -1,12 +1,12 @@
-package com.remitro.member.application.command;
+package com.remitro.member.application.command.account;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.remitro.member.application.command.account.validator.UpdateValidator;
 import com.remitro.member.application.command.dto.request.ProfileUpdateRequest;
-import com.remitro.member.application.query.MemberFinder;
-import com.remitro.member.application.validator.UpdateValidator;
+import com.remitro.member.application.read.account.MemberFinder;
 import com.remitro.member.domain.member.model.Member;
 
 import lombok.RequiredArgsConstructor;

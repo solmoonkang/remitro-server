@@ -1,15 +1,14 @@
-package com.remitro.member.application.command;
+package com.remitro.member.application.command.auth;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.common.exception.UnauthorizedException;
 import com.remitro.common.security.AuthenticatedUser;
+import com.remitro.member.application.command.auth.validator.TokenValidator;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
-import com.remitro.member.application.query.TokenFinder;
-import com.remitro.member.application.support.TokenIssuanceSupport;
-import com.remitro.member.application.validator.TokenValidator;
+import com.remitro.member.application.read.auth.TokenFinder;
 import com.remitro.member.domain.token.model.RefreshToken;
 import com.remitro.member.domain.token.repository.RefreshTokenRepository;
 import com.remitro.member.infrastructure.security.JwtTokenProvider;
@@ -25,7 +24,7 @@ public class ReissueCommandService {
 	private final TokenFinder tokenFinder;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final TokenValidator tokenValidator;
-	private final TokenIssuanceSupport tokenIssuanceSupport;
+	private final TokenIssuanceProcessor tokenIssuanceProcessor;
 	private final JwtTokenProvider jwtTokenProvider;
 
 	public TokenResponse reissue(String refreshToken, HttpServletResponse httpServletResponse) {
@@ -49,7 +48,7 @@ public class ReissueCommandService {
 			authenticatedUser.role()
 		);
 
-		tokenIssuanceSupport.issueAndStoreRefreshToken(
+		tokenIssuanceProcessor.issueAndStoreRefreshToken(
 			authenticatedUser.memberId(),
 			newRefreshToken,
 			httpServletResponse

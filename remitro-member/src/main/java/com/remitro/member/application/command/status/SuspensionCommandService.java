@@ -1,4 +1,4 @@
-package com.remitro.member.application.command;
+package com.remitro.member.application.command.status;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.batch.suspension.SuspensionBatchProperties;
-import com.remitro.member.application.support.recorder.MemberStatusRecorder;
-import com.remitro.member.application.support.SuspensionReleaseSupport;
+import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.audit.model.StatusHistory;
@@ -33,7 +32,7 @@ public class SuspensionCommandService {
 	private final MemberRepository memberRepository;
 	private final MemberStatusRecorder memberStatusRecorder;
 	private final SuspensionBatchProperties suspensionBatchProperties;
-	private final SuspensionReleaseSupport suspensionReleaseSupport;
+	private final SuspensionReleaseProcessor suspensionReleaseProcessor;
 	private final Clock clock;
 
 	@Transactional
@@ -58,7 +57,7 @@ public class SuspensionCommandService {
 
 	public StatusHistory tryReleaseSuspension(Member member) {
 		try {
-			return suspensionReleaseSupport.processRelease(member);
+			return suspensionReleaseProcessor.processRelease(member);
 
 		} catch (ObjectOptimisticLockingFailureException e) {
 			log.warn("[✅ LOGGER] 관리자 수동 작업과 충돌하여 정지 해제 배치를 건너뜁니다. (회원 ID: {})", member.getId());

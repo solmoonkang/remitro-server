@@ -1,4 +1,4 @@
-package com.remitro.member.application.query;
+package com.remitro.member.application.read.account;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;

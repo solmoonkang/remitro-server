@@ -1,4 +1,4 @@
-package com.remitro.member.application.command;
+package com.remitro.member.application.command.status;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -13,8 +13,8 @@ import com.remitro.common.error.ErrorCode;
 import com.remitro.common.exception.NotFoundException;
 import com.remitro.common.security.Role;
 import com.remitro.member.application.command.dto.request.WithdrawalRequest;
-import com.remitro.member.application.support.recorder.MemberStatusRecorder;
-import com.remitro.member.application.validator.PasswordValidator;
+import com.remitro.member.application.support.MemberStatusRecorder;
+import com.remitro.member.application.command.account.validator.PasswordValidator;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
