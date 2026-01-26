@@ -27,14 +27,20 @@ public class PasswordValidator {
 		String newPassword,
 		String confirmPassword
 	) {
-		if (passwordPolicy.isWrongPassword(currentPassword, encodedPassword)) {
-			throw new BadRequestException(ErrorCode.WRONG_PASSWORD);
+		if (!passwordPolicy.isConfirmationMatched(newPassword, confirmPassword)) {
+			throw new BadRequestException(ErrorCode.PASSWORD_CONFIRM_MISMATCH);
 		}
 
 		if (passwordPolicy.isSamePassword(currentPassword, newPassword)) {
 			throw new BadRequestException(ErrorCode.PASSWORD_REUSE_DENIED);
 		}
 
+		if (passwordPolicy.isWrongPassword(currentPassword, encodedPassword)) {
+			throw new BadRequestException(ErrorCode.WRONG_PASSWORD);
+		}
+	}
+
+	public void validatePasswordConfirm(String newPassword, String confirmPassword) {
 		if (!passwordPolicy.isConfirmationMatched(newPassword, confirmPassword)) {
 			throw new BadRequestException(ErrorCode.PASSWORD_CONFIRM_MISMATCH);
 		}
