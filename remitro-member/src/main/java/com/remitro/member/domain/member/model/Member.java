@@ -92,6 +92,10 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
 
+	@Comment("마지막 비밀번호 변경 일시")
+	@Column(name = "password_last_changed_at", nullable = false)
+	private LocalDateTime passwordLastChangedAt;
+
 	@Comment("계정 잠금 일시")
 	@Column(name = "locked_at")
 	private LocalDateTime lockedAt;
@@ -143,8 +147,14 @@ public class Member extends BaseTimeEntity {
 		this.phoneNumber = newPhoneNumber;
 	}
 
-	public void changePassword(String newPasswordHash) {
+	public void changePassword(String newPasswordHash, LocalDateTime now) {
 		this.passwordHash = newPasswordHash;
+		this.passwordLastChangedAt = now;
+	}
+
+	public void recoverPassword(String newPasswordHash, LocalDateTime now) {
+		this.passwordHash = newPasswordHash;
+		this.passwordLastChangedAt = now;
 	}
 
 	public void increaseFailedCount(LocalDateTime now) {
