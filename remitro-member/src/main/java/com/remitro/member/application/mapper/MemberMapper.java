@@ -1,6 +1,9 @@
 package com.remitro.member.application.mapper;
 
-import com.remitro.member.application.read.account.dto.MemberProfileResponse;
+import java.time.LocalDateTime;
+
+import com.remitro.member.application.read.account.dto.response.EmailFindResponse;
+import com.remitro.member.application.read.account.dto.response.MemberProfileResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -18,5 +21,9 @@ public class MemberMapper {
 			nickname,
 			maskPhoneNumber
 		);
+	}
+
+	public static EmailFindResponse toEmailFindResponse(String maskEmail, LocalDateTime createdAt) {
+		return new EmailFindResponse(maskEmail, createdAt);
 	}
 }
