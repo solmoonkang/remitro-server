@@ -26,4 +26,9 @@ public class MemberFinder {
 		return memberRepository.findActiveByEmail(email)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
+
+	public Member getMemberByNicknameAndPhoneNumber(String nickname, String phoneNumber) {
+		return memberRepository.findNicknameAndPhoneNumber(nickname, phoneNumber)
+			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+	}
 }
