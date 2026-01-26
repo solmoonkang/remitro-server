@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.mapper.MemberMapper;
-import com.remitro.member.application.read.account.dto.MemberProfileResponse;
+import com.remitro.member.application.read.account.dto.request.EmailFindRequest;
+import com.remitro.member.application.read.account.dto.response.EmailFindResponse;
+import com.remitro.member.application.read.account.dto.response.MemberProfileResponse;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.policy.MaskingPolicy;
 
@@ -27,5 +29,16 @@ public class ProfileQueryService {
 		final String maskPhoneNumber = maskingPolicy.maskPhoneNumberForProfile(member.getPhoneNumber());
 
 		return MemberMapper.toMemberProfileResponse(maskEmail, member.getNickname(), maskPhoneNumber);
+	}
+
+	public EmailFindResponse lookupEmail(EmailFindRequest emailFindRequest) {
+		final Member member = memberFinder.getMemberByNicknameAndPhoneNumber(
+			emailFindRequest.nickname(),
+			emailFindRequest.phoneNumber()
+		);
+
+		final String maskEmail = maskingPolicy.maskEmailForProfile(member.getEmail());
+
+		return MemberMapper.toEmailFindResponse(maskEmail, member.getCreatedAt());
 	}
 }
