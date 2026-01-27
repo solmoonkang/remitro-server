@@ -6,9 +6,7 @@ import com.remitro.member.domain.verification.model.Verification;
 
 public interface VerificationRepository {
 
-	Optional<Verification> findById(String email);
-
-	Optional<Verification> findByIdAndVerificationToken(String email, String verificationToken);
+	Optional<Verification> findByEmail(String email);
 
 	Verification save(Verification verification);
 
