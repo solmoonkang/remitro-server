@@ -17,9 +17,9 @@ public interface JpaMemberRepository extends JpaRepository<Member, Long>, Member
 
 	@Query("SELECT m "
 		+ "FROM Member m "
-		+ "WHERE m.id = :memberId AND m.memberStatus != 'WITHDRAWN'"
+		+ "WHERE m.id = :id AND m.memberStatus != 'WITHDRAWN'"
 	)
-	Optional<Member> findActiveById(@Param("memberId") Long memberId);
+	Optional<Member> findActiveById(@Param("id") Long id);
 
 	@Query("SELECT m "
 		+ "FROM Member m "
