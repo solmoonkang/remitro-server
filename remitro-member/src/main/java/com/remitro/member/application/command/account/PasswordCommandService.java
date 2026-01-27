@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.remitro.member.application.command.account.validator.PasswordValidator;
 import com.remitro.member.application.command.dto.request.PasswordChangeRequest;
 import com.remitro.member.application.command.dto.request.PasswordRecoveryRequest;
+import com.remitro.member.application.command.verification.VerificationValidator;
 import com.remitro.member.application.read.account.MemberFinder;
 import com.remitro.member.application.read.verification.VerificationFinder;
 import com.remitro.member.domain.member.model.Member;
@@ -29,6 +30,7 @@ public class PasswordCommandService {
 	private final VerificationFinder verificationFinder;
 	private final VerificationRepository verificationRepository;
 	private final PasswordValidator passwordValidator;
+	private final VerificationValidator verificationValidator;
 
 	private final CacheManager cacheManager;
 	private final PasswordEncoder passwordEncoder;
@@ -57,16 +59,16 @@ public class PasswordCommandService {
 		);
 
 		final Verification verification = verificationFinder.getVerifiedToken(
-			passwordRecoveryRequest.email(),
-			passwordRecoveryRequest.verificationToken()
+			passwordRecoveryRequest.email()
 		);
+
+		verificationValidator.validateRecoveryToken(verification, passwordRecoveryRequest.verificationToken());
 
 		final Member member = memberFinder.getMemberByEmail(passwordRecoveryRequest.email());
 		final String encodedPassword = passwordEncoder.encode(passwordRecoveryRequest.newPassword());
 		member.recoverPassword(encodedPassword, LocalDateTime.now(clock));
 
 		evictMemberProfileCache(member.getId());
-
 		verificationRepository.delete(verification);
 	}
 
