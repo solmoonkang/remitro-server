@@ -28,7 +28,7 @@ public class MemberFinder {
 	}
 
 	public Member getMemberByNicknameAndPhoneNumber(String nickname, String phoneNumber) {
-		return memberRepository.findNicknameAndPhoneNumber(nickname, phoneNumber)
+		return memberRepository.findByNicknameAndPhoneNumber(nickname, phoneNumber)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 	}
 }
