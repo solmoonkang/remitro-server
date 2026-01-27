@@ -17,13 +17,13 @@ public class VerificationFinder {
 	private final VerificationRepository verificationRepository;
 
 	public Verification getLatestPendingCode(String email) {
-		return verificationRepository.findById(email)
+		return verificationRepository.findByEmail(email)
 			.filter(verification -> !verification.isVerified())
 			.orElseThrow(() -> new NotFoundException(ErrorCode.VERIFICATION_NOT_FOUND));
 	}
 
-	public Verification getVerifiedToken(String email, String verificationToken) {
-		return verificationRepository.findByIdAndVerificationToken(email, verificationToken)
-			.orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_TOKEN));
+	public Verification getVerifiedToken(String email) {
+		return verificationRepository.findByEmail(email)
+			.orElseThrow(() -> new UnauthorizedException(ErrorCode.VERIFICATION_NOT_FOUND));
 	}
 }
