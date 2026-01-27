@@ -120,7 +120,14 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "version")
 	private Long version;
 
-	private Member(String email, String passwordHash, String nickname, String phoneNumber, String phoneNumberHash) {
+	private Member(
+		String email,
+		String passwordHash,
+		String nickname,
+		String phoneNumber,
+		String phoneNumberHash,
+		LocalDateTime now
+	) {
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.nickname = nickname;
@@ -130,6 +137,7 @@ public class Member extends BaseTimeEntity {
 		this.loginSecurityStatus = LoginSecurityStatus.NORMAL;
 		this.role = Role.USER;
 		this.failedCount = 0;
+		this.passwordLastChangedAt = now;
 	}
 
 	public static Member register(
@@ -137,9 +145,10 @@ public class Member extends BaseTimeEntity {
 		String passwordHash,
 		String nickname,
 		String phoneNumber,
-		String phoneNumberHash
+		String phoneNumberHash,
+		LocalDateTime now
 	) {
-		return new Member(email, passwordHash, nickname, phoneNumber, phoneNumberHash);
+		return new Member(email, passwordHash, nickname, phoneNumber, phoneNumberHash, now);
 	}
 
 	public void updateProfile(String newNickname, String newPhoneNumber) {
