@@ -30,8 +30,13 @@ public class SecurityConfig {
 	};
 	private static final String[] PERMIT_ALL_URLS = {
 		"/api/v1/members/signup",
+		"/api/v1/members/email-lookup",
+		"/api/v1/members/me/password/recovery",
+
 		"/api/v1/auth/login",
-		"/api/v1/auth/reissue"
+		"/api/v1/auth/reissue",
+
+		"/api/v1/verifications/**"
 	};
 	private static final String[] ROLE_ADMIN_URLS = {
 		"/api/v1/admin/**"
