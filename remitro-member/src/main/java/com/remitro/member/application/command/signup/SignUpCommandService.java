@@ -26,6 +26,8 @@ public class SignUpCommandService {
 	private final Clock clock;
 
 	public void signUp(SignUpRequest signUpRequest) {
+		final LocalDateTime now = LocalDateTime.now(clock);
+
 		signUpValidator.validateSignUpUniqueness(
 			signUpRequest.email(),
 			signUpRequest.nickname(),
@@ -34,14 +36,15 @@ public class SignUpCommandService {
 
 		final String phoneNumberHash = dataHasher.hash(signUpRequest.phoneNumber());
 		memberRepository.findWithdrawnByPhoneNumberHash(phoneNumberHash)
-			.ifPresent(member -> signUpValidator.validateRejoinRestriction(member, LocalDateTime.now(clock)));
+			.ifPresent(member -> signUpValidator.validateRejoinRestriction(member, now));
 
 		final Member member = Member.register(
 			signUpRequest.email(),
 			passwordEncoder.encode(signUpRequest.password()),
 			signUpRequest.nickname(),
 			signUpRequest.phoneNumber(),
-			phoneNumberHash
+			phoneNumberHash,
+			now
 		);
 
 		memberRepository.save(member);
