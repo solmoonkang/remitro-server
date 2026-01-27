@@ -46,7 +46,13 @@ public enum ErrorCode {
 	PASSWORD_REUSE_DENIED(400, "P400002", "현재 비밀번호와 동일한 비밀번호는 사용할 수 없습니다."),
 	PASSWORD_CONFIRM_MISMATCH(400, "P400003", "새 비밀번호와 확인 비밀번호가 일치하지 않습니다."),
 
-	INVALID_PASSWORD(401, "P401001", "잘못된 비밀번호입니다.");
+	INVALID_PASSWORD(401, "P401001", "잘못된 비밀번호입니다."),
+
+	// --- V (Verification): 본인 인증 관련 --- //
+	VERIFICATION_NOT_FOUND(404, "V404001", "인증 정보를 찾을 수 없습니다."),
+	VERIFICATION_EXPIRED(401, "V401003", "인증 시간이 만료되었습니다."),
+	VERIFICATION_CODE_MISMATCH(401, "V401004", "인증 번호가 일치하지 않습니다."),
+	VERIFICATION_ALREADY_CONFIRMED(409, "V409001", "이미 완료된 인증입니다.");
 
 	private final int status;
 	private final String code;

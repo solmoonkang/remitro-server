@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.common.response.CommonResponse;
-import com.remitro.member.application.command.LoginCommandService;
-import com.remitro.member.application.command.ReissueCommandService;
+import com.remitro.member.application.command.auth.LoginCommandService;
+import com.remitro.member.application.command.auth.ReissueCommandService;
 import com.remitro.member.application.command.dto.request.LoginRequest;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 
@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,10 +47,11 @@ public class AuthController {
 	@ResponseStatus(HttpStatus.OK)
 	public CommonResponse<TokenResponse> login(
 		@Valid @RequestBody LoginRequest loginRequest,
+		@Parameter(hidden = true) HttpServletRequest httpServletRequest,
 		@Parameter(hidden = true) HttpServletResponse httpServletResponse
 	) {
 		return CommonResponse.success(
-			loginCommandService.login(loginRequest, httpServletResponse)
+			loginCommandService.login(loginRequest, httpServletRequest, httpServletResponse)
 		);
 	}
 

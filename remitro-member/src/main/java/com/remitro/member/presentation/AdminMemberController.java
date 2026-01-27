@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitro.common.response.CommonResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
-import com.remitro.member.application.command.AdminMemberCommandService;
+import com.remitro.member.application.command.management.AdminMemberCommandService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

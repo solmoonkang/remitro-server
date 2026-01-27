@@ -3,6 +3,7 @@ package com.remitro.member.presentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,16 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.remitro.common.response.CommonResponse;
 import com.remitro.common.security.AuthenticatedUser;
 import com.remitro.common.security.CurrentUser;
-import com.remitro.member.application.command.PasswordCommandService;
-import com.remitro.member.application.command.ProfileCommandService;
-import com.remitro.member.application.command.SignUpCommandService;
-import com.remitro.member.application.command.WithdrawalCommandService;
+import com.remitro.member.application.command.account.PasswordCommandService;
+import com.remitro.member.application.command.account.ProfileCommandService;
 import com.remitro.member.application.command.dto.request.PasswordChangeRequest;
+import com.remitro.member.application.command.dto.request.PasswordRecoveryRequest;
 import com.remitro.member.application.command.dto.request.ProfileUpdateRequest;
 import com.remitro.member.application.command.dto.request.SignUpRequest;
 import com.remitro.member.application.command.dto.request.WithdrawalRequest;
-import com.remitro.member.application.query.ProfileQueryService;
-import com.remitro.member.application.query.dto.response.MemberProfileResponse;
+import com.remitro.member.application.command.signup.SignUpCommandService;
+import com.remitro.member.application.command.status.WithdrawalCommandService;
+import com.remitro.member.application.read.account.ProfileQueryService;
+import com.remitro.member.application.read.account.dto.request.EmailFindRequest;
+import com.remitro.member.application.read.account.dto.response.EmailFindResponse;
+import com.remitro.member.application.read.account.dto.response.MemberProfileResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -82,6 +86,26 @@ public class MemberController {
 	}
 
 	@Operation(
+		summary = "이메일 계정 찾기",
+		description = "닉네임과 전화번호가 일치하는 회원의 이메일과 가입일을 조회합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "이메일 조회 성공"),
+		@ApiResponse(responseCode = "400", description = "요청 값 검증 실패"),
+		@ApiResponse(responseCode = "404", description = "존재하지 않는 사용자"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+	})
+	@GetMapping("/email-lookup")
+	@ResponseStatus(HttpStatus.OK)
+	public CommonResponse<EmailFindResponse> lookupEmail(
+		@Valid @ModelAttribute EmailFindRequest emailFindRequest
+	) {
+		return CommonResponse.success(
+			profileQueryService.lookupEmail(emailFindRequest)
+		);
+	}
+
+	@Operation(
 		summary = "내 프로필 정보 수정",
 		description = "로그인한 사용자의 닉네임과 전화번호를 수정합니다."
 	)
@@ -120,6 +144,25 @@ public class MemberController {
 		@Valid @RequestBody PasswordChangeRequest passwordChangeRequest
 	) {
 		passwordCommandService.changePassword(authenticatedUser.memberId(), passwordChangeRequest);
+		return CommonResponse.successNoContent();
+	}
+
+	@Operation(
+		summary = "비밀번호 복구",
+		description = "발급받은 일회용 인증 토큰을 사용하여 비밀번호를 재설정합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "비밀번호 복구 성공"),
+		@ApiResponse(responseCode = "400", description = "토큰 불일치 및 비밀번호 불일치"),
+		@ApiResponse(responseCode = "401", description = "유효하지 않거나 만료된 토큰"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+	})
+	@PatchMapping("/me/password/recovery")
+	@ResponseStatus(HttpStatus.OK)
+	public CommonResponse<Void> recoveryPassword(
+		@Valid @RequestBody PasswordRecoveryRequest passwordRecoveryRequest
+	) {
+		passwordCommandService.recoveryPassword(passwordRecoveryRequest);
 		return CommonResponse.successNoContent();
 	}
 

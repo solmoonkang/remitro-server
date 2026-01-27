@@ -10,7 +10,7 @@ import com.remitro.common.exception.BadRequestException;
 import com.remitro.common.security.Role;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;
-import com.remitro.member.infrastructure.persistence.BaseTimeEntity;
+import com.remitro.member.domain.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -92,6 +92,10 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "last_login_at")
 	private LocalDateTime lastLoginAt;
 
+	@Comment("마지막 비밀번호 변경 일시")
+	@Column(name = "password_last_changed_at", nullable = false)
+	private LocalDateTime passwordLastChangedAt;
+
 	@Comment("계정 잠금 일시")
 	@Column(name = "locked_at")
 	private LocalDateTime lockedAt;
@@ -116,7 +120,14 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "version")
 	private Long version;
 
-	private Member(String email, String passwordHash, String nickname, String phoneNumber, String phoneNumberHash) {
+	private Member(
+		String email,
+		String passwordHash,
+		String nickname,
+		String phoneNumber,
+		String phoneNumberHash,
+		LocalDateTime now
+	) {
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.nickname = nickname;
@@ -126,6 +137,7 @@ public class Member extends BaseTimeEntity {
 		this.loginSecurityStatus = LoginSecurityStatus.NORMAL;
 		this.role = Role.USER;
 		this.failedCount = 0;
+		this.passwordLastChangedAt = now;
 	}
 
 	public static Member register(
@@ -133,9 +145,10 @@ public class Member extends BaseTimeEntity {
 		String passwordHash,
 		String nickname,
 		String phoneNumber,
-		String phoneNumberHash
+		String phoneNumberHash,
+		LocalDateTime now
 	) {
-		return new Member(email, passwordHash, nickname, phoneNumber, phoneNumberHash);
+		return new Member(email, passwordHash, nickname, phoneNumber, phoneNumberHash, now);
 	}
 
 	public void updateProfile(String newNickname, String newPhoneNumber) {
@@ -143,8 +156,14 @@ public class Member extends BaseTimeEntity {
 		this.phoneNumber = newPhoneNumber;
 	}
 
-	public void changePassword(String newPasswordHash) {
+	public void changePassword(String newPasswordHash, LocalDateTime now) {
 		this.passwordHash = newPasswordHash;
+		this.passwordLastChangedAt = now;
+	}
+
+	public void recoverPassword(String newPasswordHash, LocalDateTime now) {
+		this.passwordHash = newPasswordHash;
+		this.passwordLastChangedAt = now;
 	}
 
 	public void increaseFailedCount(LocalDateTime now) {
