@@ -3,7 +3,6 @@ rootProject.name = 'remitro-server'
 include ':remitro-gateway'
 include ':remitro-discovery'
 
-include ':remitro-auth'
 include ':remitro-member'
 include ':remitro-account'
 include ':remitro-transaction'
