@@ -27,4 +27,14 @@ public class VerificationValidator {
 			throw new ConflictException(ErrorCode.VERIFICATION_ALREADY_CONFIRMED);
 		}
 	}
+
+	public void validateRecoveryToken(Verification verification, String verificationToken) {
+		if (!verification.isVerified()) {
+			throw new UnauthorizedException(ErrorCode.INVALID_TOKEN, "인증 정보");
+		}
+
+		if (!verification.getVerificationToken().equals(verificationToken)) {
+			throw new UnauthorizedException(ErrorCode.INVALID_TOKEN, "일회용 인증 토큰");
+		}
+	}
 }
