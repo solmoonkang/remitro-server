@@ -4,6 +4,7 @@ description = 'Account Service'
 
 dependencies {
     implementation project(':remitro-common-support')
+    implementation project(':remitro-common-event')
 
     // Web & API Documentation
     implementation 'org.springframework.boot:spring-boot-starter-web'
