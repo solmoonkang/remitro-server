@@ -38,4 +38,8 @@ public class MemberProjection {
 		this.nickname = nickname;
 		this.memberStatus = memberStatus;
 	}
+
+	public boolean isActive() {
+		return this.memberStatus == MemberProjectionStatus.ACTIVE;
+	}
 }
