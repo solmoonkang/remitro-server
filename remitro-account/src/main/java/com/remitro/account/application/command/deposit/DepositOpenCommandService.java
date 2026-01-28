@@ -50,25 +50,27 @@ public class DepositOpenCommandService {
 		final MemberProjection member = memberProjectionRepository.findByMemberId(memberId)
 			.orElseThrow(() -> new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
-		depositOpenValidator.validateMember(member);
-		depositOpenValidator.validateLimit(memberId);
+		depositOpenValidator.validateMemberOpenable(member);
+		depositOpenValidator.validateAccountTypeOpenable(depositOpenRequest.accountType());
+		depositOpenValidator.validateAccountOpenLimit(memberId, depositOpenRequest.accountType());
 		pinNumberValidator.validateConfirm(depositOpenRequest.pinNumber(), depositOpenRequest.confirmPinNumber());
 
 		final String accountNumber = accountNumberGenerator.generate(depositOpenRequest.accountType());
+		final String accountAlias = depositOpenValidator.trimAccountAlias(depositOpenRequest.accountAlias());
 		final String pinNumberHash = passwordEncoder.encode(depositOpenRequest.pinNumber());
 
 		final Account account = Account.open(
 			memberId,
 			accountNumber,
-			depositOpenRequest.accountAlias(),
+			accountAlias,
 			depositOpenRequest.accountType(),
 			pinNumberHash
 		);
 		accountRepository.save(account);
 
 		return AccountMapper.toDepositOpenResponse(
-			formatPolicy.format(accountNumber),
-			depositOpenRequest.accountAlias(),
+			formatPolicy.format(account.getAccountNumber()),
+			account.getAccountAlias(),
 			account.getCreatedAt()
 		);
 	}
