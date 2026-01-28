@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.remitro.common.response.ErrorResponse;
+import com.remitro.support.response.ErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;

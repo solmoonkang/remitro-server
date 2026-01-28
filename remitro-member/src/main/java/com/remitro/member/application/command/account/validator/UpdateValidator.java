@@ -2,8 +2,8 @@ package com.remitro.member.application.command.account.validator;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.BadRequestException;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.BadRequestException;
 import com.remitro.member.domain.member.policy.UpdatePolicy;
 
 import lombok.RequiredArgsConstructor;

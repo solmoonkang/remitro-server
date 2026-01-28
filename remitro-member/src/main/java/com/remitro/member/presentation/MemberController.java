@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.common.response.CommonResponse;
-import com.remitro.common.security.AuthenticatedUser;
-import com.remitro.common.security.CurrentUser;
+import com.remitro.support.response.CommonResponse;
+import com.remitro.support.security.AuthenticatedUser;
+import com.remitro.support.security.CurrentUser;
 import com.remitro.member.application.command.account.PasswordCommandService;
 import com.remitro.member.application.command.account.ProfileCommandService;
 import com.remitro.member.application.command.dto.request.PasswordChangeRequest;

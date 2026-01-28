@@ -1,4 +1,4 @@
-package com.remitro.common.security;
+package com.remitro.support.security;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

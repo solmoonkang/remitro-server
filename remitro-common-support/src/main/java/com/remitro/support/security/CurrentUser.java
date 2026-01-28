@@ -1,4 +1,4 @@
-package com.remitro.common.security;
+package com.remitro.support.security;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

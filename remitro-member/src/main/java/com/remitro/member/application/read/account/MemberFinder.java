@@ -3,8 +3,8 @@ package com.remitro.member.application.read.account;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.NotFoundException;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.NotFoundException;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.repository.MemberRepository;
 

@@ -1,4 +1,4 @@
-package com.remitro.common.security;
+package com.remitro.support.security;
 
 public record AuthenticatedUser(
 	Long memberId,

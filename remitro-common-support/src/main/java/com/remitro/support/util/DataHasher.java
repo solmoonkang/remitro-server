@@ -1,4 +1,4 @@
-package com.remitro.common.support;
+package com.remitro.support.util;
 
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -6,8 +6,8 @@ import java.security.GeneralSecurityException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.InternalServerException;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.InternalServerException;
 
 public class DataHasher {
 

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.remitro.common.response.CommonResponse;
+import com.remitro.support.response.CommonResponse;
 import com.remitro.member.application.command.auth.LoginCommandService;
 import com.remitro.member.application.command.auth.ReissueCommandService;
 import com.remitro.member.application.command.dto.request.LoginRequest;

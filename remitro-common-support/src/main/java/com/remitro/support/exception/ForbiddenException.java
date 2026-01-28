@@ -1,6 +1,6 @@
-package com.remitro.common.exception;
+package com.remitro.support.exception;
 
-import com.remitro.common.error.ErrorCode;
+import com.remitro.support.error.ErrorCode;
 
 public class ForbiddenException extends BaseException {
 

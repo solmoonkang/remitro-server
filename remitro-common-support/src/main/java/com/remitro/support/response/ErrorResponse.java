@@ -1,9 +1,9 @@
-package com.remitro.common.response;
+package com.remitro.support.response;
 
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.remitro.common.error.ErrorCode;
+import com.remitro.support.error.ErrorCode;
 
 import lombok.Builder;
 

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.security.Role;
+import com.remitro.support.security.Role;
 import com.remitro.member.application.read.account.MemberFinder;
 import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.domain.audit.enums.ChangeReason;

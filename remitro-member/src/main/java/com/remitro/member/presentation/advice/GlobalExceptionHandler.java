@@ -12,9 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.BaseException;
-import com.remitro.common.response.ErrorResponse;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.BaseException;
+import com.remitro.support.response.ErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package com.remitro.common.response;
+package com.remitro.support.response;
 
 public record CommonResponse<T>(
 	boolean success,

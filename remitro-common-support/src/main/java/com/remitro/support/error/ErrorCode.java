@@ -1,4 +1,4 @@
-package com.remitro.common.error;
+package com.remitro.support.error;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

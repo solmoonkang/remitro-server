@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.exception.BaseException;
+import com.remitro.support.exception.BaseException;
 import com.remitro.member.application.command.dto.request.LoginRequest;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.read.account.MemberFinder;
