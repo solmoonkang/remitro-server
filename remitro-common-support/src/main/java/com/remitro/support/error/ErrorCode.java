@@ -49,7 +49,8 @@ public enum ErrorCode {
 	VERIFICATION_ALREADY_CONFIRMED(409, "V004", "이미 완료된 인증 절차입니다."),
 
 	// ============ ACCOUNT ============ //
-	ACCOUNT_LIMIT_EXCEEDED(400, "AC001", "계좌 보유 한도를 초과하였습니다.");
+	ACCOUNT_LIMIT_EXCEEDED(400, "AC001", "계좌 보유 한도를 초과하였습니다."),
+	ACCOUNT_TYPE_NOT_OPENABLE(400, "AC002", "%s 계좌 타입은 개설이 허용되지 않습니다.");
 
 	private final int status;
 	private final String code;
