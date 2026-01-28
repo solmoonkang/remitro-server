@@ -7,52 +7,49 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-	// --- C (Common): 공통 에러 --- //
-	INVALID_INPUT_VALUE(400, "C400001", "%s는 잘못된 입력 값입니다."),
+	// ============ COMMON ============ //
+	INVALID_INPUT_VALUE(400, "C001", "%s(은)는 잘못된 입력 값입니다."),
+	METHOD_NOT_ALLOWED(405, "C002", "허용되지 않은 요청 메서드입니다."),
+	DUPLICATE_RESOURCE(409, "C003", "이미 존재하는 리소스이거나 중복된 데이터입니다."),
+	DUPLICATE_REQUEST(409, "C004", "이미 처리 중이거나 완료된 요청입니다."),
+	INTERNAL_SERVER_ERROR(500, "C005", "서버 내부 오류가 발생했습니다."),
+	ALGORITHM_CRYPTO_ERROR(500, "C006", "데이터 처리 중 오류가 발생했습니다."),
 
-	METHOD_NOT_ALLOWED(405, "C405001", "허용되지 않은 HTTP 메소드입니다."),
+	// ============ AUTH ============ //
+	UNAUTHORIZED_ACCESS(401, "AU001", "인증이 필요한 서비스입니다."),
+	EXPIRED_TOKEN(401, "AU002", "만료된 인증 토큰입니다."),
+	INVALID_TOKEN(403, "AU003", "유효하지 않은 %s 토큰입니다."),
 
-	DUPLICATE_RESOURCE(409, "C409001", "이미 가입된 정보가 존재하거나 중복된 데이터가 있습니다."),
+	// ============ MEMBER ============ //
+	ALREADY_SUSPENDED(400, "M001", "이미 정지 처리된 계정입니다."),
+	ALREADY_WITHDRAWN(400, "M002", "이미 탈퇴 처리된 계정입니다."),
+	NOT_SUSPENDED(400, "M003", "정지 상태가 아닌 계정은 해제할 수 없습니다."),
+	INVALID_SUSPEND_UNTIL(400, "M004", "정지 해제 예정 시각은 현재보다 이후여야 합니다."),
+	REJOIN_RESTRICTED_PERIOD(400, "M005", "탈퇴 후 30일 이내에는 재가입이 불가능합니다."),
+	MEMBER_LOCKED(403, "M006", "비밀번호 오류 횟수 초과로 잠긴 계정입니다."),
+	MEMBER_DORMANT(403, "M007", "장기 미접속으로 인해 휴면 전환된 계정입니다."),
+	MEMBER_SUSPENDED(403, "M008", "이용 정책 위반으로 정지된 계정입니다."),
+	MEMBER_WITHDRAWN(403, "M009", "탈퇴 처리된 계정입니다."),
+	MEMBER_NOT_FOUND(404, "M010", "존재하지 않는 회원 정보입니다."),
+	DUPLICATE_EMAIL(409, "M011", "이미 사용 중인 이메일(%s)입니다."),
+	DUPLICATE_NICKNAME(409, "M012", "이미 사용 중인 닉네임(%s)입니다."),
+	DUPLICATE_PHONE_NUMBER(409, "M013", "이미 등록된 휴대폰 번호(%s)입니다."),
+	MEMBER_INACTIVE(403, "M014", "활성화된 회원만 계좌를 개설할 수 있습니다."),
 
-	INTERNAL_SERVER_ERROR(500, "C500001", "서버 내부 오류가 발생했습니다."),
-	ALGORITHM_CRYPTO_ERROR(500, "C500002", "암호화 알고리즘 실행 중 오류가 발생했습니다."),
+	// ============ PASSWORD ============ //
+	WRONG_PASSWORD(400, "P001", "현재 비밀번호가 일치하지 않습니다."),
+	PASSWORD_REUSE_DENIED(400, "P002", "현재와 동일한 비밀번호는 재사용할 수 없습니다."),
+	PASSWORD_CONFIRM_MISMATCH(400, "P003", "비밀번호 확인이 일치하지 않습니다."),
+	INVALID_PASSWORD(401, "P004", "비밀번호가 올바르지 않습니다."),
 
-	// --- A (Auth): 인증 및 인가 --- //
-	UNAUTHORIZED_ACCESS(401, "A401001", "인증이 필요합니다."),
-	EXPIRED_TOKEN(401, "A401002", "만료된 토큰입니다."),
+	// ============ VERIFICATION ============ //
+	VERIFICATION_NOT_FOUND(404, "V001", "인증 정보를 찾을 수 없습니다."),
+	VERIFICATION_EXPIRED(401, "V002", "인증 시간이 만료되었습니다."),
+	VERIFICATION_CODE_MISMATCH(401, "V003", "인증 번호가 일치하지 않습니다."),
+	VERIFICATION_ALREADY_CONFIRMED(409, "V004", "이미 완료된 인증 절차입니다."),
 
-	INVALID_TOKEN(403, "A403001", "%s이(가) 유효하지 않은 토큰입니다."),
-
-	// --- M (Member): 회원 계정 및 상태 --- //
-	ALREADY_SUSPENDED(400, "M400001", "이미 정지 처리된 계정입니다."),
-	ALREADY_WITHDRAWN(400, "M400002", "이미 탈퇴 처리된 계정입니다."),
-	NOT_SUSPENDED(400, "M400003", "정지 상태가 아닌 계정은 해제할 수 없습니다."),
-	INVALID_SUSPEND_UNTIL(400, "M400004", "정지 해제 예정 시각은 현재 시각보다 이후여야 합니다."),
-	REJOIN_RESTRICTED_PERIOD(400, "M400005", "탈퇴 후 30일 이내에는 재가입이 불가능합니다."),
-
-	MEMBER_LOCKED(403, "M403001", "로그인 5회 실패로 인해 잠긴 계정입니다."),
-	MEMBER_DORMANT(403, "M403002", "장기 미접속으로 인한 휴면 계정입니다."),
-	MEMBER_SUSPENDED(403, "M403003", "관리자에 의해 정지된 계정입니다."),
-	MEMBER_WITHDRAWN(403, "M403004", "존재하지 않는 계정입니다."),
-
-	MEMBER_NOT_FOUND(404, "M404001", "존재하지 않는 회원입니다."),
-
-	DUPLICATE_EMAIL(409, "M409001", "%s는 이미 사용 중인 이메일입니다."),
-	DUPLICATE_NICKNAME(409, "M409002", "%s는 이미 사용 중인 닉네임입니다."),
-	DUPLICATE_PHONE_NUMBER(409, "M409003", "%s는 이미 등록된 전화번호입니다."),
-
-	// --- P (Password): 비밀번호 및 보안 --- //
-	WRONG_PASSWORD(400, "P400001", "현재 비밀번호가 일치하지 않습니다."),
-	PASSWORD_REUSE_DENIED(400, "P400002", "현재 비밀번호와 동일한 비밀번호는 사용할 수 없습니다."),
-	PASSWORD_CONFIRM_MISMATCH(400, "P400003", "새 비밀번호와 확인 비밀번호가 일치하지 않습니다."),
-
-	INVALID_PASSWORD(401, "P401001", "잘못된 비밀번호입니다."),
-
-	// --- V (Verification): 본인 인증 관련 --- //
-	VERIFICATION_NOT_FOUND(404, "V404001", "인증 정보를 찾을 수 없습니다."),
-	VERIFICATION_EXPIRED(401, "V401003", "인증 시간이 만료되었습니다."),
-	VERIFICATION_CODE_MISMATCH(401, "V401004", "인증 번호가 일치하지 않습니다."),
-	VERIFICATION_ALREADY_CONFIRMED(409, "V409001", "이미 완료된 인증입니다.");
+	// ============ ACCOUNT ============ //
+	ACCOUNT_LIMIT_EXCEEDED(400, "AC001", "계좌 보유 한도를 초과하였습니다.");
 
 	private final int status;
 	private final String code;
@@ -62,4 +59,3 @@ public enum ErrorCode {
 		return String.format(this.message, args);
 	}
 }
-
