@@ -2,9 +2,9 @@ package com.remitro.member.application.read.verification;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.NotFoundException;
-import com.remitro.common.exception.UnauthorizedException;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.NotFoundException;
+import com.remitro.support.exception.UnauthorizedException;
 import com.remitro.member.domain.verification.model.Verification;
 import com.remitro.member.domain.verification.repository.VerificationRepository;
 

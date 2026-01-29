@@ -2,7 +2,7 @@ package com.remitro.member.domain.audit.model;
 
 import org.hibernate.annotations.Comment;
 
-import com.remitro.common.security.Role;
+import com.remitro.support.security.Role;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.enums.MemberStatus;

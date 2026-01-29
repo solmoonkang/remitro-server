@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.security.Role;
+import com.remitro.support.security.Role;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;

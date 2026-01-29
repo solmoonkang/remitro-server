@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.support.DataHasher;
+import com.remitro.support.util.DataHasher;
 import com.remitro.member.application.command.dto.request.SignUpRequest;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.repository.MemberRepository;

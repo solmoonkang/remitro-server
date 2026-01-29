@@ -8,7 +8,7 @@ public interface VerificationRepository {
 
 	Optional<Verification> findByEmail(String email);
 
-	Verification save(Verification verification);
+	void save(Verification verification);
 
-	void delete(Verification verification);
+	void deleteByEmail(String email);
 }

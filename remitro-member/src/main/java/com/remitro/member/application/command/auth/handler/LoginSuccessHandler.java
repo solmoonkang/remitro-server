@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.security.Role;
+import com.remitro.support.security.Role;
 import com.remitro.member.application.command.auth.LoginClientInfo;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;

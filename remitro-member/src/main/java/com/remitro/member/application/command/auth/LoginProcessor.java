@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.exception.BaseException;
+import com.remitro.support.exception.BaseException;
 import com.remitro.member.application.command.auth.validator.LoginValidator;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.command.auth.handler.LoginFailureHandler;

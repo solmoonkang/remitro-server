@@ -69,7 +69,7 @@ public class PasswordCommandService {
 		member.recoverPassword(encodedPassword, LocalDateTime.now(clock));
 
 		evictMemberProfileCache(member.getId());
-		verificationRepository.delete(verification);
+		verificationRepository.deleteByEmail(verification.getEmail());
 	}
 
 	private void evictMemberProfileCache(Long memberId) {

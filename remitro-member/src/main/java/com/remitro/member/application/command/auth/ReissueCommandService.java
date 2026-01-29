@@ -3,8 +3,8 @@ package com.remitro.member.application.command.auth;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.exception.UnauthorizedException;
-import com.remitro.common.security.AuthenticatedUser;
+import com.remitro.support.exception.UnauthorizedException;
+import com.remitro.support.security.AuthenticatedUser;
 import com.remitro.member.application.command.auth.validator.TokenValidator;
 import com.remitro.member.application.command.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;

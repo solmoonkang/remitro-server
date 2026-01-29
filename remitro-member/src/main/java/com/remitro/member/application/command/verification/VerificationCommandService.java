@@ -24,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class VerificationCommandService {
 
+	private static final long VERIFICATION_EXPIRE_MINUTES = 5;
+
 	private final VerificationFinder verificationFinder;
 	private final VerificationRepository verificationRepository;
 	private final VerificationCodeGenerator verificationCodeGenerator;
@@ -33,11 +35,17 @@ public class VerificationCommandService {
 	private final Clock clock;
 
 	public CodeIssueResponse issueCode(CodeSendRequest codeSendRequest) {
+		final LocalDateTime now = LocalDateTime.now(clock);
+
 		final String verificationCode = verificationCodeGenerator.generate();
-		final Verification verification = Verification.issue(codeSendRequest.email(), verificationCode);
+		final Verification verification = Verification.issue(
+			codeSendRequest.email(),
+			verificationCode,
+			now.plusMinutes(VERIFICATION_EXPIRE_MINUTES)
+		);
 		verificationRepository.save(verification);
 
-		messageSendSupport.send(codeSendRequest.email(), verificationCode, LocalDateTime.now(clock));
+		messageSendSupport.send(codeSendRequest.email(), verificationCode, now);
 
 		return VerificationMapper.toCodeIssueResponse(verificationCode);
 	}

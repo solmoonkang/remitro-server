@@ -8,10 +8,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.UnauthorizedException;
-import com.remitro.common.security.AuthenticatedUser;
-import com.remitro.common.security.CurrentUser;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.UnauthorizedException;
+import com.remitro.support.security.AuthenticatedUser;
+import com.remitro.support.security.CurrentUser;
 
 public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolver {
 

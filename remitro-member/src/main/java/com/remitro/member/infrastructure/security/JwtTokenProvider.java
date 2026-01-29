@@ -7,11 +7,11 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.InternalServerException;
-import com.remitro.common.exception.UnauthorizedException;
-import com.remitro.common.security.AuthenticatedUser;
-import com.remitro.common.security.Role;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.InternalServerException;
+import com.remitro.support.exception.UnauthorizedException;
+import com.remitro.support.security.AuthenticatedUser;
+import com.remitro.support.security.Role;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

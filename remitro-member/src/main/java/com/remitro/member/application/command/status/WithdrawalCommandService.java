@@ -9,9 +9,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.NotFoundException;
-import com.remitro.common.security.Role;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.NotFoundException;
+import com.remitro.support.security.Role;
 import com.remitro.member.application.command.dto.request.WithdrawalRequest;
 import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.application.command.account.validator.PasswordValidator;
