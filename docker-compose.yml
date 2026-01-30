@@ -50,6 +50,10 @@ services:
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
 
+    # Docker 컨테이너 안에서 내 로컬 머신으로 접근 가능
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
     networks:
       - remitro-network
 
@@ -72,6 +76,29 @@ services:
 
     # 60초 동안 1개 이상의 키가 변경되면 데이터를 디스크에 저장(스냅샷)하도록 설정
     command: redis-server --save 60 1 --loglevel warning
+
+  # 4. MEMBER
+  member:
+    image: remitro/member:latest
+
+    build:
+      context: .
+      dockerfile: infrastructure/member/Dockerfile
+
+    container_name: remitro-member
+
+    ports:
+      - "8081:8081"
+
+    depends_on:
+      - discovery
+      - redis
+
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+
+    networks:
+      - remitro-network
 
 networks:
   # 모든 서비스가 동일한 네트워크에 있어야 서비스 이름(예: http://discovery:...)으로 통신 가능
