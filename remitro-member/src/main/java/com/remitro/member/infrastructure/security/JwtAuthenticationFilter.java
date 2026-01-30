@@ -35,10 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	) throws ServletException, IOException {
 
 		final String accessToken = resolveToken(httpServletRequest);
-
 		if (accessToken != null) {
-			final AuthenticatedUser authenticatedUser = jwtTokenProvider.authenticate(accessToken);
-			setAuthenticationToContext(authenticatedUser);
+			try {
+				final AuthenticatedUser authenticatedUser = jwtTokenProvider.authenticate(accessToken);
+				setAuthenticationToContext(authenticatedUser);
+
+			} catch (Exception e) {
+				SecurityContextHolder.clearContext();
+			}
 		}
 
 		filterChain.doFilter(httpServletRequest, httpServletResponse);
