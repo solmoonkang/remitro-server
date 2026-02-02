@@ -43,14 +43,18 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: remitro-redis
       port: 6379
 
 eureka:
+  instance:
+    # 서비스 인스턴스를 호스트 이름이 아닌 IP 주소로 등록 (Docker/운영 환경에서 필수)
+    prefer-ip-address: true
+
   client:
     service-url:
       # 유레카 서버(Discovery)의 위치를 지정
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://remitro-discovery:8761/eureka/
 
     # 이 서비스를 유레카 서버에 등록할지 여부
     register-with-eureka: true
