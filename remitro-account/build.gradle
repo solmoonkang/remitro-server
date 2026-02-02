@@ -6,22 +6,29 @@ dependencies {
     implementation project(':remitro-common-support')
     implementation project(':remitro-common-event')
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10'
-    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-
+    // Web & API Documentation
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.redisson:redisson-spring-boot-starter:3.33.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    runtimeOnly 'com.h2database:h2'
-    implementation 'org.apache.commons:commons-lang3:3.18.0'
+    // Service Discovery & Communication
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
+    // Persistence & Data
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    runtimeOnly 'com.h2database:h2'
+
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Utils
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

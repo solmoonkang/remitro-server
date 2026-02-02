@@ -1,6 +1,63 @@
+server:
+  port: 8082
+
 spring:
   application:
     name: remitro-account
 
-  config:
-    import: "optional:configserver:http://localhost:8888"
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:account_db;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  jpa:
+    # 테이블 생성 후 데이터 삽입
+    defer-datasource-initialization: true
+
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        # 출력되는 SQL을 한 줄이 아닌 가독성 좋게 포맷팅
+        format_sql: true
+
+        # JPA가 H2 데이터베이스 전용 문법으로 쿼리를 생성하도록 지정
+        dialect: org.hibernate.dialect.H2Dialect
+
+  sql:
+    init:
+      # H2 실행 시 data.sql 파일을 읽기 위한 설정
+      mode: always
+
+  h2:
+    console:
+      # 웹 브라우저에서 DB 내부를 확인할 수 있는 GUI 도구 활성화
+      enabled: true
+
+      # 접속 경로 (http://localhost:8082/h2-console)
+      path: /h2-console
+
+  data:
+    redis:
+      host: remitro-redis
+      port: 6379
+
+eureka:
+  instance:
+    # 서비스 인스턴스를 호스트 이름이 아닌 IP 주소로 등록 (Docker/운영 환경에서 필수)
+    prefer-ip-address: true
+
+  client:
+    service-url:
+      # 유레카 서버(Discovery)의 위치를 지정
+      defaultZone: http://remitro-discovery:8761/eureka/
+
+    # 이 서비스를 유레카 서버에 등록할지 여부
+    register-with-eureka: true
+
+    # 유레카 서버로부터 다른 서비스들의 정보를 가져올지 여부
+    fetch-registry: true

@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.error.ErrorCode;
-import com.remitro.common.exception.ForbiddenException;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.ForbiddenException;
 import com.remitro.member.application.support.LoginSecurityRecorder;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;

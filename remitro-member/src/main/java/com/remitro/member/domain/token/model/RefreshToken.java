@@ -3,16 +3,19 @@ package com.remitro.member.domain.token.model;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
 
-	private final Long memberId;
+	private Long memberId;
 
-	private final String token;
+	private String token;
 
-	private final LocalDateTime expiresAt;
+	private LocalDateTime expiresAt;
 
 	private RefreshToken(Long memberId, String token, LocalDateTime expiresAt) {
 		this.memberId = memberId;

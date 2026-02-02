@@ -2,7 +2,7 @@ package com.remitro.member.application.support;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.common.security.Role;
+import com.remitro.support.security.Role;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.LoginSecurityStatus;
 import com.remitro.member.domain.member.model.Member;

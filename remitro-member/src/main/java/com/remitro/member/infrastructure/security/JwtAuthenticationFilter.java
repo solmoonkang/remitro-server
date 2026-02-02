@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.remitro.common.security.AuthenticatedUser;
+import com.remitro.support.security.AuthenticatedUser;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,10 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	) throws ServletException, IOException {
 
 		final String accessToken = resolveToken(httpServletRequest);
-
 		if (accessToken != null) {
-			final AuthenticatedUser authenticatedUser = jwtTokenProvider.authenticate(accessToken);
-			setAuthenticationToContext(authenticatedUser);
+			try {
+				final AuthenticatedUser authenticatedUser = jwtTokenProvider.authenticate(accessToken);
+				setAuthenticationToContext(authenticatedUser);
+
+			} catch (Exception e) {
+				SecurityContextHolder.clearContext();
+			}
 		}
 
 		filterChain.doFilter(httpServletRequest, httpServletResponse);

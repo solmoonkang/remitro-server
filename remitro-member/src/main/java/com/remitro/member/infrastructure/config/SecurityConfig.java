@@ -12,9 +12,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.remitro.common.security.Role;
 import com.remitro.member.infrastructure.security.JwtAuthenticationFilter;
+import com.remitro.support.security.Role;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -56,13 +57,19 @@ public class SecurityConfig {
 		httpSecurity
 			.csrf(AbstractHttpConfigurer::disable)
 			.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-		httpSecurity
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			)
 			.authorizeHttpRequests(authorization -> authorization
 				.requestMatchers(PERMIT_ALL_URLS).permitAll()
 				.requestMatchers(ROLE_ADMIN_URLS).hasRole(Role.ADMIN.name())
-				.anyRequest().authenticated());
+				.anyRequest().authenticated()
+			)
+			.exceptionHandling(exception -> exception
+				.authenticationEntryPoint(((request, response, authException) ->
+					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
+				)
+			);
 
 		httpSecurity
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

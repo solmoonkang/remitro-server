@@ -18,30 +18,10 @@ spring:
       default-filters:
         - RemoveRequestHeader=Cookie
 
-      routes:
-        # 1. 회원 서비스 (Member Service)
-        - id: member-service
-          uri: lb://remitro-member
-          predicates:
-            - Path=/api/v1/members/** # /api/v1/members로 시작하는 모든 요청을 가로챔
-          filters:
-            - RewritePath=/api/v1/members/(?<segment>.*), /${segment} # /api/v1/members를 떼고 실제 서비스에 전달
-
-        # 2. 계좌 서비스 (Account Service)
-        - id: account-service
-          uri: lb://remitro-account
-          predicates:
-            - Path=/api/v1/accounts/**
-          filters:
-            - RewritePath=/api/v1/accounts/(?<segment>.*), /${segment}
-
-        # 3. 거래 서비스 (Transaction Service)
-        - id: transaction-service
-          uri: lb://remitro-transaction
-          predicates:
-            - Path=/api/v1/transactions/**
-          filters:
-            - RewritePath=/api/v1/transactions/(?<segment>.*), /${segment}
+      discovery:
+        locator:
+          # 서비스 ID를 소문자로 매핑하도록 허용
+          lower-case-service-id: true
 
 eureka:
   instance:
@@ -55,15 +35,19 @@ eureka:
     # 유레카 서버로부터 다른 서비스 정보를 가져올지 여부
     fetch-registry: true
 
+    # 5초마다 유레카 서버가 뜨는 동안 게이트웨이가 기다리거나 재시도
+    registry-fetch-interval-seconds: 5
+
     service-url:
       # 유레카 서버의 위치 (Discovery 서버에서 사용할 기본 포트 8761)
       defaultZone: http://localhost:8761/eureka/
 
-    # 5초마다 유레카 서버가 뜨는 동안 게이트웨이가 기다리거나 재시도
-    registry-fetch-interval-seconds: 5
-
 logging:
   level:
     # 게이트웨이의 라우팅 로그를 상세히 확인하기 위함
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway: TRACE
     com.remitro: DEBUG
+
+jwt:
+  # 최소 256bit (32자 이상) 필수
+  secret: "secret-key-secret-key-secret-key-secret-key-secret-key"
