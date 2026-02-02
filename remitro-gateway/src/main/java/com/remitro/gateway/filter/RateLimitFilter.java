@@ -51,11 +51,6 @@ public class RateLimitFilter implements GlobalFilter, Ordered {
 		return inetSocketAddress.getAddress().getHostAddress();
 	}
 
-	@Override
-	public int getOrder() {
-		return Ordered.HIGHEST_PRECEDENCE + 2;
-	}
-
 	private static class Counter {
 		private int requestCount = 0;
 		private long windowStartAt = System.currentTimeMillis();
@@ -71,5 +66,10 @@ public class RateLimitFilter implements GlobalFilter, Ordered {
 			requestCount++;
 			return requestCount <= MAX_REQUESTS;
 		}
+	}
+
+	@Override
+	public int getOrder() {
+		return Ordered.HIGHEST_PRECEDENCE + 1;
 	}
 }
