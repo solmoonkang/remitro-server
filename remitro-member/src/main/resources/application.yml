@@ -46,6 +46,22 @@ spring:
       host: remitro-redis
       port: 6379
 
+  kafka:
+    # 도커 컴포즈 내부 통신 주소
+    bootstrap-servers: remitro-kafka:29092
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+
+      # 데이터 유실 방지를 위해 모든 복제본 저장 확인
+      acks: all
+
+      # 멱등성 보장 (중복 전송 방지)
+      properties:
+        enable.idempotence: true
+
 eureka:
   instance:
     # 서비스 인스턴스를 호스트 이름이 아닌 IP 주소로 등록 (Docker/운영 환경에서 필수)
