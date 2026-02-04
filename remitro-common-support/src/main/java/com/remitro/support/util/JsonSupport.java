@@ -14,7 +14,7 @@ public final class JsonSupport {
 			return objectMapper.writeValueAsString(data);
 
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("[❎ ERROR] REDIS 직렬화에 실패했습니다.", e);
+			throw new RuntimeException("[❎ ERROR] 데이터 직렬화에 실패했습니다.", e);
 		}
 	}
 
@@ -23,7 +23,7 @@ public final class JsonSupport {
 			return objectMapper.readValue(jsonData, clazz);
 
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("[❎ ERROR] REDIS 역직렬화에 실패했습니다.", e);
+			throw new RuntimeException("[❎ ERROR] 데이터 역직렬화에 실패했습니다.", e);
 		}
 	}
 }
