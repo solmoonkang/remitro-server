@@ -1,8 +1,13 @@
 package com.remitro.gateway.filter;
 
+import java.util.Optional;
+
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -25,12 +30,32 @@ public class GlobalLoggingFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public Mono<Void> filter(ServerWebExchange serverWebExchange, GatewayFilterChain gatewayFilterChain) {
-		final String traceId = traceIdGenerator.generate();
 		final long startTime = System.currentTimeMillis();
 
-		serverWebExchange.getResponse().getHeaders().add(HEADER_TRACE_ID, traceId);
+		final String traceId = Optional.ofNullable(serverWebExchange.getRequest().getHeaders().getFirst(HEADER_TRACE_ID))
+			.orElse(traceIdGenerator.generate());
 
-		return gatewayFilterChain.filter(serverWebExchange)
+		ServerHttpRequest decoratedHttpReqeust = new ServerHttpRequestDecorator(serverWebExchange.getRequest()) {
+
+			@Override
+			public HttpHeaders getHeaders() {
+				HttpHeaders newHttpHeaders = new HttpHeaders();
+				newHttpHeaders.putAll(super.getHeaders());
+				newHttpHeaders.set(HEADER_TRACE_ID, traceId);
+				return newHttpHeaders;
+			}
+		};
+
+		ServerWebExchange mutatedWebExchange = serverWebExchange.mutate()
+			.request(decoratedHttpReqeust)
+			.build();
+
+		mutatedWebExchange.getResponse().beforeCommit(() -> {
+			mutatedWebExchange.getResponse().getHeaders().set(HEADER_TRACE_ID, traceId);
+			return Mono.empty();
+		});
+
+		return gatewayFilterChain.filter(mutatedWebExchange)
 			.doFinally(signalType -> {
 				final long duration = System.currentTimeMillis() - startTime;
 
@@ -47,6 +72,6 @@ public class GlobalLoggingFilter implements GlobalFilter, Ordered {
 
 	@Override
 	public int getOrder() {
-		return Ordered.HIGHEST_PRECEDENCE;
+		return Ordered.HIGHEST_PRECEDENCE + 1;
 	}
 }
