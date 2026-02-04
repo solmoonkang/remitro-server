@@ -46,6 +46,20 @@ spring:
       host: remitro-redis
       port: 6379
 
+  kafka:
+    # 도커 컴포즈 내부 통신 주소
+    bootstrap-servers: remitro-kafka:29092
+
+    consumer:
+      # 컨슈머 그룹 ID
+      group-id: remitro-account-group
+
+      # 가장 최신 메시지를 읽을시 latest, 처음부터 읽을시 earliest
+      auto-offset-reset: earliest
+
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 eureka:
   instance:
     # 서비스 인스턴스를 호스트 이름이 아닌 IP 주소로 등록 (Docker/운영 환경에서 필수)
