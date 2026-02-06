@@ -54,6 +54,9 @@ spring:
     # 도커 컴포즈 내부 통신 주소
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
+    topics:
+      member-events: "remitro.member.events.v1"
+
     consumer:
       # 컨슈머 그룹 ID
       group-id: remitro-account-group
