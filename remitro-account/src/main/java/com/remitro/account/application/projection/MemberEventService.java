@@ -20,7 +20,7 @@ public class MemberEventService {
 	private final MemberProjectionRepository memberProjectionRepository;
 
 	@Transactional
-	public void handleMemberRegistered(MemberRegisteredEvent memberRegisteredEvent) {
+	public void handleSignUp(MemberRegisteredEvent memberRegisteredEvent) {
 		final MemberProjection member = MemberProjection.create(
 			memberRegisteredEvent.memberId(),
 			memberRegisteredEvent.nickname(),
