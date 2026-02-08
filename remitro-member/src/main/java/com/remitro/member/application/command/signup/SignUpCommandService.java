@@ -7,10 +7,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.support.util.DataHasher;
+import com.remitro.event.common.EventType;
+import com.remitro.event.domain.member.model.MemberRegisteredEvent;
 import com.remitro.member.application.command.dto.request.SignUpRequest;
+import com.remitro.member.application.mapper.EventMapper;
+import com.remitro.member.application.outbox.OutboxEventRecorder;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.repository.MemberRepository;
+import com.remitro.support.util.DataHasher;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +25,9 @@ public class SignUpCommandService {
 
 	private final MemberRepository memberRepository;
 	private final SignUpValidator signUpValidator;
+
+	private final OutboxEventRecorder outboxEventRecorder;
+
 	private final PasswordEncoder passwordEncoder;
 	private final DataHasher dataHasher;
 	private final Clock clock;
@@ -48,5 +55,12 @@ public class SignUpCommandService {
 		);
 
 		memberRepository.save(member);
+
+		final MemberRegisteredEvent memberRegisteredEvent = EventMapper.toMemberRegisteredEvent(member, now);
+		outboxEventRecorder.record(
+			EventType.MEMBER_REGISTERED,
+			member.getId(),
+			memberRegisteredEvent
+		);
 	}
 }

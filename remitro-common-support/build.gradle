@@ -3,12 +3,16 @@ apply plugin: 'java-library'
 description = 'Common Support Library'
 
 dependencies {
+    // Validation & JSON
     api 'com.fasterxml.jackson.core:jackson-databind'
     api 'jakarta.validation:jakarta.validation-api'
-
     implementation 'org.hibernate.validator:hibernate-validator'
+
+    // Utils
+    api 'org.apache.commons:commons-lang3:3.18.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // Test
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }

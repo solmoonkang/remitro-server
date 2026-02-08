@@ -14,10 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 public class SuspensionBatchScheduler {
 
 	private final SuspensionCommandService suspensionCommandService;
+	private final SuspensionBatchProperties suspensionBatchProperties;
 
 	@Scheduled(cron = "${batch.suspension.cron}")
 	public void executeSuspensionRelease() {
-		log.info("[✅ LOGGER] 정지 기간 만료 계정 자동 해제 배치를 시작합니다.");
+		log.info("[✅ LOGGER] 정지 기간 만료 계정 자동 해제 배치를 시작합니다. (처리 단위: {}건)", suspensionBatchProperties.chunkSize());
 
 		final int processedCount = suspensionCommandService.processSuspensionStatusChange();
 

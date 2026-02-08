@@ -1,5 +1,7 @@
 package com.remitro.account.domain.projection.model;
 
+import java.time.LocalDateTime;
+
 import org.hibernate.annotations.Comment;
 
 import com.remitro.account.domain.projection.enums.MemberProjectionStatus;
@@ -33,10 +35,18 @@ public class MemberProjection {
 	@Column(name = "member_status", nullable = false)
 	private MemberProjectionStatus memberStatus;
 
+	@Comment("마지막 동기화 일시")
+	@Column(name = "last_updated_at")
+	private LocalDateTime lastUpdatedAt;
+
 	private MemberProjection(Long memberId, String nickname, MemberProjectionStatus memberStatus) {
 		this.memberId = memberId;
 		this.nickname = nickname;
 		this.memberStatus = memberStatus;
+	}
+
+	public static MemberProjection create(Long memberId, String nickname, MemberProjectionStatus memberStatus) {
+		return new MemberProjection(memberId, nickname, memberStatus);
 	}
 
 	public boolean isActive() {
