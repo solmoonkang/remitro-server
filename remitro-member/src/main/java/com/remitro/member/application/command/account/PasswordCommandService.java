@@ -37,7 +37,7 @@ public class PasswordCommandService {
 	private final Clock clock;
 
 	public void changePassword(Long memberId, PasswordChangeRequest passwordChangeRequest) {
-		final Member member = memberFinder.getMemberById(memberId);
+		final Member member = memberFinder.getActiveById(memberId);
 
 		passwordValidator.validatePasswordChange(
 			member.getPasswordHash(),
@@ -64,7 +64,7 @@ public class PasswordCommandService {
 
 		verificationValidator.validateRecoveryToken(verification, passwordRecoveryRequest.verificationToken());
 
-		final Member member = memberFinder.getMemberByEmail(passwordRecoveryRequest.email());
+		final Member member = memberFinder.getActiveByEmail(passwordRecoveryRequest.email());
 		final String encodedPassword = passwordEncoder.encode(passwordRecoveryRequest.newPassword());
 		member.recoverPassword(encodedPassword, LocalDateTime.now(clock));
 
