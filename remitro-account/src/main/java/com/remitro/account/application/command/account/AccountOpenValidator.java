@@ -1,6 +1,4 @@
-package com.remitro.account.application.command.deposit;
-
-import java.util.Optional;
+package com.remitro.account.application.command.account;
 
 import org.springframework.stereotype.Component;
 
@@ -16,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class DepositOpenValidator {
+public class AccountOpenValidator {
 
 	private final OpenPolicy openPolicy;
 	private final LimitPolicy limitPolicy;
