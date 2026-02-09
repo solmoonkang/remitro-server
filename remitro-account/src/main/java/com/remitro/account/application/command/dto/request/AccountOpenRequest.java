@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "입출금 계좌 개설 요청")
-public record DepositOpenRequest(
+public record AccountOpenRequest(
 	@Schema(
 		description = "계좌 별칭",
 		example = "생활비 통장"
