@@ -1,6 +1,7 @@
 package com.remitro.support.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AccessLevel;
@@ -14,7 +15,7 @@ public final class JsonSupport {
 			return objectMapper.writeValueAsString(data);
 
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("[❎ ERROR] REDIS 직렬화에 실패했습니다.", e);
+			throw new RuntimeException("[❎ ERROR] 데이터 직렬화에 실패했습니다.", e);
 		}
 	}
 
@@ -23,7 +24,16 @@ public final class JsonSupport {
 			return objectMapper.readValue(jsonData, clazz);
 
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("[❎ ERROR] REDIS 역직렬화에 실패했습니다.", e);
+			throw new RuntimeException("[❎ ERROR] 데이터 역직렬화에 실패했습니다.", e);
+		}
+	}
+
+	public static <T> T fromJSON(ObjectMapper objectMapper, String jsonData, TypeReference<T> typeReference) {
+		try {
+			return objectMapper.readValue(jsonData, typeReference);
+
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("[❎ ERROR] 데이터 역직렬화에 실패했습니다.", e);
 		}
 	}
 }

@@ -65,5 +65,4 @@ public class LoginSuccessHandler {
 			member, previousStatus, ChangeReason.USER_ACTIVE_BY_DORMANT_RELEASE, Role.USER, member.getId()
 		);
 	}
-
 }

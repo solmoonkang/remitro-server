@@ -41,10 +41,30 @@ spring:
       # 접속 경로 (http://localhost:8081/h2-console)
       path: /h2-console
 
+      settings:
+        # 도커 컨테이너 외부(내 로컬 브라우저)에서 H2 접속 경로로 접속 가능
+        web-allow-others: true
+
   data:
     redis:
       host: remitro-redis
       port: 6379
+
+  kafka:
+    # 도커 컴포즈 내부 통신 주소
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      retries: 3
+
+      # 데이터 유실 방지를 위해 모든 복제본 저장 확인
+      acks: all
+
+      # 멱등성 보장 (중복 전송 방지)
+      properties:
+        enable.idempotence: true
 
 eureka:
   instance:
@@ -90,5 +110,15 @@ batch:
     cron: "0 0 3 * * *"
 
   suspension:
+    # 한 번에 배치 작업에서 처리할 최대 회원 수
     chunk-size: 1000
+
+    # 정지 전환 배치 실행 주기 (초 분 시 일 월 요일: 매일 새벽 3시)
     cron: "0 0 3 * * *"
+
+  outbox:
+    # 한 번에 배치 작업에서 처리할 최대 회원 수
+    chunk-size: 50
+
+    # 아웃박스 배치 실행 주기 (2000ms -> 2s)
+    fixed-delay: 2000

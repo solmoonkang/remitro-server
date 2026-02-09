@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.batch.suspension.SuspensionBatchProperties;
 import com.remitro.member.application.support.MemberStatusRecorder;
+import com.remitro.member.domain.audit.model.StatusHistory;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
-import com.remitro.member.domain.audit.model.StatusHistory;
 import com.remitro.member.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class SuspensionCommandService {
 		);
 
 		final List<StatusHistory> suspensionHistories = suspensionCandidates.stream()
-			.map(this::tryReleaseSuspension)
+			.map(member -> tryReleaseSuspension(member, now))
 			.filter(Objects::nonNull)
 			.toList();
 
@@ -55,9 +55,9 @@ public class SuspensionCommandService {
 		return suspensionHistories.size();
 	}
 
-	public StatusHistory tryReleaseSuspension(Member member) {
+	public StatusHistory tryReleaseSuspension(Member member, LocalDateTime now) {
 		try {
-			return suspensionReleaseProcessor.processRelease(member);
+			return suspensionReleaseProcessor.processRelease(member, now);
 
 		} catch (ObjectOptimisticLockingFailureException e) {
 			log.warn("[✅ LOGGER] 관리자 수동 작업과 충돌하여 정지 해제 배치를 건너뜁니다. (회원 ID: {})", member.getId());

@@ -10,7 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.remitro.event.common.EventType;
 import com.remitro.member.application.batch.dormancy.DormancyBatchProperties;
+import com.remitro.member.application.mapper.EventMapper;
+import com.remitro.member.application.outbox.OutboxEventRecorder;
 import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
@@ -28,6 +31,9 @@ public class DormancyCommandService {
 	private static final String SORT_FIELD_LAST_LOGIN_AT = "lastLoginAt";
 
 	private final MemberRepository memberRepository;
+
+	private final OutboxEventRecorder outboxEventRecorder;
+
 	private final MemberStatusRecorder memberStatusRecorder;
 	private final DormancyBatchProperties dormancyBatchProperties;
 	private final Clock clock;
@@ -54,6 +60,18 @@ public class DormancyCommandService {
 		final MemberStatus previousStatus = member.getMemberStatus();
 		member.changeToDormant(now);
 
-		return StatusHistory.ofSystem(member, previousStatus, ChangeReason.SYSTEM_DORMANT_BY_INACTIVITY);
+		final StatusHistory statusHistory = StatusHistory.ofSystem(
+			member,
+			previousStatus,
+			ChangeReason.SYSTEM_DORMANT_BY_INACTIVITY
+		);
+
+		outboxEventRecorder.record(
+			EventType.MEMBER_STATUS_CHANGED,
+			member.getId(),
+			EventMapper.toMemberStatusChangedEvent(member, statusHistory, now)
+		);
+
+		return statusHistory;
 	}
 }

@@ -14,10 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 public class InactivityBatchScheduler {
 
 	private final DormancyCommandService dormancyCommandService;
+	private final DormancyBatchProperties dormancyBatchProperties;
 
 	@Scheduled(cron = "${batch.dormancy.cron}")
 	public void executeDormancyTransition() {
-		log.info("[✅ LOGGER] 장기 미접속자 휴면 전환 배치를 시작합니다. (기준일: 1년 미접속)");
+		log.info("[✅ LOGGER] 장기 미접속자 휴면 전환 배치를 시작합니다. (처리 단위: {}건)", dormancyBatchProperties.chunkSize());
 
 		final int processedCount = dormancyCommandService.processInactivityStatusChange();
 
