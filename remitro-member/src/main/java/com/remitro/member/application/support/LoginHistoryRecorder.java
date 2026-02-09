@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.member.application.command.auth.LoginClientInfo;
+import com.remitro.member.application.command.access.LoginClientInfo;
 import com.remitro.member.domain.audit.enums.LoginStatus;
 import com.remitro.member.domain.audit.model.LoginHistory;
 import com.remitro.member.domain.audit.repository.LoginHistoryRepository;

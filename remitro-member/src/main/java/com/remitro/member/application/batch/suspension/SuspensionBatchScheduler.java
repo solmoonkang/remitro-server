@@ -3,7 +3,7 @@ package com.remitro.member.application.batch.suspension;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.remitro.member.application.command.status.SuspensionCommandService;
+import com.remitro.member.application.command.lifecycle.SuspensionCommandService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

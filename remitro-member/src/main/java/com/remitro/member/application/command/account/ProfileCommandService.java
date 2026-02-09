@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.event.common.EventType;
 import com.remitro.member.application.command.account.validator.UpdateValidator;
-import com.remitro.member.application.command.dto.request.ProfileUpdateRequest;
+import com.remitro.member.application.dto.request.ProfileUpdateRequest;
 import com.remitro.member.application.mapper.EventMapper;
 import com.remitro.member.application.outbox.OutboxEventRecorder;
-import com.remitro.member.application.read.account.MemberFinder;
+import com.remitro.member.application.read.MemberFinder;
 import com.remitro.member.domain.member.model.Member;
 
 import lombok.RequiredArgsConstructor;

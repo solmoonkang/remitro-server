@@ -1,6 +1,6 @@
 package com.remitro.member.application.mapper;
 
-import com.remitro.member.application.command.dto.response.TokenResponse;
+import com.remitro.member.application.dto.response.TokenResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

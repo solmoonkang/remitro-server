@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.support.response.CommonResponse;
-import com.remitro.member.application.command.dto.request.CodeSendRequest;
-import com.remitro.member.application.command.dto.request.CodeVerifyRequest;
-import com.remitro.member.application.command.dto.response.CodeConfirmResponse;
-import com.remitro.member.application.command.dto.response.CodeIssueResponse;
-import com.remitro.member.application.command.verification.VerificationCommandService;
+import com.remitro.member.application.dto.request.CodeSendRequest;
+import com.remitro.member.application.dto.request.CodeVerifyRequest;
+import com.remitro.member.application.dto.response.CodeConfirmResponse;
+import com.remitro.member.application.dto.response.CodeIssueResponse;
+import com.remitro.member.application.command.onboarding.VerificationCommandService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

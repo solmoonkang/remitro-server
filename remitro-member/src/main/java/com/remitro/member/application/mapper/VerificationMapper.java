@@ -1,7 +1,7 @@
 package com.remitro.member.application.mapper;
 
-import com.remitro.member.application.command.dto.response.CodeConfirmResponse;
-import com.remitro.member.application.command.dto.response.CodeIssueResponse;
+import com.remitro.member.application.dto.response.CodeConfirmResponse;
+import com.remitro.member.application.dto.response.CodeIssueResponse;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
