@@ -14,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum EventType {
 
-	MEMBER_REGISTERED("member.registered", EventTopic.MEMBER_EVENTS, "1");
+	MEMBER_REGISTERED("member.registered", EventTopic.MEMBER_EVENTS, "1"),
+	MEMBER_PROFILE_UPDATED("member.profile_updated", EventTopic.MEMBER_EVENTS, "1"),
+	MEMBER_STATUS_CHANGED("member.status_changed", EventTopic.MEMBER_EVENTS, "1"),
+	MEMBER_WITHDRAWN("member.withdrawn", EventTopic.MEMBER_EVENTS, "1");
 
 	private final String code;
 	private final EventTopic eventTopic;
