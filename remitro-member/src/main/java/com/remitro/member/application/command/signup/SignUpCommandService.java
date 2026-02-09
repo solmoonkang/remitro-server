@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.event.common.EventType;
-import com.remitro.event.domain.member.model.MemberRegisteredEvent;
 import com.remitro.member.application.command.dto.request.SignUpRequest;
 import com.remitro.member.application.mapper.EventMapper;
 import com.remitro.member.application.outbox.OutboxEventRecorder;
@@ -56,11 +55,10 @@ public class SignUpCommandService {
 
 		memberRepository.save(member);
 
-		final MemberRegisteredEvent memberRegisteredEvent = EventMapper.toMemberRegisteredEvent(member, now);
 		outboxEventRecorder.record(
 			EventType.MEMBER_REGISTERED,
 			member.getId(),
-			memberRegisteredEvent
+			EventMapper.toMemberRegisteredEvent(member, now)
 		);
 	}
 }
