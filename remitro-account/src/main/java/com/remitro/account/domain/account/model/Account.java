@@ -7,6 +7,8 @@ import org.hibernate.annotations.Comment;
 import com.remitro.account.domain.account.enums.AccountStatus;
 import com.remitro.account.domain.account.enums.AccountType;
 import com.remitro.account.domain.common.BaseTimeEntity;
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.BadRequestException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -97,5 +99,19 @@ public class Account extends BaseTimeEntity {
 		return Optional.ofNullable(accountAlias)
 			.filter(input -> !input.isBlank())
 			.orElseGet(accountType::getDefaultAlias);
+	}
+
+	public void deposit(Long amount) {
+		if (amount <= 0) {
+			throw new BadRequestException(ErrorCode.INVALID_TRANSACTION_AMOUNT);
+		}
+		this.balance += amount;
+	}
+
+	public void withdraw(Long amount) {
+		if (this.balance < amount) {
+			throw new BadRequestException(ErrorCode.INSUFFICIENT_BALANCE);
+		}
+		this.balance -= amount;
 	}
 }
