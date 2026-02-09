@@ -49,8 +49,13 @@ public enum ErrorCode {
 	VERIFICATION_ALREADY_CONFIRMED(409, "V004", "이미 완료된 인증 절차입니다."),
 
 	// ============ ACCOUNT ============ //
-	ACCOUNT_LIMIT_EXCEEDED(400, "AC001", "계좌 보유 한도를 초과하였습니다."),
-	ACCOUNT_TYPE_NOT_OPENABLE(400, "AC002", "%s 계좌 타입은 개설이 허용되지 않습니다.");
+	ACCOUNT_NOT_FOUND(404, "A001", "존재하지 않는 계좌 정보입니다."),
+	ACCOUNT_OWNERSHIP_REQUIRED(403, "A002", "해당 계좌에 대한 접근 권한이 없습니다."),
+	ACCOUNT_INACTIVE(400, "A003", "활성 상태가 아닌 계좌는 거래가 불가능합니다."),
+	INVALID_TRANSACTION_AMOUNT(400, "A004", "거래 금액은 0원보다 커야 합니다."),
+	INSUFFICIENT_BALANCE(400, "A005", "잔액이 부족하여 거래를 진행할 수 없습니다."),
+	ACCOUNT_LIMIT_EXCEEDED(400, "A006", "계좌 개설 가능 개수를 초과했습니다."),
+	ACCOUNT_TYPE_NOT_OPENABLE(400, "A007", "%s는 개설 불가능한 계좌 타입입니다.");
 
 	private final int status;
 	private final String code;
