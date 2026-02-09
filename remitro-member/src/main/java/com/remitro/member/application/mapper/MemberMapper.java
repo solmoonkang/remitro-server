@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberMapper {
+public final class MemberMapper {
 
 	public static MemberProfileResponse toMemberProfileResponse(
 		String maskEmail,

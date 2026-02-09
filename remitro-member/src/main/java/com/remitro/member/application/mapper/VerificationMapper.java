@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class VerificationMapper {
+public final class VerificationMapper {
 
 	public static CodeIssueResponse toCodeIssueResponse(String verificationCode	) {
 		return new CodeIssueResponse(verificationCode);
