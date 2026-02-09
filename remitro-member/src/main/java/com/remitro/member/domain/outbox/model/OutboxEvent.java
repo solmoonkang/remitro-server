@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.Comment;
 
+import com.remitro.event.common.AggregateType;
 import com.remitro.event.common.EventType;
 import com.remitro.member.domain.outbox.enums.OutboxStatus;
 
@@ -41,11 +42,12 @@ public class OutboxEvent {
 	@Column(name = "outbox_event_id")
 	private Long id;
 
-	@Comment("")
+	@Comment("도메인 종류")
+	@Enumerated(EnumType.STRING)
 	@Column(name = "aggregate_type", nullable = false, length = 64)
-	private String aggregateType;
+	private AggregateType aggregateType;
 
-	@Comment("")
+	@Comment("도메인 대상 식별자")
 	@Column(name = "aggregate_id", nullable = false, length = 200)
 	private String aggregateId;
 
@@ -53,7 +55,7 @@ public class OutboxEvent {
 	@Column(name = "event_type", nullable = false, length = 100)
 	private String eventType;
 
-	@Comment("이벤트 JSON (Envelope 직렬화)")
+	@Comment("이벤트 JSON")
 	@Lob
 	@Column(name = "message_json", nullable = false)
 	private String messageJson;
@@ -80,13 +82,12 @@ public class OutboxEvent {
 	private LocalDateTime lastAttemptAt;
 
 	private OutboxEvent(
-		String aggregateType,
 		String aggregateId,
 		String eventType,
 		String messageJson,
 		LocalDateTime createdAt
 	) {
-		this.aggregateType = aggregateType;
+		this.aggregateType = AggregateType.MEMBER;
 		this.aggregateId = aggregateId;
 		this.eventType = eventType;
 		this.messageJson = messageJson;
@@ -95,17 +96,16 @@ public class OutboxEvent {
 	}
 
 	public static OutboxEvent newEvent(
-		String aggregateType,
 		Long aggregateId,
 		EventType eventType,
 		String messageJson,
 		LocalDateTime now
 	) {
 		return new OutboxEvent(
-			aggregateType,
 			String.valueOf(aggregateId),
 			eventType.getCode(),
-			messageJson, now
+			messageJson,
+			now
 		);
 	}
 
