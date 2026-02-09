@@ -23,7 +23,7 @@ public class ProfileQueryService {
 
 	@Cacheable(value = "memberProfile", key = "'ID:' + #memberId")
 	public MemberProfileResponse getMyProfile(Long memberId) {
-		final Member member = memberFinder.getMemberById(memberId);
+		final Member member = memberFinder.getActiveById(memberId);
 
 		final String maskEmail = maskingPolicy.maskEmailForProfile(member.getEmail());
 		final String maskPhoneNumber = maskingPolicy.maskPhoneNumberForProfile(member.getPhoneNumber());
