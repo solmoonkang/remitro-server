@@ -54,7 +54,6 @@ public class OutboxEventRecorder {
 		);
 
 		final OutboxEvent outboxEvent = OutboxEvent.newEvent(
-			"MEMBER",
 			aggregateId,
 			eventType,
 			JsonSupport.toJSON(objectMapper, eventEnvelope),
