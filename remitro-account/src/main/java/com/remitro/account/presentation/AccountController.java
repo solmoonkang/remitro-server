@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.remitro.account.application.command.account.AccountOpenCommandService;
 import com.remitro.account.application.command.dto.request.AccountOpenRequest;
 import com.remitro.account.application.command.dto.request.DepositRequest;
+import com.remitro.account.application.command.dto.request.WithdrawRequest;
 import com.remitro.account.application.command.dto.response.AccountOpenResponse;
 import com.remitro.account.application.command.dto.response.DepositResponse;
-import com.remitro.account.application.command.account.AccountOpenCommandService;
+import com.remitro.account.application.command.dto.response.WithdrawResponse;
 import com.remitro.account.application.command.transaction.DepositCommandService;
+import com.remitro.account.application.command.transaction.WithdrawCommandService;
 import com.remitro.support.response.CommonResponse;
 import com.remitro.support.security.AuthenticatedUser;
 import com.remitro.support.security.CurrentUser;
@@ -35,6 +38,7 @@ public class AccountController {
 
 	private final AccountOpenCommandService accountOpenCommandService;
 	private final DepositCommandService depositCommandService;
+	private final WithdrawCommandService withdrawCommandService;
 
 	@Operation(
 		summary = "계좌 개설",
@@ -78,6 +82,29 @@ public class AccountController {
 	) {
 		return CommonResponse.success(
 			depositCommandService.deposit(authenticatedUser.memberId(), accountId, requestId, depositRequest)
+		);
+	}
+
+	@Operation(
+		summary = "계좌 출금",
+		description = "로그인한 사용자의 계좌에서 금액을 출금합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "출금 성공"),
+		@ApiResponse(responseCode = "400", description = "요청 값 검증 실패"),
+		@ApiResponse(responseCode = "403", description = "권한 없는 사용자"),
+		@ApiResponse(responseCode = "500", description = "서버 내부 오류")
+	})
+	@PostMapping("/{accountId}/withdraw")
+	@ResponseStatus(HttpStatus.OK)
+	public CommonResponse<WithdrawResponse> withdraw(
+		@Parameter(hidden = true) @CurrentUser AuthenticatedUser authenticatedUser,
+		@PathVariable Long accountId,
+		@RequestHeader("X-Request-ID") String requestId,
+		@Valid @RequestBody WithdrawRequest withdrawRequest
+	) {
+		return CommonResponse.success(
+			withdrawCommandService.withdraw(authenticatedUser.memberId(), accountId, requestId, withdrawRequest)
 		);
 	}
 }
