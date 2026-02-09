@@ -32,7 +32,7 @@ public class LoginCommandService {
 		HttpServletRequest httpServletRequest,
 		HttpServletResponse httpServletResponse
 	) {
-		final Member member = memberFinder.getMemberByEmail(loginRequest.email());
+		final Member member = memberFinder.getActiveByEmail(loginRequest.email());
 		final LoginClientInfo loginClientInfo = networkExtractor.extractClientInfo(httpServletRequest);
 
 		return loginProcessor.login(
