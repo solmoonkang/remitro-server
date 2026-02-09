@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "입출금 계좌 개설 응답")
-public record DepositOpenResponse(
+public record AccountOpenResponse(
 	@Schema(
 		description = "계좌 번호",
 		example = "110-99-456789"
