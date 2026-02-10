@@ -3,10 +3,11 @@ package com.remitro.account.application.command.transaction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.account.application.command.account.AccountAccessValidator;
-import com.remitro.account.application.command.account.PinNumberValidator;
+import com.remitro.account.application.command.account.validator.AccountAccessValidator;
+import com.remitro.account.application.command.account.validator.PinNumberValidator;
 import com.remitro.account.application.command.dto.request.WithdrawRequest;
 import com.remitro.account.application.command.dto.response.WithdrawResponse;
+import com.remitro.account.application.command.transaction.validator.WithdrawValidator;
 import com.remitro.account.application.idempotency.IdempotencyProvider;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.read.AccountFinder;
@@ -38,7 +39,7 @@ public class WithdrawCommandService {
 		final Account account = accountFinder.getAccountByIdWithLock(accountId);
 
 		accountAccessValidator.validateOwnership(account, memberId);
-		withdrawValidator.validateWithdraw(account, memberId);
+		withdrawValidator.validateWithdraw(account, withdrawRequest.amount());
 		pinNumberValidator.validatePinMatch(withdrawRequest.pinNumber(), account.getPinNumberHash());
 
 		account.withdraw(withdrawRequest.amount());
