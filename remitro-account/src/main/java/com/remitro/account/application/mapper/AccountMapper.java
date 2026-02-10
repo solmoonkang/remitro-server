@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.remitro.account.application.command.dto.response.AccountOpenResponse;
 import com.remitro.account.application.command.dto.response.DepositResponse;
+import com.remitro.account.application.command.dto.response.TransferResponse;
 import com.remitro.account.application.command.dto.response.WithdrawResponse;
 import com.remitro.account.domain.ledger.model.AccountLedger;
 
@@ -52,6 +53,25 @@ public final class AccountMapper {
 			amount,
 			currentBalance,
 			accountLedger.getCreatedAt()
+		);
+	}
+
+	public static TransferResponse toTransferResponse(
+		AccountLedger fromAccountLedger,
+		AccountLedger toAccountLedger,
+		String fromAccountNumber,
+		String toAccountNumber,
+		String amount,
+		String currentBalance
+	) {
+		return new TransferResponse(
+			fromAccountLedger.getId(),
+			toAccountLedger.getId(),
+			fromAccountNumber,
+			toAccountNumber,
+			amount,
+			currentBalance,
+			fromAccountLedger.getCreatedAt()
 		);
 	}
 }
