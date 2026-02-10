@@ -51,11 +51,16 @@ public enum ErrorCode {
 	// ============ ACCOUNT ============ //
 	ACCOUNT_NOT_FOUND(404, "A001", "존재하지 않는 계좌 정보입니다."),
 	ACCOUNT_OWNERSHIP_REQUIRED(403, "A002", "해당 계좌에 대한 접근 권한이 없습니다."),
-	ACCOUNT_INACTIVE(400, "A003", "활성 상태가 아닌 계좌는 거래가 불가능합니다."),
-	INVALID_TRANSACTION_AMOUNT(400, "A004", "거래 금액은 0원보다 커야 합니다."),
+	ACCOUNT_INACTIVE(403, "A003", "활성 상태가 아닌 계좌는 거래가 불가능합니다."),
+	INVALID_TRANSACTION_AMOUNT(400, "A004", "거래 금액은 최소 1원 이상이어야 합니다."),
 	INSUFFICIENT_BALANCE(400, "A005", "잔액이 부족하여 거래를 진행할 수 없습니다."),
 	ACCOUNT_LIMIT_EXCEEDED(400, "A006", "계좌 개설 가능 개수를 초과했습니다."),
-	ACCOUNT_TYPE_NOT_OPENABLE(400, "A007", "%s는 개설 불가능한 계좌 타입입니다.");
+	ACCOUNT_TYPE_NOT_OPENABLE(400, "A007", "%s는 개설 불가능한 계좌 타입입니다."),
+
+	// ============ TRANSFER ============ //
+	SAME_ACCOUNT_TRANSFER_NOT_ALLOWED(400, "T001", "자기 자신에게 송금할 수 없습니다."),
+	RECEIVER_ACCOUNT_INACTIVE(400, "T002", "받는 분의 계좌가 입금 불가능한 상태입니다."),
+	TRANSFER_DAILY_LIMIT_EXCEEDED(400, "T003", "일일 송금 한도를 초과했습니다.");
 
 	private final int status;
 	private final String code;
