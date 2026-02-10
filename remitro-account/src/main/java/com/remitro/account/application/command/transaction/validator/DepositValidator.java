@@ -1,4 +1,4 @@
-package com.remitro.account.application.command.transaction;
+package com.remitro.account.application.command.transaction.validator;
 
 import org.springframework.stereotype.Component;
 
