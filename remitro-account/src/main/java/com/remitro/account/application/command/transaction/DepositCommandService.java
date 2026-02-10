@@ -3,9 +3,10 @@ package com.remitro.account.application.command.transaction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.remitro.account.application.command.account.AccountAccessValidator;
+import com.remitro.account.application.command.account.validator.AccountAccessValidator;
 import com.remitro.account.application.command.dto.request.DepositRequest;
 import com.remitro.account.application.command.dto.response.DepositResponse;
+import com.remitro.account.application.command.transaction.validator.DepositValidator;
 import com.remitro.account.application.idempotency.IdempotencyProvider;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.read.AccountFinder;
