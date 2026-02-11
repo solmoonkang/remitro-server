@@ -15,6 +15,7 @@ import com.remitro.account.domain.account.policy.FormatPolicy;
 import com.remitro.account.domain.ledger.enums.TransactionType;
 import com.remitro.account.domain.ledger.model.AccountLedger;
 import com.remitro.account.domain.ledger.repository.AccountLedgerRepository;
+import com.remitro.account.infrastructure.aop.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,7 @@ public class DepositCommandService {
 	private final AccountAccessValidator accountAccessValidator;
 	private final DepositValidator depositValidator;
 
+	@DistributedLock(toAccountId = "#accountId")
 	public DepositResponse deposit(Long memberId, Long accountId, String requestId, DepositRequest depositRequest) {
 		idempotencyProvider.process(requestId, memberId);
 

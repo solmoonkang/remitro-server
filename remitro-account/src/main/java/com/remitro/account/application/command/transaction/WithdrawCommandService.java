@@ -16,6 +16,7 @@ import com.remitro.account.domain.account.policy.FormatPolicy;
 import com.remitro.account.domain.ledger.enums.TransactionType;
 import com.remitro.account.domain.ledger.model.AccountLedger;
 import com.remitro.account.domain.ledger.repository.AccountLedgerRepository;
+import com.remitro.account.infrastructure.aop.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +34,7 @@ public class WithdrawCommandService {
 	private final PinNumberValidator pinNumberValidator;
 	private final WithdrawValidator withdrawValidator;
 
+	@DistributedLock(fromAccountId = "#accountId")
 	public WithdrawResponse withdraw(Long memberId, Long accountId, String requestId, WithdrawRequest withdrawRequest) {
 		idempotencyProvider.process(requestId, memberId);
 
