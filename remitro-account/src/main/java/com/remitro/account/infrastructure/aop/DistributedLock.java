@@ -9,9 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DistributedLock {
 
-	String fromAccountId();
+	String fromAccountId() default "";
 
-	String toAccountId();
+	String toAccountId() default "";
 
 	String waitTime() default "${distributed-lock.wait-time}";
 
