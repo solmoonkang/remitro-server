@@ -8,5 +8,5 @@ public interface AccountLedgerRepository {
 
 	AccountLedger save(AccountLedger accountLedger);
 
-	List<AccountLedger> saveAll(List<AccountLedger> accountLedgers);
+	<S extends AccountLedger> List<S> saveAll(Iterable<S> entities);
 }
