@@ -13,7 +13,8 @@ public enum ErrorCode {
 	DUPLICATE_RESOURCE(409, "C003", "이미 존재하는 리소스이거나 중복된 데이터입니다."),
 	DUPLICATE_REQUEST(409, "C004", "이미 처리 중이거나 완료된 요청입니다."),
 	INTERNAL_SERVER_ERROR(500, "C005", "서버 내부 오류가 발생했습니다."),
-	ALGORITHM_CRYPTO_ERROR(500, "C006", "데이터 처리 중 오류가 발생했습니다."),
+	LOCK_ACQUISITION_FAILED(500, "C006", "현재 거래 요청이 많아 처리에 실패했습니다. 잠시 후 다시 시도해주세요."),
+	ALGORITHM_CRYPTO_ERROR(500, "C007", "데이터 처리 중 오류가 발생했습니다."),
 
 	// ============ AUTH ============ //
 	UNAUTHORIZED_ACCESS(401, "AU001", "인증이 필요한 서비스입니다."),
