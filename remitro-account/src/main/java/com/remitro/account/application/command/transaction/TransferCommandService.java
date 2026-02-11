@@ -1,10 +1,6 @@
 package com.remitro.account.application.command.transaction;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +18,7 @@ import com.remitro.account.domain.account.policy.FormatPolicy;
 import com.remitro.account.domain.ledger.enums.TransactionType;
 import com.remitro.account.domain.ledger.model.AccountLedger;
 import com.remitro.account.domain.ledger.repository.AccountLedgerRepository;
+import com.remitro.account.infrastructure.aop.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +36,10 @@ public class TransferCommandService {
 	private final TransferValidator transferValidator;
 	private final PinNumberValidator pinNumberValidator;
 
+	@DistributedLock(
+		fromAccountId = "#fromAccountId",
+		toAccountId = "#toAccountId"
+	)
 	public TransferResponse transfer(
 		Long memberId,
 		Long fromAccountId,
@@ -48,9 +49,8 @@ public class TransferCommandService {
 	) {
 		idempotencyProvider.process(requestId, memberId);
 
-		final Map<Long, Account> lockedAccounts = lockAccountsOrderById(fromAccountId, toAccountId);
-		final Account fromAccount = lockedAccounts.get(fromAccountId);
-		final Account toAccount = lockedAccounts.get(toAccountId);
+		final Account fromAccount = accountFinder.getAccountByIdWithLock(fromAccountId);
+		final Account toAccount = accountFinder.getAccountByIdWithLock(toAccountId);
 
 		accountAccessValidator.validateOwnership(fromAccount, memberId);
 		pinNumberValidator.validatePinMatch(transferRequest.pinNumber(), fromAccount.getPinNumberHash());
@@ -70,16 +70,6 @@ public class TransferCommandService {
 			formatPolicy.formatAmount(transferRequest.amount()),
 			formatPolicy.formatAmount(fromAccount.getBalance())
 		);
-	}
-
-	private Map<Long, Account> lockAccountsOrderById(Long fromAccountId, Long toAccountId) {
-		return Stream.of(fromAccountId, toAccountId)
-			.sorted()
-			.collect(Collectors.toMap(
-				accountId -> accountId,
-				accountFinder::getAccountByIdWithLock,
-				(existing, replacement) -> existing, LinkedHashMap::new)
-			);
 	}
 
 	private List<AccountLedger> recordLedgers(
