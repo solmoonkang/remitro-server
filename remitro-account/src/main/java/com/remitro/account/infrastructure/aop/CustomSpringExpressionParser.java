@@ -7,6 +7,10 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 public final class CustomSpringExpressionParser {
 
 	public static Long getDynamicValue(String[] parameterNames, Object[] arguments, String expression) {
+		if (expression == null || expression.isBlank()) {
+			return null;
+		}
+
 		final ExpressionParser expressionParser = new SpelExpressionParser();
 		final StandardEvaluationContext standardEvaluationContext = new StandardEvaluationContext();
 
