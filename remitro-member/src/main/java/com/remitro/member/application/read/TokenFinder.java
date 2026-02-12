@@ -1,0 +1,22 @@
+package com.remitro.member.application.read;
+
+import org.springframework.stereotype.Component;
+
+import com.remitro.support.error.ErrorCode;
+import com.remitro.support.exception.UnauthorizedException;
+import com.remitro.member.domain.token.model.RefreshToken;
+import com.remitro.member.domain.token.repository.RefreshTokenRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class TokenFinder {
+
+	private final RefreshTokenRepository refreshTokenRepository;
+
+	public RefreshToken getRefreshTokenByMemberId(Long memberId) {
+		return refreshTokenRepository.findByMemberId(memberId)
+			.orElseThrow(() -> new UnauthorizedException(ErrorCode.INVALID_TOKEN, "인증 정보"));
+	}
+}

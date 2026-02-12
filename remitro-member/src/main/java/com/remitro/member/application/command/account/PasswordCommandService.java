@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.remitro.member.application.command.account.validator.PasswordValidator;
-import com.remitro.member.application.command.dto.request.PasswordChangeRequest;
-import com.remitro.member.application.command.dto.request.PasswordRecoveryRequest;
-import com.remitro.member.application.command.verification.VerificationValidator;
-import com.remitro.member.application.read.account.MemberFinder;
-import com.remitro.member.application.read.verification.VerificationFinder;
+import com.remitro.member.application.dto.request.PasswordChangeRequest;
+import com.remitro.member.application.dto.request.PasswordRecoveryRequest;
+import com.remitro.member.application.command.onboarding.validator.VerificationValidator;
+import com.remitro.member.application.read.MemberFinder;
+import com.remitro.member.application.read.VerificationFinder;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.verification.model.Verification;
 import com.remitro.member.domain.verification.repository.VerificationRepository;

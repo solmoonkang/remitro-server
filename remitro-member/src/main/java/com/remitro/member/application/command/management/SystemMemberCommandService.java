@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.remitro.event.common.EventType;
 import com.remitro.member.application.mapper.EventMapper;
 import com.remitro.member.application.outbox.OutboxEventRecorder;
-import com.remitro.member.application.read.account.MemberFinder;
+import com.remitro.member.application.read.MemberFinder;
 import com.remitro.member.application.support.MemberStatusRecorder;
 import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.audit.model.StatusHistory;

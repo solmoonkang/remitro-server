@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.remitro.support.response.CommonResponse;
-import com.remitro.member.application.command.auth.LoginCommandService;
-import com.remitro.member.application.command.auth.ReissueCommandService;
-import com.remitro.member.application.command.dto.request.LoginRequest;
-import com.remitro.member.application.command.dto.response.TokenResponse;
+import com.remitro.member.application.command.access.LoginCommandService;
+import com.remitro.member.application.command.access.ReissueCommandService;
+import com.remitro.member.application.dto.request.LoginRequest;
+import com.remitro.member.application.dto.response.TokenResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -2,7 +2,7 @@ package com.remitro.member.infrastructure.web;
 
 import org.springframework.stereotype.Component;
 
-import com.remitro.member.application.command.auth.LoginClientInfo;
+import com.remitro.member.application.command.access.LoginClientInfo;
 
 import jakarta.servlet.http.HttpServletRequest;
 
