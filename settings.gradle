@@ -9,3 +9,4 @@ include ':remitro-transaction'
 
 include ':remitro-common-support'
 include ':remitro-common-event'
+include ':remitro-common-web'
