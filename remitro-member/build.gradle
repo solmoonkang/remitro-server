@@ -5,6 +5,7 @@ description = 'Member Service'
 dependencies {
     implementation project(':remitro-common-support')
     implementation project(':remitro-common-event')
+    implementation project(':remitro-common-web')
 
     // Web & API Documentation
     implementation 'org.springframework.boot:spring-boot-starter-web'
