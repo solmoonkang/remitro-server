@@ -98,6 +98,9 @@ security:
     # HMAC-SHA256 서명에 사용되는 비밀키로, 최소 32자 이상의 임의 문자열
     hmac-secret: "hmac-secret-key-hmac-secret-key-hmac-secret-key"
 
+authentication:
+  type: member
+
 batch:
   dormancy:
     # 한 번에 배치 작업에서 처리할 최대 회원 수
@@ -122,3 +125,12 @@ batch:
 
     # 아웃박스 배치 실행 주기 (2000ms -> 2s)
     fixed-delay: 2000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+  open-api:
+    info: "REMITRO MEMBER API"
+    description: "회원 및 인증 관련 API 문서"
+    version: "v1.0.0"
