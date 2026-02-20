@@ -1,4 +1,4 @@
-package com.remitro.member.infrastructure.web;
+package com.remitro.web.security;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
