@@ -10,7 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.remitro.account.infrastructure.web.AuthenticatedUserFilter;
+import com.remitro.web.filter.AuthenticatedUserFilter;
 
 import lombok.RequiredArgsConstructor;
 
