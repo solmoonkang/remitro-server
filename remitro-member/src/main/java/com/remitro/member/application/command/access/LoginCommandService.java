@@ -11,7 +11,8 @@ import com.remitro.member.application.dto.request.LoginRequest;
 import com.remitro.member.application.dto.response.TokenResponse;
 import com.remitro.member.application.read.MemberFinder;
 import com.remitro.member.domain.member.model.Member;
-import com.remitro.member.infrastructure.web.NetworkExtractor;
+import com.remitro.web.security.LoginClientInfo;
+import com.remitro.web.util.NetworkExtractor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
