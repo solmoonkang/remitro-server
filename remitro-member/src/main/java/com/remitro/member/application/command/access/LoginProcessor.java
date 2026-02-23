@@ -11,6 +11,7 @@ import com.remitro.member.application.command.access.handler.LoginFailureHandler
 import com.remitro.member.application.command.access.handler.LoginSuccessHandler;
 import com.remitro.member.application.command.account.validator.PasswordValidator;
 import com.remitro.member.domain.member.model.Member;
+import com.remitro.web.security.LoginClientInfo;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
