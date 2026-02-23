@@ -21,8 +21,8 @@ import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.domain.member.policy.MaskingPolicy;
 import com.remitro.member.domain.token.repository.RefreshTokenRepository;
-import com.remitro.member.infrastructure.web.CookieManager;
 import com.remitro.support.security.Role;
+import com.remitro.web.util.CookieManager;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
