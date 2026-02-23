@@ -1,0 +1,6 @@
+com.remitro.web.config.CommonWebConfig
+com.remitro.web.config.CommonInfraConfig
+com.remitro.web.config.CommonSwaggerConfig
+com.remitro.web.config.PasswordEncoderConfig
+
+com.remitro.web.advice.GlobalExceptionHandler
