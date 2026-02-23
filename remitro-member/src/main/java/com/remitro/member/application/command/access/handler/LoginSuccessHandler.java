@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
 import com.remitro.support.security.Role;
-import com.remitro.member.application.command.access.LoginClientInfo;
 import com.remitro.member.application.dto.response.TokenResponse;
 import com.remitro.member.application.mapper.TokenMapper;
 import com.remitro.member.application.command.access.TokenIssuanceProcessor;
@@ -15,6 +14,7 @@ import com.remitro.member.domain.audit.enums.ChangeReason;
 import com.remitro.member.domain.member.enums.MemberStatus;
 import com.remitro.member.domain.member.model.Member;
 import com.remitro.member.infrastructure.security.JwtTokenProvider;
+import com.remitro.web.security.LoginClientInfo;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
