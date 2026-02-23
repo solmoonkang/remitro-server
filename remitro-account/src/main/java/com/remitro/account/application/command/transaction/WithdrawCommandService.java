@@ -8,7 +8,7 @@ import com.remitro.account.application.command.account.validator.PinNumberValida
 import com.remitro.account.application.command.dto.request.WithdrawRequest;
 import com.remitro.account.application.command.dto.response.WithdrawResponse;
 import com.remitro.account.application.command.transaction.validator.WithdrawValidator;
-import com.remitro.account.application.idempotency.IdempotencyProvider;
+import com.remitro.account.application.idempotency.AccountIdempotencyStorage;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.read.AccountFinder;
 import com.remitro.account.domain.account.model.Account;
@@ -16,7 +16,6 @@ import com.remitro.account.domain.account.policy.FormatPolicy;
 import com.remitro.account.domain.ledger.enums.TransactionType;
 import com.remitro.account.domain.ledger.model.AccountLedger;
 import com.remitro.account.domain.ledger.repository.AccountLedgerRepository;
-import com.remitro.account.infrastructure.aop.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,16 +26,15 @@ public class WithdrawCommandService {
 
 	private final AccountFinder accountFinder;
 	private final AccountLedgerRepository accountLedgerRepository;
-	private final IdempotencyProvider idempotencyProvider;
+	private final AccountIdempotencyStorage accountIdempotencyStorage;
 
 	private final FormatPolicy formatPolicy;
 	private final AccountAccessValidator accountAccessValidator;
 	private final PinNumberValidator pinNumberValidator;
 	private final WithdrawValidator withdrawValidator;
 
-	@DistributedLock(fromAccountId = "#accountId")
 	public WithdrawResponse withdraw(Long memberId, Long accountId, String requestId, WithdrawRequest withdrawRequest) {
-		idempotencyProvider.process(requestId, memberId);
+		accountIdempotencyStorage.saveIfAbsent(requestId, memberId);
 
 		final Account account = accountFinder.getAccountByIdWithLock(accountId);
 
