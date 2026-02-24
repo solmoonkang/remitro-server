@@ -10,7 +10,7 @@ import com.remitro.account.application.command.account.validator.PinNumberValida
 import com.remitro.account.application.command.dto.request.TransferRequest;
 import com.remitro.account.application.command.dto.response.TransferResponse;
 import com.remitro.account.application.command.transaction.validator.TransferValidator;
-import com.remitro.account.application.idempotency.IdempotencyProvider;
+import com.remitro.account.application.idempotency.AccountIdempotencyStorage;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.read.AccountFinder;
 import com.remitro.account.domain.account.model.Account;
@@ -18,7 +18,6 @@ import com.remitro.account.domain.account.policy.FormatPolicy;
 import com.remitro.account.domain.ledger.enums.TransactionType;
 import com.remitro.account.domain.ledger.model.AccountLedger;
 import com.remitro.account.domain.ledger.repository.AccountLedgerRepository;
-import com.remitro.account.infrastructure.aop.DistributedLock;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,17 +28,13 @@ public class TransferCommandService {
 
 	private final AccountFinder accountFinder;
 	private final AccountLedgerRepository accountLedgerRepository;
-	private final IdempotencyProvider idempotencyProvider;
+	private final AccountIdempotencyStorage accountIdempotencyStorage;
 
 	private final FormatPolicy formatPolicy;
 	private final AccountAccessValidator accountAccessValidator;
 	private final TransferValidator transferValidator;
 	private final PinNumberValidator pinNumberValidator;
 
-	@DistributedLock(
-		fromAccountId = "#fromAccountId",
-		toAccountId = "#toAccountId"
-	)
 	public TransferResponse transfer(
 		Long memberId,
 		Long fromAccountId,
@@ -47,7 +42,7 @@ public class TransferCommandService {
 		String requestId,
 		TransferRequest transferRequest
 	) {
-		idempotencyProvider.process(requestId, memberId);
+		accountIdempotencyStorage.saveIfAbsent(requestId, memberId);
 
 		final Account fromAccount = accountFinder.getAccountByIdWithLock(fromAccountId);
 		final Account toAccount = accountFinder.getAccountByIdWithLock(toAccountId);

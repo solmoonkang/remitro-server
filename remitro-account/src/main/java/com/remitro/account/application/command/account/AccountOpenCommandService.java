@@ -8,7 +8,7 @@ import com.remitro.account.application.command.account.validator.AccountOpenVali
 import com.remitro.account.application.command.account.validator.PinNumberValidator;
 import com.remitro.account.application.command.dto.request.AccountOpenRequest;
 import com.remitro.account.application.command.dto.response.AccountOpenResponse;
-import com.remitro.account.application.idempotency.IdempotencyProvider;
+import com.remitro.account.application.idempotency.AccountIdempotencyStorage;
 import com.remitro.account.application.mapper.AccountMapper;
 import com.remitro.account.application.read.MemberFinder;
 import com.remitro.account.application.support.AccountNumberGenerator;
@@ -26,7 +26,7 @@ public class AccountOpenCommandService {
 
 	private final MemberFinder memberFinder;
 	private final AccountRepository accountRepository;
-	private final IdempotencyProvider idempotencyProvider;
+	private final AccountIdempotencyStorage accountIdempotencyStorage;
 
 	private final AccountNumberGenerator accountNumberGenerator;
 	private final AccountOpenValidator accountOpenValidator;
@@ -35,7 +35,7 @@ public class AccountOpenCommandService {
 	private final PasswordEncoder passwordEncoder;
 
 	public AccountOpenResponse open(Long memberId, String requestId, AccountOpenRequest accountOpenRequest) {
-		idempotencyProvider.process(requestId, memberId);
+		accountIdempotencyStorage.saveIfAbsent(requestId, memberId);
 
 		final MemberProjection member = memberFinder.getMemberById(memberId);
 

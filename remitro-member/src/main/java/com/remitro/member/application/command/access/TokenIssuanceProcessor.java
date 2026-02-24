@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.remitro.member.domain.token.model.RefreshToken;
 import com.remitro.member.domain.token.repository.RefreshTokenRepository;
 import com.remitro.member.infrastructure.security.JwtTokenProvider;
-import com.remitro.member.infrastructure.web.CookieManager;
+import com.remitro.web.util.CookieManager;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

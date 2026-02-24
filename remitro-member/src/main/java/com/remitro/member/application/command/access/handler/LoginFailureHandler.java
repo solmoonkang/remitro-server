@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import com.remitro.support.exception.BaseException;
 import com.remitro.support.exception.UnauthorizedException;
 import com.remitro.member.application.command.access.validator.LoginValidator;
-import com.remitro.member.application.command.access.LoginClientInfo;
 import com.remitro.member.application.support.LoginHistoryRecorder;
 import com.remitro.member.domain.member.model.Member;
+import com.remitro.web.security.LoginClientInfo;
 
 import lombok.RequiredArgsConstructor;
 
